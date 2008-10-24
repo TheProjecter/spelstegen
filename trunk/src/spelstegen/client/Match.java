@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Match class
+ * 
+ * @author Henrik Segesten
+ *
+ */
 public class Match implements Serializable {
 
 	private String matchid;

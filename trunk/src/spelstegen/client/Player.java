@@ -2,6 +2,11 @@ package spelstegen.client;
 
 import java.io.Serializable;
 
+/**
+ * Class representing a player
+ * 
+ * @author Henrik Segesten
+ */
 public class Player implements Serializable, Comparable<Player> {
 	
 	private String playerId;

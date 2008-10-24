@@ -13,6 +13,12 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Class that draws the login panel
+ * 
+ * @author Henrik Segesten
+ *
+ */
 public class LoginPanel extends PopupPanel {
 
 	public LoginPanel() {
