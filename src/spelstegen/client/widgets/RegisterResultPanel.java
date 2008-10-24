@@ -18,6 +18,11 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Class that draws the regi
+ * @author heno02
+ *
+ */
 public class RegisterResultPanel extends PopupPanel {
 
 	private List<TextBox> player1Score;
