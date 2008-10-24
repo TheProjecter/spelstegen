@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <servlet>
+    <servlet-name>SpelstegenService</servlet-name>
+    <servlet-class>spelstegen.server.ServerMain</servlet-class>
+    <load-on-startup>1</load-on-startup>
+    <init-param>
+      <param-name>dbhost</param-name>
+      <param-value>localhost</param-value>
+    </init-param>
+    <init-param>
+      <param-name>dbport</param-name>
+      <param-value>3306</param-value>
+    </init-param>
+    <init-param>
+      <param-name>dbuser</param-name>
+      <param-value>uppfolj</param-value>
+    </init-param>
+    <init-param>
+      <param-name>dbpassw</param-name>
+      <param-value>uppfolj</param-value>
+    </init-param>
+    <init-param>
+      <param-name>dbname</param-name>
+      <param-value>uppfolj</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SpelstegenService</servlet-name>
+    <url-pattern>/spelstegen</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+
