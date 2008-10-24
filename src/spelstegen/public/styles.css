@@ -1,0 +1,45 @@
+.table-caption
+  {
+     border-bottom: 1px solid #696969;
+  }
+  
+.outer-border
+  {
+     border-bottom: 3px solid #696969;
+     border-top: 3px solid #696969;
+     border-left: 1px solid #696969;
+     border-right: 1px solid #696969;
+  }
+
+.TABLE.MYTABLE
+  { 
+     font-family:arial;
+     border-collapse:collapse;
+     font-size:10pt;
+     background-color:#808080;
+     width:500px;
+     border-style:solid;
+     border-color:black;
+     border-width:2px;
+  }
+
+.TH.MYTABLE
+  {
+     font-size:10pt;
+     color:white;
+  }
+
+.TD.MYTABLE
+  {  
+     font-size:10pt;
+     background-color:#409040;
+     color:white;
+     border-style:solid;
+     border-width:1px;
+     text-align:center;
+  }
+  
+.toplabel {
+	font-size:16pt;
+	color:black;
+	}
