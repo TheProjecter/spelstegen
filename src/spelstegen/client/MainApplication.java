@@ -2,8 +2,10 @@ package spelstegen.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import spelstegen.client.Match.MatchDoneException;
 import spelstegen.client.widgets.LoginPanel;
 import spelstegen.client.widgets.RegisterResultPanel;
 
@@ -11,6 +13,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -31,11 +34,17 @@ public class MainApplication implements EntryPoint {
 	public final static int HORISONTAL_SPACING = 5;
 	public final static int VERTICAL_SPACING = 15;
 	private Grid mainTable;
-	private List<Player> testPlayerData = new ArrayList<Player> (2);
+	private Grid matchTable;
 	private ToggleButton tableButton = new ToggleButton("Tabell");
 	private ToggleButton matchesButton = new ToggleButton("Matcher");
+	private static PopupPanel popup;
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
+	
+	
+	// Test data
+	private List<Player> testPlayerData = new ArrayList<Player> (2);
+	private List<Match> matchData = new ArrayList<Match>();
 	
 	{
 		Player p1 = new Player("1", "Åke");
@@ -44,6 +53,19 @@ public class MainApplication implements EntryPoint {
 		Player p2 = new Player("2", "Elsa");
 		p2.changePoints(-34);
 		testPlayerData.add(p2);
+		Match m1 = new Match(new Date(), p1, p2);
+		Match m2 = new Match(new Date(), p1, p2);
+		try {
+			m1.addSet(15, 1);
+			m2.addSet(15, 1);
+			m2.addSet(4, 15);
+			m2.addSet(6, 15);
+		} catch (MatchDoneException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		matchData.add(m1);
+		matchData.add(m2);
 	}
 	
 	/**
@@ -59,6 +81,22 @@ public class MainApplication implements EntryPoint {
 		mainPanel.add(topLabel);
 		
 		// Top buttons
+		tableButton.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				if (matchesButton.isDown()) {
+					matchesButton.setDown(false);
+					showTableView();
+				}
+			}
+		});
+		matchesButton.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				if (tableButton.isDown()) {
+					tableButton.setDown(false);
+					showMatchView();
+				}
+			}
+		});
 		tableButton.setDown(true);
 		HorizontalPanel topButtonPanel = new HorizontalPanel();
 		topButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -131,7 +169,21 @@ public class MainApplication implements EntryPoint {
 	
 	private void showMatchView() {
 		contentPanel.clear();
-		
+		populateMatches(matchData);
+		contentPanel.add(matchTable);
+	}
+	
+	private void populateMatches(List<Match> matches) {
+		matchTable = new Grid(matches.size(), 4);
+		matchTable.setCellSpacing(0);
+		matchTable.setWidth("600px");
+		for (int i = 0; i < matches.size(); i++) {
+			Match match = matches.get(i);
+			matchTable.setText(i, 0, match.getDate().toString());
+			matchTable.setHTML(i, 1, "<b>" + match.getWinner().getPlayerName() + "</b>");
+			matchTable.setText(i, 2, match.getLoser().getPlayerName());
+			matchTable.setText(i, 3, match.getScores());
+		}
 	}
 	
 	private void populateTable(List<Player> players) {
@@ -155,5 +207,17 @@ public class MainApplication implements EntryPoint {
 		panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		return panel;
 	}
+	
+    public static void showStatus(String text, boolean isError) {
+    	popup = new PopupPanel(true);
+    	popup.setAnimationEnabled(true);
+    	popup.setWidget(new HTML(text));
+    	if (!isError) {
+    		popup.setStylePrimaryName("popup");
+    	} else {
+    		popup.setStylePrimaryName("popupError");
+    	}
+    	popup.show();
+    }
 
 }

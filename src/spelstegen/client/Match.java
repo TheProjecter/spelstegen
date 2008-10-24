@@ -21,6 +21,7 @@ public class Match implements Serializable {
 	}
 	
 	public Match(String matchId, Date date, Player player1, Player player2) {
+		this();
 		this.matchid = matchId;
 		this.date = date;
 		this.player1 = player1;
@@ -115,5 +116,16 @@ public class Match implements Serializable {
 
 	public int getNumberOfSets() {
 		return sets.size();
+	}
+	
+	public String getScores() {
+		StringBuilder sb = new StringBuilder();
+		for (Integer[] set : sets) {
+			if (sb.length() != 0) {
+				sb.append(", ");
+			}
+			sb.append(set[0] + "-" + set[1]);
+		}
+		return sb.toString();
 	}
 }
