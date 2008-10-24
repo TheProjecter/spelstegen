@@ -19,8 +19,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Class that draws the regi
- * @author heno02
+ * Class that draws the register result panel.
+ * @author Henrik Segesten
  *
  */
 public class RegisterResultPanel extends PopupPanel {
