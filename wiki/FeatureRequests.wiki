@@ -1,0 +1,9 @@
+#summary Feature requests for spelstegen
+#labels Featured
+
+Features and assigned developers
+
+= Feature requests =
+
+  * Database design
+  * Server implementation
