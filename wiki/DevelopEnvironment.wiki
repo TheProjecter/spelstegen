@@ -12,3 +12,4 @@ This is a small howto to set up the development environment.
   # Create a lib directory in the checkout
   # Get all the dependencies listed in the build.xml file and put into the lib directory.
   # I have checked in my Eclipse project and classpath file as well, you can use these and modify to fit your needs.
+  # The project is built with ant. The target for deployment is build.war.
