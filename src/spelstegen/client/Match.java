@@ -20,22 +20,24 @@ public class Match implements Serializable {
 	private List<Integer[]> sets;
 	private int setsWonByPlayer1;
 	private int setsWonByPlayer2;
+	private String season;
 	
 	public Match() {
 		super();
 		sets = new ArrayList<Integer[]>();
 	}
 	
-	public Match(String matchId, Date date, Player player1, Player player2) {
+	public Match(String matchId, String season, Date date, Player player1, Player player2) {
 		this();
 		this.matchid = matchId;
+		this.season = season;
 		this.date = date;
 		this.player1 = player1;
 		this.player2 = player2;
 	}
 	
-	public Match(Date date, Player player1, Player player2) {
-		this(null, date, player1, player2);
+	public Match(String season, Date date, Player player1, Player player2) {
+		this(null, season, date, player1, player2);
 	}
 	
 	public void addSet(int score1, int score2) throws MatchDoneException {
@@ -67,6 +69,14 @@ public class Match implements Serializable {
 				setsWonByPlayer2++;
 			}
 		}
+	}
+	
+	public String getSeason() {
+		return season;
+	}
+	
+	public void setSeason(String season) {
+		this.season = season;
 	}
 	
 	public Date getDate() {

@@ -55,8 +55,8 @@ public class MainApplication implements EntryPoint {
 		Player p2 = new Player("2", "Elsa");
 		p2.changePoints(-34);
 		testPlayerData.add(p2);
-		Match m1 = new Match(new Date(), p1, p2);
-		Match m2 = new Match(new Date(), p1, p2);
+		Match m1 = new Match("HT08", new Date(), p1, p2);
+		Match m2 = new Match("HT08", new Date(), p1, p2);
 		try {
 			m1.addSet(15, 1);
 			m2.addSet(15, 1);
@@ -210,7 +210,7 @@ public class MainApplication implements EntryPoint {
 		return panel;
 	}
 	
-    public static void showStatus(String text, boolean isError) {
+    public static void showMessage(String text, boolean isError) {
     	popup = new PopupPanel(true);
     	popup.setAnimationEnabled(true);
     	popup.setWidget(new HTML(text));
@@ -219,6 +219,14 @@ public class MainApplication implements EntryPoint {
     	} else {
     		popup.setStylePrimaryName("popupError");
     	}
+    	popup.show();
+    }
+    
+    public static void showStatus(String text) {
+    	popup = new PopupPanel(false);
+    	popup.setAnimationEnabled(true);
+    	popup.setWidget(new HTML(text));
+    	popup.setStylePrimaryName("popup");
     	popup.show();
     }
 
