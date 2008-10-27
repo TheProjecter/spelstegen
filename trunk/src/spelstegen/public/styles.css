@@ -1,18 +1,15 @@
-.table-caption
-  {
+.table-caption {
      border-bottom: 1px solid #696969;
-  }
+}
   
-.outer-border
-  {
+.outer-border {
      border-bottom: 3px solid white;
      border-top: 3px solid white;
      border-left: 1px solid white;
      border-right: 1px solid white;
-  }
+}
 
-.TABLE.MYTABLE
-  { 
+.TABLE.MYTABLE { 
      font-family:arial;
      border-collapse:collapse;
      font-size:10pt;
@@ -21,25 +18,33 @@
      border-style:solid;
      border-color:black;
      border-width:2px;
-  }
+}
 
-.TH.MYTABLE
-  {
+.TH.MYTABLE {
      font-size:10pt;
      color:white;
-  }
+}
 
-.TD.MYTABLE
-  {  
+.TD.MYTABLE {  
      font-size:10pt;
      background-color:#409040;
      color:white;
      border-style:solid;
      border-width:1px;
      text-align:center;
-  }
+}
   
 .toplabel {
 	font-size:16pt;
 	color:black;
-	}
+}
+	
+.popup {
+	background-color: #C3D9FF;
+	font-size: smaller;
+}
+
+.popupError {
+	background-color: #FF3300;
+	font-size: smaller;
+}
