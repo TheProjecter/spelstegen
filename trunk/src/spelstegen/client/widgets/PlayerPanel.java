@@ -17,6 +17,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Panel that shows details of a Player
+ * @author Henrik Segesten
+ */
 public class PlayerPanel extends PopupPanel {
 
 	private TextBox nameBox;
