@@ -7,10 +7,13 @@ import java.util.List;
 
 import spelstegen.client.Match.MatchDoneException;
 import spelstegen.client.widgets.LoginPanel;
+import spelstegen.client.widgets.PlayerPanel;
 import spelstegen.client.widgets.RegisterResultPanel;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -40,6 +43,7 @@ public class MainApplication implements EntryPoint {
 	private ToggleButton tableButton = new ToggleButton("Tabell");
 	private ToggleButton matchesButton = new ToggleButton("Matcher");
 	private static PopupPanel popup;
+	private SpelstegenServiceAsync spelstegenService;
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
@@ -130,7 +134,7 @@ public class MainApplication implements EntryPoint {
 		PushButton loginButton = new PushButton("Logga in");
 		loginButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final LoginPanel loginPanel = new LoginPanel();
+				final LoginPanel loginPanel = new LoginPanel(spelstegenService);
 				loginPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -140,16 +144,37 @@ public class MainApplication implements EntryPoint {
 				});
 			}
 		});
+		PushButton addPlayerButton = new PushButton("Lägg till spelare");
+		addPlayerButton.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				final PlayerPanel playerPanel = new PlayerPanel(spelstegenService);
+				playerPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+					public void setPosition(int offsetWidth, int offsetHeight) {
+			            int left = (Window.getClientWidth() - offsetWidth) / 3;
+			            int top = (Window.getClientHeight() - offsetHeight) / 3;
+			            playerPanel.setPopupPosition(left + 100, top);
+			          }
+				});
+			}
+		});
+		
 		HorizontalPanel bottomButtonPanel = new HorizontalPanel();
 		bottomButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		bottomButtonPanel.setSpacing(HORISONTAL_SPACING);
 		bottomButtonPanel.add(inputMatchButton);
 		bottomButtonPanel.add(loginButton);
+		bottomButtonPanel.add(addPlayerButton);
 		
 		mainPanel.add(bottomButtonPanel);
 		
 		showTableView();
 		RootPanel.get().add(mainPanel);
+		
+		// Init RPC service
+		spelstegenService = (SpelstegenServiceAsync) GWT.create(SpelstegenService.class);
+		ServiceDefTarget enpoint = (ServiceDefTarget) spelstegenService;
+		String moduleRelativeURL = GWT.getModuleBaseURL() + "spelstegenService";
+		enpoint.setServiceEntryPoint(moduleRelativeURL);
 	}
 	
 	private void showTableView() {
@@ -226,8 +251,12 @@ public class MainApplication implements EntryPoint {
     	popup = new PopupPanel(false);
     	popup.setAnimationEnabled(true);
     	popup.setWidget(new HTML(text));
-    	popup.setStylePrimaryName("popup");
-    	popup.show();
+    	popup.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+			public void setPosition(int offsetWidth, int offsetHeight) {
+	            int left = (Window.getClientWidth() - offsetWidth);
+	            popup.setPopupPosition(left, 0);
+	          }
+		});
     }
 
 }
