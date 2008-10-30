@@ -91,6 +91,7 @@ public class RegisterResultPanel extends PopupPanel {
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
+		mainPanel.add(new Label("Registrera ny match"));
 		mainPanel.add(playerPanel);
 		mainPanel.add(setPanel);
 		mainPanel.add(scorePanel);

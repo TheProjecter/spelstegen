@@ -17,74 +17,87 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-/**
- * Class that draws the login panel
- * 
- * @author Henrik Segesten
- *
- */
-public class LoginPanel extends PopupPanel {
-	
-	private Player player;
-	private TextBox usernameBox;
-	private PasswordTextBox passwordBox;
-	
-	public LoginPanel(final SpelstegenServiceAsync spelstegenService) {
-		super(false);
+public class PlayerPanel extends PopupPanel {
 
+	private TextBox nameBox;
+	private TextBox emailBox;
+	private PasswordTextBox passwordBox;
+	private PasswordTextBox passwordBox2;
+	
+	public PlayerPanel(final SpelstegenServiceAsync spelstegenService) {
+		super(false);
+		
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
 		
-		mainPanel.add(new Label("Logga in"));
+		mainPanel.add(new Label("Lägg till ny spelare"));
 		
-		HorizontalPanel usernamePanel = MainApplication.createHorizontalPanel();
-		usernamePanel.add(new Label("Användarnamn (epost):"));
-		usernameBox = new TextBox();
-		usernamePanel.add(usernameBox);
+		HorizontalPanel namePanel = MainApplication.createHorizontalPanel();
+		namePanel.add(new Label("Spelarens namn:"));
+		nameBox = new TextBox();
+		namePanel.add(nameBox);
+		
+		HorizontalPanel emailPanel = MainApplication.createHorizontalPanel();
+		emailPanel.add(new Label("E-postadress:"));
+		emailBox = new TextBox();
+		emailPanel.add(emailBox);
 		
 		HorizontalPanel passwordPanel = MainApplication.createHorizontalPanel();
 		passwordPanel.add(new Label("Lösenord:"));
 		passwordBox = new PasswordTextBox();
 		passwordPanel.add(passwordBox);
 		
+		HorizontalPanel repeatPwPanel = MainApplication.createHorizontalPanel();
+		repeatPwPanel.add(new Label("Upprepa lösenordet:"));
+		passwordBox2 = new PasswordTextBox();
+		repeatPwPanel.add(passwordBox2);
+		
 		VerticalPanel fieldPanel = new VerticalPanel();
 		fieldPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		fieldPanel.setSpacing(10);
-		fieldPanel.add(usernamePanel);
+		fieldPanel.add(namePanel);
+		fieldPanel.add(emailPanel);
 		fieldPanel.add(passwordPanel);
+		fieldPanel.add(repeatPwPanel);
 		
-		final AsyncCallback<Player> callback = new AsyncCallback<Player>() {
+		final AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
 			public void onFailure(Throwable caught) {
-				Window.alert("Inloggningen misslyckades. " + caught.getMessage());
+				Window.alert("Fel vid sparning av spelare. " + caught.getMessage());
 			}
 
-			public void onSuccess(Player result) {
-				if (result != null) {
-					LoginPanel.this.player = result;
-					MainApplication.showStatus("Inloggad: " + result.getPlayerName());
+			public void onSuccess(Boolean result) {
+				if (result) {
+					MainApplication.showStatus("Sparade spelaren.");
+					PlayerPanel.this.hide();
 				} else {
-					Window.alert("Fel lösenord eller epostadress, försök igen.");
+					Window.alert("Emailadressen är inte unik, försök igen");
 				}
-				LoginPanel.this.hide();
 			}
+			
 		};
 		
-		PushButton loginButton = new PushButton("Logga in");
-		loginButton.addClickListener(new ClickListener() {
+		PushButton createButton = new PushButton("Spara");
+		createButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				spelstegenService.logIn(usernameBox.getText().trim(), Player.md5(passwordBox.getText()), callback);
+				if (passwordBox.getText().trim().equals(passwordBox2.getText().trim())) {
+					Player player = new Player(nameBox.getText().trim(), emailBox.getText().trim());
+					player.changePassword(passwordBox.getText().trim());
+					spelstegenService.addPlayer(player, callback);
+				}
 			}
 		});
+		
 		PushButton cancelButton = new PushButton("Avbryt");
 		cancelButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				LoginPanel.this.hide();
+				PlayerPanel.this.hide();
 			}
 		});
+		
 		HorizontalPanel buttonPanel = MainApplication.createHorizontalPanel();
-		buttonPanel.add(loginButton);
+		buttonPanel.add(createButton);
 		buttonPanel.add(cancelButton);
 		
 		mainPanel.add(fieldPanel);
@@ -93,7 +106,4 @@ public class LoginPanel extends PopupPanel {
 		this.add(mainPanel);
 	}
 	
-	public Player getPlayer() {
-		return player;
-	}
 }
