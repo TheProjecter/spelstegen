@@ -3,7 +3,9 @@ package spelstegen.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import spelstegen.client.Match.MatchDoneException;
 import spelstegen.client.widgets.LoginPanel;
@@ -13,6 +15,7 @@ import spelstegen.client.widgets.RegisterResultPanel;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
@@ -43,24 +46,23 @@ public class MainApplication implements EntryPoint {
 	private ToggleButton tableButton = new ToggleButton("Tabell");
 	private ToggleButton matchesButton = new ToggleButton("Matcher");
 	private static PopupPanel popup;
-	private SpelstegenServiceAsync spelstegenService;
+	private static SpelstegenServiceAsync spelstegenService;
+	private static Map<String,Player> players;
+	private GetPlayersCallBack getPlayersCallBack = new GetPlayersCallBack();
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
 	
 	// Test data
-	private List<Player> testPlayerData = new ArrayList<Player> (2);
 	private List<Match> matchData = new ArrayList<Match>();
 	
 	{
-		Player p1 = new Player("1", "Åke");
+		Player p1 = new Player("Åke", "ake@ake.se");
 		p1.changePoints(53);
-		testPlayerData.add(p1);
-		Player p2 = new Player("2", "Elsa");
+		Player p2 = new Player("Elsa", "elsa@elsa.se");
 		p2.changePoints(-34);
-		testPlayerData.add(p2);
-		Match m1 = new Match("HT08", new Date(), p1, p2);
-		Match m2 = new Match("HT08", new Date(), p1, p2);
+		Match m1 = new Match("HT08", new Date(), p1.getEmail(), p2.getEmail());
+		Match m2 = new Match("HT08", new Date(), p1.getEmail(), p2.getEmail());
 		try {
 			m1.addSet(15, 1);
 			m2.addSet(15, 1);
@@ -78,6 +80,17 @@ public class MainApplication implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		// Init RPC service
+		spelstegenService = (SpelstegenServiceAsync) GWT.create(SpelstegenService.class);
+		ServiceDefTarget enpoint = (ServiceDefTarget) spelstegenService;
+		String moduleRelativeURL = GWT.getModuleBaseURL() + "spelstegenService";
+		enpoint.setServiceEntryPoint(moduleRelativeURL);
+		
+		// Init
+		players = new HashMap<String, Player>();
+		updatePlayerList();
+		
+		// Construct gui
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setWidth("100%");
 		mainPanel.setSpacing(VERTICAL_SPACING);
@@ -121,7 +134,7 @@ public class MainApplication implements EntryPoint {
 		PushButton inputMatchButton = new PushButton("Registrera match");
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(testPlayerData);
+				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(players.values());
 				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -147,7 +160,7 @@ public class MainApplication implements EntryPoint {
 		PushButton addPlayerButton = new PushButton("Lägg till spelare");
 		addPlayerButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final PlayerPanel playerPanel = new PlayerPanel(spelstegenService);
+				final PlayerPanel playerPanel = new PlayerPanel(spelstegenService, MainApplication.this);
 				playerPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -170,11 +183,7 @@ public class MainApplication implements EntryPoint {
 		showTableView();
 		RootPanel.get().add(mainPanel);
 		
-		// Init RPC service
-		spelstegenService = (SpelstegenServiceAsync) GWT.create(SpelstegenService.class);
-		ServiceDefTarget enpoint = (ServiceDefTarget) spelstegenService;
-		String moduleRelativeURL = GWT.getModuleBaseURL() + "spelstegenService";
-		enpoint.setServiceEntryPoint(moduleRelativeURL);
+
 	}
 	
 	private void showTableView() {
@@ -190,8 +199,8 @@ public class MainApplication implements EntryPoint {
 			mainTable.getCellFormatter().setStyleName(0, i, "table-caption"); 
 		}
 		
-		populateTable(testPlayerData);
 		contentPanel.add(mainTable);
+		populateTable();
 	}
 	
 	private void showMatchView() {
@@ -207,23 +216,31 @@ public class MainApplication implements EntryPoint {
 		for (int i = 0; i < matches.size(); i++) {
 			Match match = matches.get(i);
 			matchTable.setText(i, 0, match.getDate().toString());
-			matchTable.setHTML(i, 1, "<b>" + match.getWinner().getPlayerName() + "</b>");
-			matchTable.setText(i, 2, match.getLoser().getPlayerName());
-			matchTable.setText(i, 3, match.getScores());
+			Player p = getPlayer(match.getWinner());
+			matchTable.setHTML(i, 1, "<b>" + (p != null ? p.getPlayerName() : match.getWinner()) + "</b>");
+			p = getPlayer(match.getLoser());
+			matchTable.setText(i, 2, (p != null ? p.getPlayerName() : match.getLoser()));
+			matchTable.setText(i, 3, match.getScores(true));
 		}
 	}
 	
-	private void populateTable(List<Player> players) {
+	public void populateTable() {
 		int col = 0;
-		Collections.sort(players);
-		for (int i = 0; i < players.size(); i++) {
+		List<Player> playersList = new ArrayList<Player>(players.size());
+		for (Player player : players.values()) {
+			playersList.add(player);
+		}
+		Collections.sort(playersList);
+		Player p = null;
+		for (int i = 0; i < playersList.size(); i++) {
+			p = playersList.get(i);
 			mainTable.setText(i+1, col++, i+1 + "");
-			mainTable.setText(i+1, col++, players.get(i).getPlayerName());
-			mainTable.setText(i+1, col++, players.get(i).getPoints() + "");
+			mainTable.setText(i+1, col++, p.getPlayerName());
+			mainTable.setText(i+1, col++, p.getPoints() + "");
 			col = 0;
 		}
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			mainTable.getCellFormatter().setStyleName(players.size(), i, "table-caption");
+			mainTable.getCellFormatter().setStyleName(playersList.size(), i, "table-caption");
 		}
 	}
 	
@@ -257,6 +274,30 @@ public class MainApplication implements EntryPoint {
 	            popup.setPopupPosition(left, 0);
 	          }
 		});
+    }
+    
+    public static Player getPlayer(String email) {
+    	return players.get(email);
+    }
+    
+    public void updatePlayerList() {
+		spelstegenService.getPlayers(getPlayersCallBack);
+    }
+    
+    private class GetPlayersCallBack implements AsyncCallback<List<Player>> {
+
+		public void onFailure(Throwable caught) {
+			Window.alert("Failed to get players. " + caught.getMessage());
+		}
+
+		public void onSuccess(List<Player> result) {
+			players.clear();
+			for (Player player : result) {
+				players.put(player.getEmail(), player);
+			}
+			MainApplication.this.populateTable();
+		}
+    	
     }
 
 }

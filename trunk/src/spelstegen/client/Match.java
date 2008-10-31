@@ -15,8 +15,8 @@ public class Match implements Serializable {
 
 	private String matchid;
 	private Date date;
-	private Player player1;
-	private Player player2;
+	private String player1Email;
+	private String player2Email;
 	private List<Integer[]> sets;
 	private int setsWonByPlayer1;
 	private int setsWonByPlayer2;
@@ -27,17 +27,17 @@ public class Match implements Serializable {
 		sets = new ArrayList<Integer[]>();
 	}
 	
-	public Match(String matchId, String season, Date date, Player player1, Player player2) {
+	public Match(String matchId, String season, Date date, String player1Email, String player2Email) {
 		this();
 		this.matchid = matchId;
 		this.season = season;
 		this.date = date;
-		this.player1 = player1;
-		this.player2 = player2;
+		this.player1Email = player1Email;
+		this.player2Email = player2Email;
 	}
 	
-	public Match(String season, Date date, Player player1, Player player2) {
-		this(null, season, date, player1, player2);
+	public Match(String season, Date date, String player1Email, String player2Email) {
+		this(null, season, date, player1Email, player2Email);
 	}
 	
 	public void addSet(int score1, int score2) throws MatchDoneException {
@@ -91,8 +91,8 @@ public class Match implements Serializable {
 		return matchid;
 	}
 	
-	public Player[] getPlayers() {
-		return new Player[] {player1, player2};
+	public String[] getPlayers() {
+		return new String[] {player1Email, player2Email};
 	}
 	
 	public static class MatchDoneException extends Exception {
@@ -106,25 +106,25 @@ public class Match implements Serializable {
 		}
 	}
 	
-	public Player getWinner() {
+	public String getWinner() {
 		int setsPlayed = sets.size();
 		if (setsPlayed == 1 || setsPlayed == 3 || setsPlayed == 5) {
 			if (setsWonByPlayer1 > setsWonByPlayer2) {
-				return player1;
+				return player1Email;
 			} else {
-				return player2;
+				return player2Email;
 			}
 		}
 		return null;
 	}
 	
-	public Player getLoser() {
+	public String getLoser() {
 		int setsPlayed = sets.size();
 		if (setsPlayed == 1 || setsPlayed == 3 || setsPlayed == 5) {
 			if (setsWonByPlayer1 > setsWonByPlayer2) {
-				return player2;
+				return player2Email;
 			} else {
-				return player1;
+				return player1Email;
 			}
 		}
 		return null;
@@ -134,10 +134,10 @@ public class Match implements Serializable {
 		return sets.size();
 	}
 	
-	public String getScores() {
+	public String getScores(boolean insertSpace) {
 		StringBuilder sb = new StringBuilder();
 		for (Integer[] set : sets) {
-			if (sb.length() != 0) {
+			if (insertSpace && sb.length() != 0) {
 				sb.append(", ");
 			}
 			sb.append(set[0] + "-" + set[1]);

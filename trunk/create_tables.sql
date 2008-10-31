@@ -9,10 +9,10 @@ name VARCHAR(50),
 password VARCHAR(50));
 
 CREATE TABLE matches(
-id VARCHAR(8) NOT NULL,
+id MEDIUMINT NOT NULL AUTO_INCREMENT,
 PRIMARY KEY(id),
 date DATE,
-player1 VARCHAR(8),
-player2 VARCHAR(8),
+player1 VARCHAR(50),
+player2 VARCHAR(50),
 sets varchar(100),
 season VARCHAR(8));

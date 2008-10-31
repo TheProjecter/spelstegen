@@ -1,6 +1,7 @@
 package spelstegen.client.widgets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import spelstegen.client.MainApplication;
@@ -32,9 +33,9 @@ public class RegisterResultPanel extends PopupPanel {
 	private RadioButton threeSet;
 	private RadioButton fiveSet;
 	private int setMode = 1;
-	private List<Player> players;
+	private Collection<Player> players;
 	
-	public RegisterResultPanel(List<Player> players) {
+	public RegisterResultPanel(Collection<Player> players) {
 		super(false);
 		this.players = players;
 		

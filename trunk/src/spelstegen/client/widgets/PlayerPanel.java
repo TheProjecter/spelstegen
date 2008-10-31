@@ -28,7 +28,7 @@ public class PlayerPanel extends PopupPanel {
 	private PasswordTextBox passwordBox;
 	private PasswordTextBox passwordBox2;
 	
-	public PlayerPanel(final SpelstegenServiceAsync spelstegenService) {
+	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication parent) {
 		super(false);
 		
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -74,6 +74,8 @@ public class PlayerPanel extends PopupPanel {
 			public void onSuccess(Boolean result) {
 				if (result) {
 					MainApplication.showStatus("Sparade spelaren.");
+					parent.updatePlayerList();
+					parent.populateTable();
 					PlayerPanel.this.hide();
 				} else {
 					Window.alert("Emailadressen är inte unik, försök igen");
