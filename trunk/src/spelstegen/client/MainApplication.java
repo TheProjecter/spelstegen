@@ -11,6 +11,7 @@ import spelstegen.client.Match.MatchDoneException;
 import spelstegen.client.widgets.LoginPanel;
 import spelstegen.client.widgets.PlayerPanel;
 import spelstegen.client.widgets.RegisterResultPanel;
+import spelstegen.client.widgets.StatisticsPanel;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -43,8 +44,10 @@ public class MainApplication implements EntryPoint {
 	public final static int VERTICAL_SPACING = 15;
 	private Grid mainTable;
 	private Grid matchTable;
+	private StatisticsPanel statisticsPanel = new StatisticsPanel();
 	private ToggleButton tableButton = new ToggleButton("Tabell");
 	private ToggleButton matchesButton = new ToggleButton("Matcher");
+	private ToggleButton statisticsButton = new ToggleButton("Statistik");
 	private static PopupPanel popup;
 	private static SpelstegenServiceAsync spelstegenService;
 	private static Map<String,Player> players;
@@ -102,26 +105,38 @@ public class MainApplication implements EntryPoint {
 		// Top buttons
 		tableButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				if (matchesButton.isDown()) {
+				if (tableButton.isDown()) {
 					matchesButton.setDown(false);
+					statisticsButton.setDown(false);
 					showTableView();
 				}
 			}
 		});
 		matchesButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				if (tableButton.isDown()) {
+				if (matchesButton.isDown()) {
 					tableButton.setDown(false);
+					statisticsButton.setDown(false);
 					showMatchView();
 				}
 			}
 		});
+		statisticsButton.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				if (statisticsButton.isDown()) {
+					tableButton.setDown(false);
+					matchesButton.setDown(false);
+					showStatisticsView();
+				}
+			}
+		});	
 		tableButton.setDown(true);
 		HorizontalPanel topButtonPanel = new HorizontalPanel();
 		topButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		topButtonPanel.setSpacing(HORISONTAL_SPACING);
 		topButtonPanel.add(tableButton);
 		topButtonPanel.add(matchesButton);
+		topButtonPanel.add(statisticsButton);
 		mainPanel.add(topButtonPanel);
 		
 		contentPanel.setSpacing(VERTICAL_SPACING);
@@ -207,6 +222,11 @@ public class MainApplication implements EntryPoint {
 		contentPanel.clear();
 		populateMatches(matchData);
 		contentPanel.add(matchTable);
+	}
+	
+	private void showStatisticsView() {
+		contentPanel.clear();
+		contentPanel.add(statisticsPanel);
 	}
 	
 	private void populateMatches(List<Match> matches) {
