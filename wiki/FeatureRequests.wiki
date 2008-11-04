@@ -5,5 +5,9 @@ Features and assigned developers
 
 = Feature requests =
 
-  * Database design
-  * Server implementation
+  * ~~Database design~~ /Henrik
+  * ~~Server implementation~~ /Henrik
+  * ~~Points calculation~~ /Henrik
+  * Only logged in users should be allowed to add scores. /Henrik
+  * Add admin mode which should be the only one allowed to add other accounts. /Henrik
+  * Add more columns to the table. Matches won and lost etc in the style of joinit.
