@@ -54,6 +54,10 @@ public class MainApplication implements EntryPoint {
 	private GetPlayersCallBack getPlayersCallBack = new GetPlayersCallBack();
 	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
 	private LadderCalculator ladderCalculator = new LadderCalculator();
+	private PushButton inputMatchButton;
+	private PushButton addPlayerButton;
+	private PushButton loginButton;
+	private LoginClickListener loginClickListener;
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
@@ -75,6 +79,7 @@ public class MainApplication implements EntryPoint {
 		updateMatchList();
 		mainTable = new Grid(players.size() > 0 ? players.size() : 3, NUMBER_OF_COLUMNS);
 		matchTable = new Grid(3, 4);
+		
 		
 		// Construct gui
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -129,7 +134,8 @@ public class MainApplication implements EntryPoint {
 		mainPanel.add(contentPanel);
 		
 		// Bottom buttons
-		PushButton inputMatchButton = new PushButton("Registrera match");
+		inputMatchButton = new PushButton("Registrera match");
+		inputMatchButton.setEnabled(false);
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, playerList, MainApplication.this);
@@ -142,20 +148,11 @@ public class MainApplication implements EntryPoint {
 				});
 			}
 		});
-		PushButton loginButton = new PushButton("Logga in");
-		loginButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				final LoginPanel loginPanel = new LoginPanel(spelstegenService);
-				loginPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-					public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (Window.getClientWidth() - offsetWidth) / 3;
-			            int top = (Window.getClientHeight() - offsetHeight) / 3;
-			            loginPanel.setPopupPosition(left + 100, top);
-			          }
-				});
-			}
-		});
-		PushButton addPlayerButton = new PushButton("Lägg till spelare");
+		loginButton = new PushButton("Logga in");
+		loginClickListener = new LoginClickListener();
+		loginButton.addClickListener(loginClickListener);
+		addPlayerButton = new PushButton("Lägg till spelare");
+		addPlayerButton.setEnabled(false);
 		addPlayerButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				final PlayerPanel playerPanel = new PlayerPanel(spelstegenService, MainApplication.this);
@@ -280,6 +277,13 @@ public class MainApplication implements EntryPoint {
     	spelstegenService.getMatches(null, getMatchesCallback);
     }
     
+    public void loggedIn() {
+    	addPlayerButton.setEnabled(true);
+    	inputMatchButton.setEnabled(true);
+    	loginButton.setText("Logga ut");
+    	loginClickListener.setLoggedIn(true);
+    }
+    
     private class GetMatchesCallback implements AsyncCallback<List<Match>> {
 
 		public void onFailure(Throwable caught) {
@@ -312,7 +316,36 @@ public class MainApplication implements EntryPoint {
 			Collections.sort(playerList);
 			populateTable();
 		}
-    	
     }
 
+    private class LoginClickListener implements ClickListener {
+    	
+    	private boolean loggedIn = false;
+    	
+    	public LoginClickListener() {
+    	}
+    	
+    	public void setLoggedIn(boolean loggedIn) {
+    		this.loggedIn = loggedIn;
+    	}
+    	
+    	
+    	public void onClick(Widget sender) {
+    		if (!loggedIn) {
+    			final LoginPanel loginPanel = new LoginPanel(spelstegenService, MainApplication.this);
+    			loginPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+    				public void setPosition(int offsetWidth, int offsetHeight) {
+    					int left = (Window.getClientWidth() - offsetWidth) / 3;
+    					int top = (Window.getClientHeight() - offsetHeight) / 3;
+    					loginPanel.setPopupPosition(left + 100, top);
+    				}
+    			});
+    		} else {
+    			addPlayerButton.setEnabled(false);
+    			inputMatchButton.setEnabled(false);
+    			loggedIn = false;
+    			loginButton.setText("Logga in");
+    		}
+		}
+    }
 }
