@@ -1,5 +1,5 @@
 #summary Feature requests for spelstegen
-#labels Featured
+#labels Featured,Deprecated
 
 Features and assigned developers
 
