@@ -1,12 +1,17 @@
 package spelstegen.client.widgets;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import spelstegen.client.MainApplication;
+import spelstegen.client.Match;
 import spelstegen.client.Player;
+import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.Match.MatchDoneException;
 
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -33,16 +38,22 @@ public class RegisterResultPanel extends PopupPanel {
 	private RadioButton threeSet;
 	private RadioButton fiveSet;
 	private int setMode = 1;
-	private Collection<Player> players;
+	private List<Player> players;
+	private ListBox player1Box;
+	private ListBox player2Box;
+	private SpelstegenServiceAsync spelstegenService;
+	private MainApplication mainApplication;
 	
-	public RegisterResultPanel(Collection<Player> players) {
+	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, List<Player> players, MainApplication mainApplication) {
 		super(false);
 		this.players = players;
+		this.spelstegenService = spelstegenService;
+		this.mainApplication = mainApplication;
 		
-		ListBox player1Box = new ListBox(false);
+		player1Box = new ListBox(false);
 		populatePlayerBox(player1Box);
 		Label vsLabel = new Label(" spelade mot ");
-		ListBox player2Box = new ListBox(false);
+		player2Box = new ListBox(false);
 		populatePlayerBox(player2Box);
 		HorizontalPanel playerPanel = MainApplication.createHorizontalPanel();
 		playerPanel.add(player1Box);
@@ -75,8 +86,7 @@ public class RegisterResultPanel extends PopupPanel {
 		PushButton saveButton = new PushButton("Spara");
 		saveButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				// TODO add save code here.
-				RegisterResultPanel.this.hide();
+				submitMatch();
 			}
 		});
 		PushButton cancelButton = new PushButton("Avbryt");
@@ -140,6 +150,33 @@ public class RegisterResultPanel extends PopupPanel {
 		for (Player player : players) {
 			playerBox.addItem(player.getPlayerName());
 		}
+	}
+	
+	private void submitMatch() {
+		Match m = new Match("HT08", new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
+				players.get(player2Box.getSelectedIndex()-1).getEmail());
+		for (int i = 0; i < player1Score.size(); i++) {
+			try {
+				m.addSet(Integer.parseInt(player1Score.get(i).getText()), Integer.parseInt(player2Score.get(i).getText()));
+			} catch (NumberFormatException e) {
+				Window.alert("Failed to parse number: " + e.getMessage());
+			} catch (MatchDoneException e) {
+				Window.alert("Failed to add set to match: " + e.getMessage());
+			}
+		}
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			public void onFailure(Throwable caught) {
+				Window.alert("Failed to save match. " + caught.getMessage());
+			}
+
+			public void onSuccess(Void result) {
+				MainApplication.showMessage("Sparade match.", false);
+				mainApplication.updateMatchList();
+				mainApplication.populateMatches();
+				RegisterResultPanel.this.hide();
+			}
+		};
+		spelstegenService.addMatch(m, callback);
 	}
 	
 }
