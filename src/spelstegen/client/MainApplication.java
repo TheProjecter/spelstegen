@@ -48,11 +48,12 @@ public class MainApplication implements EntryPoint {
 	private ToggleButton statisticsButton = new ToggleButton("Statistik");
 	private static PopupPanel popup;
 	private static SpelstegenServiceAsync spelstegenService;
-	private static Map<String,Player> players;
+	static Map<String,Player> players;
 	private List<Match> matches;
 	private List<Player> playerList;
 	private GetPlayersCallBack getPlayersCallBack = new GetPlayersCallBack();
 	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
+	private LadderCalculator ladderCalculator = new LadderCalculator();
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
@@ -288,6 +289,10 @@ public class MainApplication implements EntryPoint {
 		public void onSuccess(List<Match> result) {
 			matches = result;
 			populateMatches();
+			ladderCalculator.reset();
+			ladderCalculator.addMatches(result);
+			Collections.sort(playerList);
+			populateTable();
 		}
     	
     }
