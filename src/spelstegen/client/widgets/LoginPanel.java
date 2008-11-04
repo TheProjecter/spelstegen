@@ -29,7 +29,7 @@ public class LoginPanel extends PopupPanel {
 	private TextBox usernameBox;
 	private PasswordTextBox passwordBox;
 	
-	public LoginPanel(final SpelstegenServiceAsync spelstegenService) {
+	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication mainApplication) {
 		super(false);
 
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -63,6 +63,7 @@ public class LoginPanel extends PopupPanel {
 			public void onSuccess(Player result) {
 				if (result != null) {
 					LoginPanel.this.player = result;
+					mainApplication.loggedIn();
 					MainApplication.showStatus("Inloggad: " + result.getPlayerName());
 				} else {
 					Window.alert("Fel lösenord eller epostadress, försök igen.");
@@ -71,7 +72,7 @@ public class LoginPanel extends PopupPanel {
 			}
 		};
 		
-		PushButton loginButton = new PushButton("Logga in");
+		PushButton loginButton = new PushButton("Ok");
 		loginButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				spelstegenService.logIn(usernameBox.getText().trim(), Player.md5(passwordBox.getText()), callback);
