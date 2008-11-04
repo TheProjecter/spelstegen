@@ -2,12 +2,10 @@ package spelstegen.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import spelstegen.client.Match.MatchDoneException;
 import spelstegen.client.widgets.LoginPanel;
 import spelstegen.client.widgets.PlayerPanel;
 import spelstegen.client.widgets.RegisterResultPanel;
@@ -51,33 +49,12 @@ public class MainApplication implements EntryPoint {
 	private static PopupPanel popup;
 	private static SpelstegenServiceAsync spelstegenService;
 	private static Map<String,Player> players;
+	private List<Match> matches;
+	private List<Player> playerList;
 	private GetPlayersCallBack getPlayersCallBack = new GetPlayersCallBack();
+	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
-	
-	
-	// Test data
-	private List<Match> matchData = new ArrayList<Match>();
-	
-	{
-		Player p1 = new Player("Åke", "ake@ake.se");
-		p1.changePoints(53);
-		Player p2 = new Player("Elsa", "elsa@elsa.se");
-		p2.changePoints(-34);
-		Match m1 = new Match("HT08", new Date(), p1.getEmail(), p2.getEmail());
-		Match m2 = new Match("HT08", new Date(), p1.getEmail(), p2.getEmail());
-		try {
-			m1.addSet(15, 1);
-			m2.addSet(15, 1);
-			m2.addSet(4, 15);
-			m2.addSet(6, 15);
-		} catch (MatchDoneException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		matchData.add(m1);
-		matchData.add(m2);
-	}
 	
 	/**
 	 * This is the entry point method.
@@ -91,7 +68,12 @@ public class MainApplication implements EntryPoint {
 		
 		// Init
 		players = new HashMap<String, Player>();
+		playerList = new ArrayList<Player>();
+		matches = new ArrayList<Match>();
 		updatePlayerList();
+		updateMatchList();
+		mainTable = new Grid(players.size() > 0 ? players.size() : 3, NUMBER_OF_COLUMNS);
+		matchTable = new Grid(3, 4);
 		
 		// Construct gui
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -149,7 +131,7 @@ public class MainApplication implements EntryPoint {
 		PushButton inputMatchButton = new PushButton("Registrera match");
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(players.values());
+				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, playerList, MainApplication.this);
 				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -204,7 +186,6 @@ public class MainApplication implements EntryPoint {
 	private void showTableView() {
 		contentPanel.clear();
 		
-		mainTable = new Grid(3, NUMBER_OF_COLUMNS);
 		mainTable.setCellSpacing(0);
 		mainTable.setWidth("600px");
 		mainTable.setText(0, 0, "#");
@@ -215,24 +196,23 @@ public class MainApplication implements EntryPoint {
 		}
 		
 		contentPanel.add(mainTable);
-		populateTable();
 	}
 	
 	private void showMatchView() {
 		contentPanel.clear();
-		populateMatches(matchData);
+		updateMatchList();
+		matchTable.setCellSpacing(0);
+		matchTable.setWidth("600px");
 		contentPanel.add(matchTable);
 	}
 	
-	private void showStatisticsView() {
+	public void showStatisticsView() {
 		contentPanel.clear();
 		contentPanel.add(statisticsPanel);
 	}
-	
-	private void populateMatches(List<Match> matches) {
-		matchTable = new Grid(matches.size(), 4);
-		matchTable.setCellSpacing(0);
-		matchTable.setWidth("600px");
+
+	public void populateMatches() {
+		matchTable.resize(matches.size(), 4);
 		for (int i = 0; i < matches.size(); i++) {
 			Match match = matches.get(i);
 			matchTable.setText(i, 0, match.getDate().toString());
@@ -246,21 +226,17 @@ public class MainApplication implements EntryPoint {
 	
 	public void populateTable() {
 		int col = 0;
-		List<Player> playersList = new ArrayList<Player>(players.size());
-		for (Player player : players.values()) {
-			playersList.add(player);
-		}
-		Collections.sort(playersList);
 		Player p = null;
-		for (int i = 0; i < playersList.size(); i++) {
-			p = playersList.get(i);
+		mainTable.resize(playerList.size()+1, NUMBER_OF_COLUMNS);
+		for (int i = 0; i < playerList.size(); i++) {
+			p = playerList.get(i);
 			mainTable.setText(i+1, col++, i+1 + "");
 			mainTable.setText(i+1, col++, p.getPlayerName());
 			mainTable.setText(i+1, col++, p.getPoints() + "");
 			col = 0;
 		}
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			mainTable.getCellFormatter().setStyleName(playersList.size(), i, "table-caption");
+			mainTable.getCellFormatter().setStyleName(playerList.size(), i, "table-caption");
 		}
 	}
 	
@@ -276,11 +252,6 @@ public class MainApplication implements EntryPoint {
     	popup = new PopupPanel(true);
     	popup.setAnimationEnabled(true);
     	popup.setWidget(new HTML(text));
-    	if (!isError) {
-    		popup.setStylePrimaryName("popup");
-    	} else {
-    		popup.setStylePrimaryName("popupError");
-    	}
     	popup.show();
     }
     
@@ -304,6 +275,23 @@ public class MainApplication implements EntryPoint {
 		spelstegenService.getPlayers(getPlayersCallBack);
     }
     
+    public void updateMatchList() {
+    	spelstegenService.getMatches(null, getMatchesCallback);
+    }
+    
+    private class GetMatchesCallback implements AsyncCallback<List<Match>> {
+
+		public void onFailure(Throwable caught) {
+			Window.alert("Failed to get matches. " + caught.getMessage());
+		}
+
+		public void onSuccess(List<Match> result) {
+			matches = result;
+			populateMatches();
+		}
+    	
+    }
+    
     private class GetPlayersCallBack implements AsyncCallback<List<Player>> {
 
 		public void onFailure(Throwable caught) {
@@ -315,7 +303,9 @@ public class MainApplication implements EntryPoint {
 			for (Player player : result) {
 				players.put(player.getEmail(), player);
 			}
-			MainApplication.this.populateTable();
+			playerList = result;
+			Collections.sort(playerList);
+			populateTable();
 		}
     	
     }

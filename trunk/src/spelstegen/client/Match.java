@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Match implements Serializable {
 
-	private String matchid;
+	private int matchid;
 	private Date date;
 	private String player1Email;
 	private String player2Email;
@@ -27,7 +27,7 @@ public class Match implements Serializable {
 		sets = new ArrayList<Integer[]>();
 	}
 	
-	public Match(String matchId, String season, Date date, String player1Email, String player2Email) {
+	public Match(int matchId, String season, Date date, String player1Email, String player2Email) {
 		this();
 		this.matchid = matchId;
 		this.season = season;
@@ -37,7 +37,7 @@ public class Match implements Serializable {
 	}
 	
 	public Match(String season, Date date, String player1Email, String player2Email) {
-		this(null, season, date, player1Email, player2Email);
+		this(-1, season, date, player1Email, player2Email);
 	}
 	
 	public void addSet(int score1, int score2) throws MatchDoneException {
@@ -87,7 +87,7 @@ public class Match implements Serializable {
 		this.date = date;
 	}
 	
-	public String getMatchId() {
+	public int getMatchId() {
 		return matchid;
 	}
 	
@@ -137,8 +137,11 @@ public class Match implements Serializable {
 	public String getScores(boolean insertSpace) {
 		StringBuilder sb = new StringBuilder();
 		for (Integer[] set : sets) {
-			if (insertSpace && sb.length() != 0) {
-				sb.append(", ");
+			if (sb.length() != 0) {
+				sb.append(",");
+				if (insertSpace) {
+					sb.append(" ");
+				}
 			}
 			sb.append(set[0] + "-" + set[1]);
 		}
