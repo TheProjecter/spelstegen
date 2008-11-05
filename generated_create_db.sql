@@ -11,13 +11,13 @@ USE `spelstegen`;
 DROP TABLE IF EXISTS `spelstegen`.`players` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`players` (
-  `playerid` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
   `email` VARCHAR(50) NOT NULL ,
   `nickname` VARCHAR(50) NULL ,
   `password` VARCHAR(50) NULL ,
   `image_url` VARCHAR(50) NULL ,
-  PRIMARY KEY (`playerid`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -27,13 +27,13 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`players` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`players` (
-  `playerid` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
   `email` VARCHAR(50) NOT NULL ,
   `nickname` VARCHAR(50) NULL ,
   `password` VARCHAR(50) NULL ,
   `image_url` VARCHAR(50) NULL ,
-  PRIMARY KEY (`playerid`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -43,11 +43,11 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`seasons` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`seasons` (
-  `seasonid` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
   `startDate` DATE NULL ,
   `endDate` DATE NULL ,
-  PRIMARY KEY (`seasonid`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -57,22 +57,22 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`matches` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
-  `matchid` INT NOT NULL AUTO_INCREMENT ,
-  `seasonid` INT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `season_id` INT NULL ,
   `date` DATE NULL ,
   `player1id` INT NULL ,
   `player2id` INT NULL ,
-  PRIMARY KEY (`matchid`) ,
+  PRIMARY KEY (`id`) ,
   INDEX `fk_matches_players` (`player1id` ASC, `player2id` ASC) ,
-  INDEX `fk_matches_seasons` (`seasonid` ASC) ,
+  INDEX `fk_matches_seasons` (`season_id` ASC) ,
   CONSTRAINT `fk_matches_players`
     FOREIGN KEY (`player1id` , `player2id` )
-    REFERENCES `spelstegen`.`players` (`playerid` , `playerid` )
+    REFERENCES `spelstegen`.`players` (`id` , `id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_matches_seasons`
-    FOREIGN KEY (`seasonid` )
-    REFERENCES `spelstegen`.`seasons` (`seasonid` )
+    FOREIGN KEY (`season_id` )
+    REFERENCES `spelstegen`.`seasons` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -84,10 +84,10 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`sports` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`sports` (
-  `sportid` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
   `iconUrl` VARCHAR(50) NULL ,
-  PRIMARY KEY (`sportid`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -97,22 +97,22 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`sets` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`sets` (
-  `setid` INT NOT NULL AUTO_INCREMENT ,
-  `sportid` INT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `sport_id` INT NULL ,
   `player1Score` INT NULL ,
   `player2Score` INT NULL ,
-  `matchid` INT NULL ,
-  PRIMARY KEY (`setid`) ,
-  INDEX `fk_sets_sports` (`sportid` ASC) ,
-  INDEX `fk_sets_matches` (`matchid` ASC) ,
+  `match_id` INT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_sets_sports` (`sport_id` ASC) ,
+  INDEX `fk_sets_matches` (`match_id` ASC) ,
   CONSTRAINT `fk_sets_sports`
-    FOREIGN KEY (`sportid` )
-    REFERENCES `spelstegen`.`sports` (`sportid` )
+    FOREIGN KEY (`sport_id` )
+    REFERENCES `spelstegen`.`sports` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_sets_matches`
-    FOREIGN KEY (`matchid` )
-    REFERENCES `spelstegen`.`matches` (`matchid` )
+    FOREIGN KEY (`match_id` )
+    REFERENCES `spelstegen`.`matches` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -124,9 +124,9 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`leagues` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagues` (
-  `leagueid` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
-  PRIMARY KEY (`leagueid`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -136,18 +136,18 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`leaguePlayers` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`leaguePlayers` (
-  `leagueid` INT NULL ,
-  `playerid` INT NULL ,
-  INDEX `fk_leagueplayers_leagues` (`leagueid` ASC) ,
-  INDEX `fk_leagueplayers_players` (`playerid` ASC) ,
+  `league_id` INT NULL ,
+  `player_id` INT NULL ,
+  INDEX `fk_leagueplayers_leagues` (`league_id` ASC) ,
+  INDEX `fk_leagueplayers_players` (`player_id` ASC) ,
   CONSTRAINT `fk_leagueplayers_leagues`
-    FOREIGN KEY (`leagueid` )
-    REFERENCES `spelstegen`.`leagues` (`leagueid` )
+    FOREIGN KEY (`league_id` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_leagueplayers_players`
-    FOREIGN KEY (`playerid` )
-    REFERENCES `spelstegen`.`players` (`playerid` )
+    FOREIGN KEY (`player_id` )
+    REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -159,18 +159,18 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `spelstegen`.`leagueSeasons` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueSeasons` (
-  `seasons_seasonid` INT NULL ,
-  `leagues_leagueid` INT NULL ,
-  INDEX `fk_leagueSeasons_seasons` (`seasons_seasonid` ASC) ,
-  INDEX `fk_leagueSeasons_leagues` (`leagues_leagueid` ASC) ,
+  `season_id` INT NULL ,
+  `league_id` INT NULL ,
+  INDEX `fk_leagueSeasons_seasons` (`season_id` ASC) ,
+  INDEX `fk_leagueSeasons_leagues` (`league_id` ASC) ,
   CONSTRAINT `fk_leagueSeasons_seasons`
-    FOREIGN KEY (`seasons_seasonid` )
-    REFERENCES `spelstegen`.`seasons` (`seasonid` )
+    FOREIGN KEY (`season_id` )
+    REFERENCES `spelstegen`.`seasons` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_leagueSeasons_leagues`
-    FOREIGN KEY (`leagues_leagueid` )
-    REFERENCES `spelstegen`.`leagues` (`leagueid` )
+    FOREIGN KEY (`league_id` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
