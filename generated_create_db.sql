@@ -58,21 +58,27 @@ DROP TABLE IF EXISTS `spelstegen`.`matches` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `season_id` INT NULL ,
+  `season_id` INT NOT NULL ,
   `date` DATE NULL ,
-  `player1id` INT NULL ,
-  `player2id` INT NULL ,
+  `player1_id` INT NULL ,
+  `player2_id` INT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `fk_matches_players` (`player1id` ASC, `player2id` ASC) ,
   INDEX `fk_matches_seasons` (`season_id` ASC) ,
-  CONSTRAINT `fk_matches_players`
-    FOREIGN KEY (`player1id` , `player2id` )
-    REFERENCES `spelstegen`.`players` (`id` , `id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+  INDEX `fk_matches_players` (`player1_id` ASC) ,
+  INDEX `fk_matches_players1` (`player2_id` ASC) ,
   CONSTRAINT `fk_matches_seasons`
     FOREIGN KEY (`season_id` )
     REFERENCES `spelstegen`.`seasons` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_matches_players`
+    FOREIGN KEY (`player1_id` )
+    REFERENCES `spelstegen`.`players` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_matches_players1`
+    FOREIGN KEY (`player2_id` )
+    REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -98,10 +104,10 @@ DROP TABLE IF EXISTS `spelstegen`.`sets` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`sets` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `sport_id` INT NULL ,
+  `sport_id` INT NOT NULL ,
   `player1Score` INT NULL ,
   `player2Score` INT NULL ,
-  `match_id` INT NULL ,
+  `match_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_sets_sports` (`sport_id` ASC) ,
   INDEX `fk_sets_matches` (`match_id` ASC) ,
