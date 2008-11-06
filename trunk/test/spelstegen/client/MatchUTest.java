@@ -21,7 +21,7 @@ public class MatchUTest extends TestCase {
 	
 	
 	public void testCalculateWinner() throws Exception {
-		Match m1 = new Match("HT08", new Date(), testPlayerData.get(0).getEmail(), testPlayerData.get(1).getEmail());
+		Match m1 = new Match(-1, new Date(), testPlayerData.get(0).getEmail(), testPlayerData.get(1).getEmail());
 		m1.addSet(15, 1);
 		assertEquals(m1.getWinner(), testPlayerData.get(0).getEmail());
 		m1.addSet(3, 15);

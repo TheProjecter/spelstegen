@@ -274,7 +274,7 @@ public class MainApplication implements EntryPoint {
     }
     
     public void updateMatchList() {
-    	spelstegenService.getMatches(null, getMatchesCallback);
+    	spelstegenService.getMatches(-1, getMatchesCallback);
     }
     
     public void loggedIn() {
