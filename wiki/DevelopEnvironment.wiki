@@ -26,6 +26,8 @@ This is a small guide on how to set up the development environment.
     * From [http://sourceforge.net/project/showfiles.php?group_id=15494 JFreeChart v1.0.11] add:
       * {{{jfreechart-1.0.11.jar}}} 
       * {{{jcommon-1.0.14.jar}}} 
+    * From [http://commons.apache.org/downloads/download_logging.cgi} add:
+      * {{{commons-logging.jar}}}
   # Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add {{{mysql-connector-java-5.1.X-bin.jar}}} to {{{jre/lib/etc}}} folder of your JDK.
   # Eclipse project and classpath files are checked in as well. You can use these and modify to fit your needs.
   # Run {{{MainApplication.launch}}} from Eclipse to start the application in Google Web Toolikt browser. You will have to change the path to {{{gwt-dev-windows.jar}}} under the classpath tab in the launch configuration to match your location.
