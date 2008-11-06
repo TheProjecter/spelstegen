@@ -29,6 +29,6 @@ This is a small guide on how to set up the development environment.
   # Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add {{{mysql-connector-java-5.1.X-bin.jar}}} to {{{jre/lib/etc}}} folder of your JDK.
   # Eclipse project and classpath files are checked in as well. You can use these and modify to fit your needs.
   # To create the tables in mysql execute the following command from a prompt:
-     * {{{mysq -u stegusr -p < generated_create_tables.sql}}}
+     * {{{mysql -u stegusr -p < generated_create_tables.sql}}}
   # Run {{{MainApplication.launch}}} from Eclipse to start the application in Google Web Toolikt browser. You will have to change the path to {{{gwt-dev-windows.jar}}} under the classpath tab in the launch configuration to match your location.
   # You can also build the project with Ant. The target for deployment is build.war.
