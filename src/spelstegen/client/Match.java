@@ -20,14 +20,14 @@ public class Match implements Serializable {
 	private List<Integer[]> sets;
 	private int setsWonByPlayer1;
 	private int setsWonByPlayer2;
-	private String season;
+	private int season;
 	
 	public Match() {
 		super();
 		sets = new ArrayList<Integer[]>();
 	}
 	
-	public Match(int matchId, String season, Date date, String player1Email, String player2Email) {
+	public Match(int matchId, int season, Date date, String player1Email, String player2Email) {
 		this();
 		this.matchid = matchId;
 		this.season = season;
@@ -36,7 +36,7 @@ public class Match implements Serializable {
 		this.player2Email = player2Email;
 	}
 	
-	public Match(String season, Date date, String player1Email, String player2Email) {
+	public Match(int season, Date date, String player1Email, String player2Email) {
 		this(-1, season, date, player1Email, player2Email);
 	}
 	
@@ -71,11 +71,11 @@ public class Match implements Serializable {
 		}
 	}
 	
-	public String getSeason() {
+	public int getSeason() {
 		return season;
 	}
 	
-	public void setSeason(String season) {
+	public void setSeason(int season) {
 		this.season = season;
 	}
 	

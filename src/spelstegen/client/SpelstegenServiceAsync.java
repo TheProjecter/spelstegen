@@ -18,6 +18,6 @@ public interface SpelstegenServiceAsync {
 	
 	public void addMatch(Match match, AsyncCallback<Void> callback);
 	
-	public void getMatches(String season, AsyncCallback<List<Match>> callback);
+	public void getMatches(int season, AsyncCallback<List<Match>> callback);
 	
 }

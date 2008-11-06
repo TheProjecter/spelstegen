@@ -42,6 +42,6 @@ public interface SpelstegenService extends RemoteService {
 	 * @param season The season to get matches for, if null all matches will be returned.
 	 * @return
 	 */
-	public List<Match> getMatches(String season);
+	public List<Match> getMatches(int season);
 	
 }

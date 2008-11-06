@@ -153,7 +153,7 @@ public class RegisterResultPanel extends PopupPanel {
 	}
 	
 	private void submitMatch() {
-		Match m = new Match("HT08", new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
+		Match m = new Match(0, new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
 				players.get(player2Box.getSelectedIndex()-1).getEmail());
 		for (int i = 0; i < player1Score.size(); i++) {
 			try {

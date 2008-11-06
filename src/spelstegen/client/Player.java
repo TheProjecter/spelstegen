@@ -9,9 +9,12 @@ import java.io.Serializable;
  */
 public class Player implements Serializable, Comparable<Player> {
 	
+	private int id;
 	private String playerName;
 	private String email;
 	private String password;
+	private String nickName;
+	private String imageURL;
 	
 	private int points = 0;
 	
@@ -19,6 +22,30 @@ public class Player implements Serializable, Comparable<Player> {
 		super();
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
 	public Player(String playerName, String email) {
 		this.playerName = playerName;
 		this.email = email;
