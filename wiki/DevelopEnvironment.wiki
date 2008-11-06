@@ -10,7 +10,7 @@ This is a small guide on how to set up the development environment.
   # Install [http://www.eclipse.org/downloads/ Eclipse].
   # Check out trunk with subversion.
     * You can do this from Eclipse using the [http://subclipse.tigris.org/install.html Subversive plugin].
-    * Or you can use [http://tortoisesvn.tigris.org/ TortoiseSVN].
+    * Or you can use [http://subversion.tigris.org/links.html#clients Another SVN client].
   # Install [http://code.google.com/webtoolkit/ Google Web Toolkit]
   # Create a {{{lib}}} directory in the checkout.
   # Download and add the following jars to the {{{lib}}} directory:
