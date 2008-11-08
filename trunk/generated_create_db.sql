@@ -18,7 +18,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`players` (
   `password` VARCHAR(50) NULL ,
   `image_url` VARCHAR(50) NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Info about all player that are part of one or more league.';
 
 
 -- -----------------------------------------------------
@@ -34,7 +35,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`players` (
   `password` VARCHAR(50) NULL ,
   `image_url` VARCHAR(50) NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Info about all player that are part of one or more league.';
 
 
 -- -----------------------------------------------------
@@ -48,7 +50,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`seasons` (
   `startDate` DATE NULL ,
   `endDate` DATE NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'A season represents a time period with a start and end date.';
 
 
 -- -----------------------------------------------------
@@ -81,7 +84,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
     REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Represent a math between to players';
 
 
 -- -----------------------------------------------------
@@ -94,7 +98,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`sports` (
   `name` VARCHAR(50) NULL ,
   `iconUrl` VARCHAR(50) NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Contains all available sports to compete in.';
 
 
 -- -----------------------------------------------------
@@ -121,7 +126,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`sets` (
     REFERENCES `spelstegen`.`matches` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'Represents a set in a match between to players.';
 
 
 -- -----------------------------------------------------
@@ -133,7 +139,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagues` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(50) NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'This table contains all available leagues.';
 
 
 -- -----------------------------------------------------
@@ -156,7 +163,8 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`leaguePlayers` (
     REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+COMMENT = 'This table contains all leagues that a player is part of.';
 
 
 -- -----------------------------------------------------
@@ -180,6 +188,56 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueSeasons` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `spelstegen`.`childSports`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`childSports` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`childSports` (
+  `parentSportId` INT NOT NULL ,
+  `childSportId` INT NOT NULL ,
+  PRIMARY KEY (`parentSportId`, `childSportId`) ,
+  INDEX `fk_parent_sport` (`parentSportId` ASC) ,
+  INDEX `fk_child_sport` (`childSportId` ASC) ,
+  CONSTRAINT `fk_parent_sport`
+    FOREIGN KEY (`parentSportId` )
+    REFERENCES `spelstegen`.`sports` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_child_sport`
+    FOREIGN KEY (`childSportId` )
+    REFERENCES `spelstegen`.`sports` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'This table defines sports that are part of another sport.';
+
+
+-- -----------------------------------------------------
+-- Table `spelstegen`.`leagueSports`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`leagueSports` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueSports` (
+  `leagueId` INT NOT NULL ,
+  `sportId` INT NOT NULL ,
+  PRIMARY KEY (`leagueId`, `sportId`) ,
+  INDEX `fk_league` (`leagueId` ASC) ,
+  INDEX `fk_sport` (`sportId` ASC) ,
+  CONSTRAINT `fk_league`
+    FOREIGN KEY (`leagueId` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sport`
+    FOREIGN KEY (`sportId` )
+    REFERENCES `spelstegen`.`sports` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'The sports that are part of a league.';
 
 
 
