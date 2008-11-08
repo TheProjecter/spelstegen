@@ -23,38 +23,6 @@ COMMENT = 'Info about all player that are part of one or more league.';
 
 
 -- -----------------------------------------------------
--- Table `spelstegen`.`players`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `spelstegen`.`players` ;
-
-CREATE  TABLE IF NOT EXISTS `spelstegen`.`players` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(50) NULL ,
-  `email` VARCHAR(50) NOT NULL ,
-  `nickname` VARCHAR(50) NULL ,
-  `password` VARCHAR(50) NULL ,
-  `image_url` VARCHAR(50) NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-COMMENT = 'Info about all player that are part of one or more league.';
-
-
--- -----------------------------------------------------
--- Table `spelstegen`.`seasons`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `spelstegen`.`seasons` ;
-
-CREATE  TABLE IF NOT EXISTS `spelstegen`.`seasons` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(50) NULL ,
-  `startDate` DATE NULL ,
-  `endDate` DATE NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-COMMENT = 'A season represents a time period with a start and end date.';
-
-
--- -----------------------------------------------------
 -- Table `spelstegen`.`sports`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `spelstegen`.`sports` ;
@@ -69,6 +37,19 @@ COMMENT = 'Contains all available sports to compete in.';
 
 
 -- -----------------------------------------------------
+-- Table `spelstegen`.`leagues`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`leagues` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagues` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(50) NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+COMMENT = 'This table contains all available leagues.';
+
+
+-- -----------------------------------------------------
 -- Table `spelstegen`.`matches`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `spelstegen`.`matches` ;
@@ -77,32 +58,32 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `date` DATE NULL ,
   `sport_id` INT NOT NULL ,
+  `league_id` INT NOT NULL ,
   `player1_id` INT NOT NULL ,
-  `player2_id` INT NOT NULL ,
-  `season_id` INT NOT NULL ,
+  `player2_id` INT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `fk_matches_seasons` (`season_id` ASC) ,
-  INDEX `fk_matches_players` (`player1_id` ASC) ,
-  INDEX `fk_matches_players1` (`player2_id` ASC) ,
   INDEX `fk_matches_sport` (`sport_id` ASC) ,
-  CONSTRAINT `fk_matches_seasons`
-    FOREIGN KEY (`season_id` )
-    REFERENCES `spelstegen`.`seasons` (`id` )
+  INDEX `fk_matches_leagues` (`league_id` ASC) ,
+  INDEX `fk_matches_player1` (`player1_id` ASC) ,
+  INDEX `fk_matches_player2` (`player2_id` ASC) ,
+  CONSTRAINT `fk_matches_sport`
+    FOREIGN KEY (`sport_id` )
+    REFERENCES `spelstegen`.`sports` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_matches_players`
+  CONSTRAINT `fk_matches_leagues`
+    FOREIGN KEY (`league_id` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_matches_player1`
     FOREIGN KEY (`player1_id` )
     REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_matches_players1`
+  CONSTRAINT `fk_matches_player2`
     FOREIGN KEY (`player2_id` )
     REFERENCES `spelstegen`.`players` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_matches_sport`
-    FOREIGN KEY (`sport_id` )
-    REFERENCES `spelstegen`.`sports` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -138,19 +119,6 @@ COMMENT = 'Represents a set in a match between to players.';
 
 
 -- -----------------------------------------------------
--- Table `spelstegen`.`leagues`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `spelstegen`.`leagues` ;
-
-CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagues` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(50) NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-COMMENT = 'This table contains all available leagues.';
-
-
--- -----------------------------------------------------
 -- Table `spelstegen`.`leaguePlayers`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `spelstegen`.`leaguePlayers` ;
@@ -172,6 +140,21 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`leaguePlayers` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 COMMENT = 'This table contains all leagues that a player is part of.';
+
+
+-- -----------------------------------------------------
+-- Table `spelstegen`.`seasons`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`seasons` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`seasons` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(50) NULL ,
+  `startDate` DATE NULL ,
+  `endDate` DATE NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+COMMENT = 'A season represents a time period with a start and end date.';
 
 
 -- -----------------------------------------------------
@@ -265,21 +248,21 @@ COMMIT;
 -- Data for table `spelstegen`.`matches`
 -- -----------------------------------------------------
 SET AUTOCOMMIT=0;
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-01-05', 3, 1, 2, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-01-20', 3, 3, 4, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-02-10', 3, 1, 4, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-03-02', 3, 2, 3, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-04-07', 3, 1, 3, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-05-01', 3, 4, 2, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-05-30', 3, 3, 2, 1);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-08-03', 3, 4, 3, 2);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-09-01', 3, 2, 4, 2);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-10-10', 3, 1, 2, 2);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-11-03', 3, 2, 3, 2);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-01-05', 5, 3, 5, 3);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-04-02', 5, 4, 6, 3);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-08-20', 5, 4, 5, 4);
-INSERT INTO `matches` (`id`, `date`, `sport_id`, `player1_id`, `player2_id`, `season_id`) VALUES (0, '2008-10-12', 5, 3, 6, 4);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-01-05', 3, 1, 1, 2);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-01-20', 3, 1, 3, 4);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-02-10', 3, 1, 1, 4);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-03-02', 3, 1, 2, 3);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-04-07', 3, 1, 1, 3);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-05-01', 3, 1, 4, 2);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-05-30', 3, 1, 3, 2);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-08-03', 3, 1, 4, 3);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-09-01', 3, 1, 2, 4);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-10-10', 3, 1, 1, 2);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-11-03', 3, 1, 2, 3);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-01-05', 5, 2, 3, 5);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-04-02', 5, 2, 4, 6);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-08-20', 5, 2, 4, 5);
+INSERT INTO `matches` (`id`, `date`, `sport_id`, `league_id`, `player1_id`, `player2_id`) VALUES (0, '2008-10-12', 5, 2, 3, 6);
 
 COMMIT;
 
