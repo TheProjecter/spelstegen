@@ -55,20 +55,36 @@ COMMENT = 'A season represents a time period with a start and end date.';
 
 
 -- -----------------------------------------------------
+-- Table `spelstegen`.`sports`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`sports` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`sports` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(50) NULL ,
+  `iconUrl` VARCHAR(50) NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+COMMENT = 'Contains all available sports to compete in.';
+
+
+-- -----------------------------------------------------
 -- Table `spelstegen`.`matches`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `spelstegen`.`matches` ;
 
 CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `season_id` INT NOT NULL ,
   `date` DATE NULL ,
-  `player1_id` INT NULL ,
-  `player2_id` INT NULL ,
+  `sport_id` INT NOT NULL ,
+  `player1_id` INT NOT NULL ,
+  `player2_id` INT NOT NULL ,
+  `season_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_matches_seasons` (`season_id` ASC) ,
   INDEX `fk_matches_players` (`player1_id` ASC) ,
   INDEX `fk_matches_players1` (`player2_id` ASC) ,
+  INDEX `fk_matches_sport` (`sport_id` ASC) ,
   CONSTRAINT `fk_matches_seasons`
     FOREIGN KEY (`season_id` )
     REFERENCES `spelstegen`.`seasons` (`id` )
@@ -83,23 +99,14 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`matches` (
     FOREIGN KEY (`player2_id` )
     REFERENCES `spelstegen`.`players` (`id` )
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_matches_sport`
+    FOREIGN KEY (`sport_id` )
+    REFERENCES `spelstegen`.`sports` (`id` )
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 COMMENT = 'Represent a math between to players';
-
-
--- -----------------------------------------------------
--- Table `spelstegen`.`sports`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `spelstegen`.`sports` ;
-
-CREATE  TABLE IF NOT EXISTS `spelstegen`.`sports` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(50) NULL ,
-  `iconUrl` VARCHAR(50) NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-COMMENT = 'Contains all available sports to compete in.';
 
 
 -- -----------------------------------------------------
