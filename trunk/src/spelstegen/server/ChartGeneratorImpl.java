@@ -21,6 +21,8 @@ public class ChartGeneratorImpl extends RemoteServiceServlet implements ChartGen
 	
 	private static final long serialVersionUID = -1396658608550159806L;
 	
+	protected StorageInterface storage = new MySQLStorageImpl();
+	
     public String generatePointsHistoryChart() {
         
     	Chart chart = new PointsHistoryChart();

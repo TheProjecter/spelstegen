@@ -2,6 +2,7 @@ package spelstegen.server;
 
 import java.util.List;
 
+import spelstegen.client.League;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
 import spelstegen.client.Sport;
@@ -51,7 +52,7 @@ public interface StorageInterface {
 	 * @param season
 	 * @return
 	 */
-	public List<Match> getMatches(int season);
+	public List<Match> getMatches(int leagueId);
 	
 	public List<Sport> getSports();
 	
