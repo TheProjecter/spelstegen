@@ -9,13 +9,18 @@ import java.util.Date;
  */
 public class Season implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 	private String name;
 	private Date startDate;
 	private Date endDate;
 	
+	public Season(String name, Date startDate, Date endDate) {
+		this(0, name, startDate, endDate);
+	}
+	
 	public Season(int id, String name, Date startDate, Date endDate) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.startDate = startDate;
@@ -54,4 +59,8 @@ public class Season implements Serializable {
 		this.endDate = endDate;
 	}
 	
+	public static Season createInitalSeason() {
+		Season season = new Season("", new Date(), null);
+		return season;
+	}
 }

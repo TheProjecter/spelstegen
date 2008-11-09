@@ -210,7 +210,7 @@ public class MainApplication implements EntryPoint {
 	}
 
 	public void populateMatches() {
-		matchTable.resize(matches.size(), 4);
+		/*matchTable.resize(matches.size(), 4);
 		for (int i = 0; i < matches.size(); i++) {
 			Match match = matches.get(i);
 			matchTable.setText(i, 0, match.getDate().toString());
@@ -219,7 +219,7 @@ public class MainApplication implements EntryPoint {
 			p = getPlayer(match.getLoser());
 			matchTable.setText(i, 2, (p != null ? p.getPlayerName() : match.getLoser()));
 			matchTable.setText(i, 3, match.getScores(true));
-		}
+		}*/
 	}
 	
 	public void populateTable() {

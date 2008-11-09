@@ -30,7 +30,7 @@ public class LadderCalculator {
 	}
 	
 	public void addMatch(Match match) {
-		float percentage;
+		/*float percentage;
 		switch (match.getNumberOfSets()) {
 		case 1:
 			percentage = ONE_SET_PERCENTAGE;
@@ -48,7 +48,7 @@ public class LadderCalculator {
 		}
 		int pointsToTransfer = Math.round(MainApplication.getPlayer(match.getLoser()).getPoints() * percentage);
 		MainApplication.getPlayer(match.getLoser()).changePoints(-pointsToTransfer);
-		MainApplication.getPlayer(match.getWinner()).changePoints(pointsToTransfer);
+		MainApplication.getPlayer(match.getWinner()).changePoints(pointsToTransfer);*/
 	}
 
 }

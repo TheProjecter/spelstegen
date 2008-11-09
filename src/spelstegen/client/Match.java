@@ -1,7 +1,6 @@
 package spelstegen.client;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,138 +12,81 @@ import java.util.List;
  */
 public class Match implements Serializable {
 
-	private int matchid;
+	private static final long serialVersionUID = 1L;
+	
+	private int id;
 	private Date date;
-	private String player1Email;
-	private String player2Email;
-	private List<Integer[]> sets;
-	private int setsWonByPlayer1;
-	private int setsWonByPlayer2;
-	private int season;
+	private Sport sport;
+	private Player player1;
+	private Player player2;
+	private List<Set> sets;
 	
-	public Match() {
-		super();
-		sets = new ArrayList<Integer[]>();
+	public Match() {}
+
+	public Match(Date date, Sport sport, Player player1,
+			Player player2, List<Set> sets) {
+		this(0, date, sport, player1, player2, sets);
 	}
-	
-	public Match(int matchId, int season, Date date, String player1Email, String player2Email) {
-		this();
-		this.matchid = matchId;
-		this.season = season;
+
+	public Match(int id, Date date, Sport sport, Player player1,
+			Player player2, List<Set> sets) {
+		this.id = id;
 		this.date = date;
-		this.player1Email = player1Email;
-		this.player2Email = player2Email;
+		this.sport = sport;
+		this.player1 = player1;
+		this.player2 = player2;
+		this.sets = sets;
 	}
-	
-	public Match(int season, Date date, String player1Email, String player2Email) {
-		this(-1, season, date, player1Email, player2Email);
+
+	public int getId() {
+		return id;
 	}
-	
-	public void addSet(int score1, int score2) throws MatchDoneException {
-		if (sets.size() <= 5) {
-			sets.add(new Integer[] {score1, score2});
-			if (score1 > score2) {
-				setsWonByPlayer1++;
-			} else if (score2 > score1) {
-				setsWonByPlayer2++;
-			}
-		} else {
-			throw new MatchDoneException("No more than 5 sets per match.");
-		}
+
+	public void setId(int id) {
+		this.id = id;
 	}
-	
-	public void updateSet(int set, int score1, int score2) {
-		if (sets.size() > set) {
-			Integer[] oldScore = sets.get(set);
-			if (oldScore[0] > oldScore[1]) {
-				setsWonByPlayer1--;
-			} else {
-				setsWonByPlayer2--;
-			}
-			sets.get(set)[0] = score1;
-			sets.get(set)[1] = score2;
-			if (score1 > score2) {
-				setsWonByPlayer1++;
-			} else if (score2 > score1) {
-				setsWonByPlayer2++;
-			}
-		}
-	}
-	
-	public int getSeason() {
-		return season;
-	}
-	
-	public void setSeason(int season) {
-		this.season = season;
-	}
-	
+
 	public Date getDate() {
 		return date;
 	}
-	
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	public int getMatchId() {
-		return matchid;
-	}
-	
-	public String[] getPlayers() {
-		return new String[] {player1Email, player2Email};
-	}
-	
-	public static class MatchDoneException extends Exception {
-		
-		public MatchDoneException() {
-			super();
-		}
-		
-		public MatchDoneException(String message) {
-			super(message);
-		}
-	}
-	
-	public String getWinner() {
-		int setsPlayed = sets.size();
-		if (setsPlayed == 1 || setsPlayed == 3 || setsPlayed == 5) {
-			if (setsWonByPlayer1 > setsWonByPlayer2) {
-				return player1Email;
-			} else {
-				return player2Email;
-			}
-		}
-		return null;
-	}
-	
-	public String getLoser() {
-		int setsPlayed = sets.size();
-		if (setsPlayed == 1 || setsPlayed == 3 || setsPlayed == 5) {
-			if (setsWonByPlayer1 > setsWonByPlayer2) {
-				return player2Email;
-			} else {
-				return player1Email;
-			}
-		}
-		return null;
+
+	public Sport getSport() {
+		return sport;
 	}
 
-	public int getNumberOfSets() {
-		return sets.size();
+	public void setSport(Sport sport) {
+		this.sport = sport;
 	}
-	
-	public String getScores(boolean insertSpace) {
-		StringBuilder sb = new StringBuilder();
-		for (Integer[] set : sets) {
-			if (sb.length() != 0) {
-				sb.append(",");
-				if (insertSpace) {
-					sb.append(" ");
-				}
-			}
-			sb.append(set[0] + "-" + set[1]);
-		}
-		return sb.toString();
+
+	public Player getPlayer1() {
+		return player1;
+	}
+
+	public void setPlayer1(Player player1) {
+		this.player1 = player1;
+	}
+
+	public Player getPlayer2() {
+		return player2;
+	}
+
+	public void setPlayer2(Player player2) {
+		this.player2 = player2;
+	}
+
+	public List<Set> getSets() {
+		return sets;
+	}
+
+	public void setSets(List<Set> sets) {
+		this.sets = sets;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
 	}
 }

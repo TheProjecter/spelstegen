@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class Player implements Serializable, Comparable<Player> {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 	private String playerName;
 	private String email;
@@ -77,6 +79,10 @@ public class Player implements Serializable, Comparable<Player> {
 	
 	public void changePassword(String newPassword) {
 		password = md5(newPassword);
+	}
+	
+	public void setEncryptedPassword(String password) {
+		this.password = password;
 	}
 	
 	public String getEncryptedPassword() {

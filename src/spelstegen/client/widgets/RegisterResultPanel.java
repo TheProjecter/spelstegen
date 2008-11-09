@@ -1,14 +1,11 @@
 package spelstegen.client.widgets;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import spelstegen.client.MainApplication;
-import spelstegen.client.Match;
 import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
-import spelstegen.client.Match.MatchDoneException;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -153,7 +150,7 @@ public class RegisterResultPanel extends PopupPanel {
 	}
 	
 	private void submitMatch() {
-		Match m = new Match(0, new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
+		/*Match m = new Match(0, new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
 				players.get(player2Box.getSelectedIndex()-1).getEmail());
 		for (int i = 0; i < player1Score.size(); i++) {
 			try {
@@ -176,7 +173,7 @@ public class RegisterResultPanel extends PopupPanel {
 				RegisterResultPanel.this.hide();
 			}
 		};
-		spelstegenService.addMatch(m, callback);
+		spelstegenService.addMatch(m, callback);*/
 	}
 	
 }
