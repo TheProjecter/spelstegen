@@ -34,14 +34,21 @@ public interface SpelstegenService extends RemoteService {
 	/**
 	 * Add a new match
 	 * @param match
+	 * @param league the league to which the match belongs
 	 */
-	public void addMatch(Match match);
+	public void addMatch(Match match, League league);
 	
 	/**
-	 * Get a list of all matches for a specific season.
-	 * @param season The season to get matches for, if null all matches will be returned.
+	 * Get a list of all matches for a specific league.
+	 * @param league The league to get matches for, if null all matches will be returned.
 	 * @return
 	 */
-	public List<Match> getMatches(int season);
+	public List<Match> getMatches(League league);
+	
+	/**
+	 * Gets all leagues that a player is a member of
+	 * @param player the player
+	 */
+	public List<League> getLeagues(Player player);
 	
 }

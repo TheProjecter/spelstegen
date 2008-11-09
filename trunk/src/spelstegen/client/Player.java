@@ -17,8 +17,7 @@ public class Player implements Serializable, Comparable<Player> {
 	private String password;
 	private String nickName;
 	private String imageURL;
-	
-	private int points = 0;
+	private int points = 1000;
 	
 	public Player() {
 		super();
@@ -73,8 +72,12 @@ public class Player implements Serializable, Comparable<Player> {
 		return points;
 	}
 	
-	public void changePoints(int amount) {
-		points += amount;
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	public void changePoints(int points) {
+		this.points += points;
 	}
 	
 	public void changePassword(String newPassword) {
@@ -88,6 +91,7 @@ public class Player implements Serializable, Comparable<Player> {
 	public String getEncryptedPassword() {
 		return password;
 	}
+	
 
 	public int compareTo(Player o) {
 		if (points == o.getPoints()) {

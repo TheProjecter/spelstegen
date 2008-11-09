@@ -2,6 +2,7 @@ package spelstegen.server;
 
 import java.util.List;
 
+import spelstegen.client.League;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
 
@@ -38,7 +39,9 @@ public class MySQLStorageImplTest extends TestCase {
 	}
 
 	public void testGetMatches() {
-		List<Match> matches = storage.getMatches(1);
+		League league = new League();
+		league.setId(1);
+		List<Match> matches = storage.getMatches(league);
 		assertNotNull(matches);
 	}
 

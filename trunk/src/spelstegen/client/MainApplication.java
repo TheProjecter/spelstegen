@@ -51,7 +51,7 @@ public class MainApplication implements EntryPoint {
 	static Map<String,Player> players;
 	private List<Match> matches;
 	private List<Player> playerList;
-	private GetPlayersCallBack getPlayersCallBack = new GetPlayersCallBack();
+	private GetLeaguesCallBack getLeaguesCallBack = new GetLeaguesCallBack();
 	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
 	private LadderCalculator ladderCalculator = new LadderCalculator();
 	private PushButton inputMatchButton;
@@ -270,11 +270,13 @@ public class MainApplication implements EntryPoint {
     }
     
     public void updatePlayerList() {
-		spelstegenService.getPlayers(getPlayersCallBack);
+    	Player player = new Player();
+    	player.setId(1);
+		spelstegenService.getLeagues(player, getLeaguesCallBack);
     }
     
     public void updateMatchList() {
-    	spelstegenService.getMatches(-1, getMatchesCallback);
+    	spelstegenService.getMatches(null, getMatchesCallback);
     }
     
     public void loggedIn() {
@@ -301,18 +303,18 @@ public class MainApplication implements EntryPoint {
     	
     }
     
-    private class GetPlayersCallBack implements AsyncCallback<List<Player>> {
+    private class GetLeaguesCallBack implements AsyncCallback<List<League>> {
 
 		public void onFailure(Throwable caught) {
 			Window.alert("Failed to get players. " + caught.getMessage());
 		}
 
-		public void onSuccess(List<Player> result) {
+		public void onSuccess(List<League> result) {
 			players.clear();
-			for (Player player : result) {
+			for (Player player : result.get(0).getPlayers()) {
 				players.put(player.getEmail(), player);
 			}
-			playerList = result;
+			playerList = result.get(0).getPlayers();
 			Collections.sort(playerList);
 			populateTable();
 		}

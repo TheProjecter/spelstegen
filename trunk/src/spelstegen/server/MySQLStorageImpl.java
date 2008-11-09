@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import spelstegen.client.League;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
 import spelstegen.client.Set;
@@ -152,7 +153,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	}
 
 	@Override
-	public void addMatch(Match match) {
+	public void addMatch(Match match, League league) {
 		/*String sql = "insert into " + MATCHES_TABLE + "(" + MATCH_DATE + "," + MATCH_PLAYER1_ID + "," + MATCH_PLAYER2_ID
 			+ "," + MATCH_SETS + "," + MATCH_SEASON + ") values(?,?,?,?,?)";
 		simpleJdbcTemplate.update(sql, match.getDate(), match.getPlayers()[0], match.getPlayers()[1], 
@@ -169,13 +170,13 @@ public class MySQLStorageImpl implements StorageInterface {
 	}
 
 	@Override
-	public List<Match> getMatches(int leagueId) throws NumberFormatException {
+	public List<Match> getMatches(League league) {
 		
 		String sql = "select * from " + MATCHES_TABLE;;
 		Object param = null;
-		if (leagueId != 0) {
+		if (league != null) {
 			sql += " where " + MATCH_LEAGUE_ID + "=?";
-			param = new Object[] {new Integer(leagueId)};
+			param = new Object[] {new Integer(league.getId())};
 		} else {
 			sql = "select * from " + MATCHES_TABLE;
 			param = new Object[] {};
@@ -186,8 +187,9 @@ public class MySQLStorageImpl implements StorageInterface {
 			Match match = new Match();
 			match.setId( (Integer)map.get(MATCH_ID) );
 			match.setDate( (Date)map.get(MATCH_DATE) );
-			match.setPlayer1( getPlayer( (Integer)map.get(MATCH_PLAYER1_ID) ) );
-			match.setPlayer2( getPlayer( (Integer)map.get(MATCH_PLAYER2_ID) ) );
+			// Get player from league to assure same instance 
+			match.setPlayer1( getPlayerFromLeague(league, (Integer)map.get(MATCH_PLAYER1_ID)) );
+			match.setPlayer2( getPlayerFromLeague(league, (Integer)map.get(MATCH_PLAYER2_ID)) );
 			match.setSport( getSport( (Integer)map.get(MATCH_SPORT_ID) ) );
 			match.setSets( getSets(match.getId()) );
 			matches.add(match);
@@ -249,5 +251,41 @@ public class MySQLStorageImpl implements StorageInterface {
 			sets.add(set);
 		}
 		return sets;
+	}
+
+	@Override
+	public List<League> getLeagues(Player player) {
+		
+		String sql = "SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagueplayers.player_id="+player.getId()+") GROUP BY leagues.id, leagues.name";
+		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(sql);
+		List<League> leagues = new ArrayList<League>(result.size());
+		for (Map<String, Object> map : result) {
+			League league = new League();
+			league.setId( (Integer)map.get(LEAGUES_ID) );
+			league.setName( (String)map.get(LEAGUES_NAME) );
+			sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, players.image_url FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagues.id="+league.getId()+") GROUP BY players.id, players.name, players.email, players.nickname, players.password, players.image_url";
+			List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
+			league.setPlayers(players);
+			
+			// TODO Add league sports and seasons
+			
+			leagues.add(league);
+		}
+		return leagues;
+	}
+	
+	/**
+	 * Returns a player with a specified id that is part of a league.
+	 * 
+	 * @param league the league
+	 * @param playerId player id
+	 */
+	private Player getPlayerFromLeague(League league, int playerId) {
+		for (Player player : league.getPlayers()) {
+			if (player.getId() == playerId) {
+				return player;
+			}
+		}
+		return null;
 	}
 }

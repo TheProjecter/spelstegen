@@ -44,16 +44,24 @@ public interface StorageInterface {
 	/**
 	 * Add a new match
 	 * @param match
+	 * @param league the league to which the match belongs
 	 */
-	public void addMatch(Match match);
+	public void addMatch(Match match, League league);
 	
 	/**
-	 * Get all matches in a season.
-	 * @param season
-	 * @return
+	 * Gets all matches in a league.
+	 * @param league
 	 */
-	public List<Match> getMatches(int leagueId);
+	public List<Match> getMatches(League league);
 	
+	/**
+	 * Gets all leagues that a player is a member of
+	 * @param player the player
+	 */
+	public List<League> getLeagues(Player player);
+	
+	/**
+	 * Gets all available sports.
+	 */
 	public List<Sport> getSports();
-	
 }
