@@ -1,13 +1,23 @@
 package spelstegen.server;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.servlet.ServletUtilities;
 
 import spelstegen.client.ChartGenerator;
+import spelstegen.client.LadderCalculator;
+import spelstegen.client.League;
+import spelstegen.client.Match;
+import spelstegen.client.MatchDrawException;
+import spelstegen.client.Player;
+import spelstegen.client.Score;
+import spelstegen.client.Season;
 import spelstegen.server.chart.Chart;
-import spelstegen.server.chart.PointsHistoryChart;
+import spelstegen.server.chart.ScoreHistoryChart;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -19,15 +29,22 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 public class ChartGeneratorImpl extends RemoteServiceServlet implements ChartGenerator {
 	
-	private static final long serialVersionUID = -1396658608550159806L;
+	private static final long serialVersionUID = -1396658608550159806L; 
 	
 	protected StorageInterface storage = new MySQLStorageImpl();
 	
-    public String generatePointsHistoryChart() {
+    public String generateScoreHistoryChart(League league, Season season) {
         
-    	Chart chart = new PointsHistoryChart();
-    	
-    	return saveChartAsPNG(chart);
+    	List<Match> matches = storage.getMatches(league);
+    	try {
+			Map<Player, List<Score>> playerScoreHistory = LadderCalculator.calculateScore(matches);
+			Chart chart = new ScoreHistoryChart(playerScoreHistory);
+	    	return saveChartAsPNG(chart);
+		} catch (MatchDrawException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return "";
     }
     
     /**

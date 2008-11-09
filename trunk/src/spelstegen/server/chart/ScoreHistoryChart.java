@@ -1,7 +1,9 @@
 package spelstegen.server.chart;
 
 import java.awt.Color;
-import java.text.ParseException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -15,24 +17,27 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
+import spelstegen.client.Player;
+import spelstegen.client.Score;
+
 /**
  * Chart that displays history of points for players
  * 
  * @author Per Mattsson
  */
-public class PointsHistoryChart extends Chart {
+public class ScoreHistoryChart extends Chart {
 
 	private JFreeChart chart;
 	
 	/**
 	 * Constructor
 	 */
-	public PointsHistoryChart() {
+	public ScoreHistoryChart(Map<Player, List<Score>> playerScoreHistory) {
 		chart = ChartFactory.createTimeSeriesChart(
 				"Poänghistorik", // title
 				"", // x-axis label
 				"", // y-axis label
-				getDataset(), // data
+				getDataset(playerScoreHistory), // data
 				true, // create legend?
 				true, // generate tooltips?
 				false // generate URLs?
@@ -65,29 +70,18 @@ public class PointsHistoryChart extends Chart {
 	 * Get dataset to display in chart.
 	 * 
 	 * @return the dataset
-	 * TODO: Replace test data with data from DB
 	 */
-	private XYDataset getDataset() {
+	private XYDataset getDataset(Map<Player, List<Score>> playerScoreHistory) {
 		TimeSeriesCollection dataset = new TimeSeriesCollection();
-		try {
-			TimeSeries s1 = new TimeSeries("Ernst-Hugo", Day.class);
-			s1.add(new Day(sdf.parse("2008-10-02")), 1000);
-			s1.add(new Day(sdf.parse("2008-10-06")), 900);
-			s1.add(new Day(sdf.parse("2008-10-10")), 934);
-			s1.add(new Day(sdf.parse("2008-10-20")), 720);
-			s1.add(new Day(sdf.parse("2008-10-28")), 1200);
-			
-			TimeSeries s2 = new TimeSeries("Reidar", Day.class);
-			s2.add(new Day(sdf.parse("2008-10-02")), 1000);
-			s2.add(new Day(sdf.parse("2008-10-06")), 1100);
-			s2.add(new Day(sdf.parse("2008-10-10")), 863);
-			s2.add(new Day(sdf.parse("2008-10-20")), 720);
-			s2.add(new Day(sdf.parse("2008-10-28")), 630);
-			
-			dataset.addSeries(s1);
-			dataset.addSeries(s2);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		for (Iterator<Map.Entry<Player, List<Score>>> it = playerScoreHistory.entrySet().iterator(); it.hasNext();) {
+			Map.Entry<Player, List<Score>> pScoreHistory = (Map.Entry<Player, List<Score>>) it.next();
+			Player player = pScoreHistory.getKey();
+			List<Score> scoreHistory = pScoreHistory.getValue();
+			TimeSeries ts = new TimeSeries(player.getPlayerName(), Day.class);
+			for (Score score : scoreHistory) {
+				ts.add(new Day(score.getDate()), score.getScore());
+			}
+			dataset.addSeries(ts);
 		}
 		return dataset;
 	}

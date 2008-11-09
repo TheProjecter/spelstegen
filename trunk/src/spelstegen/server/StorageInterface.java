@@ -5,6 +5,7 @@ import java.util.List;
 import spelstegen.client.League;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
+import spelstegen.client.ScoreHistory;
 import spelstegen.client.Sport;
 
 /**
@@ -64,4 +65,9 @@ public interface StorageInterface {
 	 * Gets all available sports.
 	 */
 	public List<Sport> getSports();
+
+	/**
+	 * Gets score history for a player.
+	 */
+	public List<ScoreHistory> getScoreHistory(Player player);
 }
