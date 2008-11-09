@@ -16,6 +16,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import spelstegen.client.League;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
+import spelstegen.client.ScoreHistory;
 import spelstegen.client.Set;
 import spelstegen.client.Sport;
 
@@ -286,6 +287,12 @@ public class MySQLStorageImpl implements StorageInterface {
 				return player;
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public List<ScoreHistory> getScoreHistory(Player player) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

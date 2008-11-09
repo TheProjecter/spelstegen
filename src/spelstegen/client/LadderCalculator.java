@@ -1,6 +1,10 @@
 package spelstegen.client;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class handles the calculation of points.
@@ -15,19 +19,14 @@ public class LadderCalculator {
 	private static final float FIVE_SET_PERCENTAGE = 0.15f;
 	
 	/**
-	 * @deprecated Remove constructor when instance methods are removed. Use static methods only 
-	 */
-	public LadderCalculator() {
-		super();
-	}
-	
-	/**
 	 * Calculates scores for players in matches.
 	 * 
 	 * @param matches a list of matches sorted by date
+	 * @return A map with score history for all players that participated in the matches
 	 * @throws MatchDrawException 
 	 */
-	public static void calculateScore(List<Match> matches) throws MatchDrawException {
+	public static Map<Player, List<Score>> calculateScore(List<Match> matches) throws MatchDrawException {
+		Map<Player, List<Score>> playerScoreHistory = new HashMap<Player, List<Score>>();
 		for (Match match : matches) {
 			Player winner = getWinner(match);
 			float percentage = getPercentage(match);
@@ -43,7 +42,10 @@ public class LadderCalculator {
 				match.getPlayer2().setPoints( match.getPlayer2().getPoints() + points );
 				match.getPlayer1().setPoints( match.getPlayer1().getPoints() - points );
 			}
+			addPlayerScore(playerScoreHistory, match.getPlayer1(), match.getDate());
+			addPlayerScore(playerScoreHistory, match.getPlayer2(), match.getDate());
 		}
+		return playerScoreHistory;
 	}
 	
 	/**
@@ -149,23 +151,62 @@ public class LadderCalculator {
 	}
 	
 	/**
-	 * @deprecated Remove this method when method calls are removed
+	 * Gets a string with set and match results 
+	 * @param match the match
 	 */
-	public void reset() {
-		// Init all players to have 1000 points.
-		for (Player player : MainApplication.players.values()) {
-			player.changePoints(1000 - player.getPoints());
+	public static String getResultsString(Match match) {
+		StringBuilder sb = new StringBuilder();
+
+		if (!match.getSport().getChildSports().isEmpty()) {
+			int player1Ponts = 0;
+			int player2Ponts = 0;
+			int i = 0;
+			sb.append(" (");
+			for (Set set : match.getSets()) {
+				sb.append(set.getPlayer1Score());
+				sb.append("-");
+				sb.append(set.getPlayer2Score());
+				if (i < (match.getSets().size() - 1)) {
+					sb.append(",");
+				}
+				i++;
+				player1Ponts += set.getPlayer1Score();
+				player2Ponts += set.getPlayer2Score();
+			}
+			sb.append(")");
+			return player1Ponts + "-" + player2Ponts + sb.toString();
+		}
+		// If the match is about a single sport
+		else {
+			int setsOneByPlayer1 = 0;
+			int setsOneByPlayer2 = 0;
+			int i = 0;
+			sb.append(" (");
+			for (Set set : match.getSets()) {
+				sb.append(set.getPlayer1Score());
+				sb.append("-");
+				sb.append(set.getPlayer2Score());
+				if (i < (match.getSets().size() - 1)) {
+					sb.append(",");
+				}
+				i++;
+				if (set.getPlayer1Score() > set.getPlayer2Score()) {
+					setsOneByPlayer1++;
+				} else if (set.getPlayer2Score() > set.getPlayer1Score()) {
+					setsOneByPlayer2++;
+				}
+			}
+			sb.append(")");
+			return setsOneByPlayer1 + "-" + setsOneByPlayer2 + sb.toString();
 		}
 	}
 	
-	/**
-	 * @deprecated Remove this method when method calls are removed
-	 */
-	public void addMatches(List<Match> matches) {}
-	
-	/**
-	 * @deprecated Remove this method when method calls are removed
-	 */
-	public void addMatch(Match match) {}
-
+	private static void addPlayerScore(Map<Player, List<Score>> playerScoreHistory, Player player, Date date) {
+		List<Score> scoreHistory = playerScoreHistory.get(player);
+		if (scoreHistory == null) {
+			scoreHistory = new ArrayList<Score>();
+		}
+		scoreHistory.add(new Score(date, player.getPoints()));
+		playerScoreHistory.put(player, scoreHistory);
+	}
 }

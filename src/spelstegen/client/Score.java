@@ -38,7 +38,6 @@ public class Score implements Serializable, Comparable<Score> {
 		this.score = score;
 	}
 
-	@Override
 	public int compareTo(Score dateScore) {
 		return date.compareTo(dateScore.getDate());
 	}

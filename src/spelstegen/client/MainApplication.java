@@ -42,22 +42,24 @@ public class MainApplication implements EntryPoint {
 	public final static int VERTICAL_SPACING = 15;
 	private Grid mainTable;
 	private Grid matchTable;
-	private StatisticsPanel statisticsPanel = new StatisticsPanel();
+	private StatisticsPanel statisticsPanel = new StatisticsPanel();;
 	private ToggleButton tableButton = new ToggleButton("Tabell");
 	private ToggleButton matchesButton = new ToggleButton("Matcher");
 	private ToggleButton statisticsButton = new ToggleButton("Statistik");
 	private static PopupPanel popup;
 	private static SpelstegenServiceAsync spelstegenService;
-	static Map<String,Player> players;
-	private List<Match> matches;
-	private List<Player> playerList;
 	private GetLeaguesCallBack getLeaguesCallBack = new GetLeaguesCallBack();
 	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
-	private LadderCalculator ladderCalculator = new LadderCalculator();
 	private PushButton inputMatchButton;
 	private PushButton addPlayerButton;
 	private PushButton loginButton;
+	private Label leagueNameLabel;
 	private LoginClickListener loginClickListener;
+	private League currentLeague;
+	private List<League> allLeaguesForPlayer;
+	static Map<String,Player> players;
+	private List<Match> matches;
+	private List<Player> playerList;
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
@@ -76,7 +78,6 @@ public class MainApplication implements EntryPoint {
 		playerList = new ArrayList<Player>();
 		matches = new ArrayList<Match>();
 		updatePlayerList();
-		updateMatchList();
 		mainTable = new Grid(players.size() > 0 ? players.size() : 3, NUMBER_OF_COLUMNS);
 		matchTable = new Grid(3, 4);
 		
@@ -86,9 +87,9 @@ public class MainApplication implements EntryPoint {
 		mainPanel.setWidth("100%");
 		mainPanel.setSpacing(VERTICAL_SPACING);
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		Label topLabel = new Label("Epsilons squashstege", false);
-		topLabel.setStylePrimaryName("toplabel");
-		mainPanel.add(topLabel);
+		leagueNameLabel = new Label("", false);
+		leagueNameLabel.setStylePrimaryName("toplabel");
+		mainPanel.add(leagueNameLabel);
 		
 		// Top buttons
 		tableButton.addClickListener(new ClickListener() {
@@ -210,16 +211,31 @@ public class MainApplication implements EntryPoint {
 	}
 
 	public void populateMatches() {
-		/*matchTable.resize(matches.size(), 4);
+		matchTable.resize(matches.size(), 4);
 		for (int i = 0; i < matches.size(); i++) {
 			Match match = matches.get(i);
 			matchTable.setText(i, 0, match.getDate().toString());
-			Player p = getPlayer(match.getWinner());
-			matchTable.setHTML(i, 1, "<b>" + (p != null ? p.getPlayerName() : match.getWinner()) + "</b>");
-			p = getPlayer(match.getLoser());
-			matchTable.setText(i, 2, (p != null ? p.getPlayerName() : match.getLoser()));
-			matchTable.setText(i, 3, match.getScores(true));
-		}*/
+			matchTable.setHTML(i, 1, getPlayerNameHtml(match, match.getPlayer1()));
+			matchTable.setHTML(i, 2, getPlayerNameHtml(match, match.getPlayer2()));
+			matchTable.setText(i, 3, LadderCalculator.getResultsString(match));
+		}
+	}
+	
+	/**
+	 * Returns player name. If player is winner of match, name will be
+	 * returned in bold; otherwise plain text.
+	 */
+	private String getPlayerNameHtml(Match match, Player player) {
+		try {
+			boolean isWinner = LadderCalculator.getWinner(match).equals(player);
+			if (isWinner) {
+				return "<b>"+player.getPlayerName()+"</b>";
+			}
+		} catch (MatchDrawException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return player.getPlayerName();
 	}
 	
 	public void populateTable() {
@@ -276,7 +292,7 @@ public class MainApplication implements EntryPoint {
     }
     
     public void updateMatchList() {
-    	spelstegenService.getMatches(null, getMatchesCallback);
+    	spelstegenService.getMatches(currentLeague, getMatchesCallback);
     }
     
     public void loggedIn() {
@@ -295,8 +311,6 @@ public class MainApplication implements EntryPoint {
 		public void onSuccess(List<Match> result) {
 			matches = result;
 			populateMatches();
-			ladderCalculator.reset();
-			ladderCalculator.addMatches(result);
 			Collections.sort(playerList);
 			populateTable();
 		}
@@ -311,11 +325,17 @@ public class MainApplication implements EntryPoint {
 
 		public void onSuccess(List<League> result) {
 			players.clear();
-			for (Player player : result.get(0).getPlayers()) {
+			allLeaguesForPlayer = result;
+			currentLeague = allLeaguesForPlayer.get(0);
+			for (Player player : currentLeague.getPlayers()) {
 				players.put(player.getEmail(), player);
 			}
-			playerList = result.get(0).getPlayers();
+			leagueNameLabel.setText(currentLeague.getName());
+			playerList = currentLeague.getPlayers();
 			Collections.sort(playerList);
+			updateMatchList();
+			statisticsPanel.setData(currentLeague, null);
+			
 			populateTable();
 		}
     }
