@@ -16,6 +16,8 @@ public class Season implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	
+	public Season() {}
+	
 	public Season(String name, Date startDate, Date endDate) {
 		this(0, name, startDate, endDate);
 	}
