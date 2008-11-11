@@ -141,7 +141,8 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public boolean addPlayer(Player player) {
-		String sql = "insert into " + PLAYERS_TABLE + " values(?,?,?)";
+		String sql = "insert into " + PLAYERS_TABLE + "(" + PLAYER_NAME + "," + PLAYER_EMAIL + "," + PLAYER_PASSWORD 
+						+ ") values(?,?,?)";
 		simpleJdbcTemplate.update(sql, player.getEmail(), player.getPlayerName(), player.getEncryptedPassword());
 		// TODO check if email is unique and return false.
 		return true;
