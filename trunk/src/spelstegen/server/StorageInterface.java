@@ -62,6 +62,12 @@ public interface StorageInterface {
 	public List<League> getLeagues(Player player);
 	
 	/**
+	 * Get all leagues in the system.
+	 * @return 
+	 */
+	public List<League> getLeagues();
+	
+	/**
 	 * Gets all available sports.
 	 */
 	public List<Sport> getSports();
@@ -70,4 +76,11 @@ public interface StorageInterface {
 	 * Gets score history for a player.
 	 */
 	public List<ScoreHistory> getScoreHistory(Player player);
+	
+	/**
+	 * Add a player to a league.
+	 * @param playerid The player to add
+	 * @param leagueid to this league
+	 */
+	public void addPlayerToLeague(int leagueid, int playerid);
 }

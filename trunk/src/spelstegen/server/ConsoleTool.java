@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
+import spelstegen.client.League;
 import spelstegen.client.Player;
 
 /**
@@ -26,20 +27,28 @@ public class ConsoleTool {
 			System.out.println("");
 			System.out.println("");
 			System.out.println("1 - Lägg till spelare");
+			System.out.println("2 - Lägg till spelare till liga");
 		}
 		if (args.length == 1) {
-			if (Integer.parseInt(args[0].trim()) == 1) {
+			switch (Integer.parseInt(args[0].trim())) {
+			case 1:
 				ct.addPlayer();
+				break;
+			case 2:
+				ct.addPlayerToLeague();
+				break;
+			default:
+				break;
 			}
 		}
 	}
-	
 	
 	private void addPlayer() {
 		String name;
 		String email;
 		String nickName;
 		String password;
+		String image;
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Skriv in ditt namn");
 		name = sc.nextLine();
@@ -54,10 +63,38 @@ public class ConsoleTool {
 		}
 		System.out.println("Skriv in ditt smeknamn");
 		nickName = sc.nextLine();
+		System.out.println("Skriv in en URL för din bild");
+		image = sc.nextLine();
 		Player p = new Player(name, email);
 		p.setEncryptedPassword(password);
 		p.setNickName(nickName);
+		p.setImageURL(image);
 		storage.addPlayer(p);
+	}
+	
+	private void addPlayerToLeague() {
+		int playerId;
+		int leagueId;
+		String playerEmail;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Skriv in epostadressen för den spelare som skall läggas till i en liga.");
+		playerEmail = sc.nextLine();
+		Player p = storage.getPlayer(playerEmail);
+		if (p == null) {
+			System.out.println("Fanns ingen spelare med den epostadressen.");
+			return;
+		}
+		playerId = p.getId();
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Tillgängliga ligor:");
+		for (League league : storage.getLeagues()) {
+			System.out.println("Id: " + league.getId() + " Namn: " + league.getName());
+		}
+		System.out.println("");
+		System.out.println("Välj vilken liga du vill lägga till spelaren till genom att mata in ligans id");
+		leagueId = sc.nextInt();
+		storage.addPlayerToLeague(leagueId, playerId);
 	}
 	
 	static String getMd5Digest(String input) {
