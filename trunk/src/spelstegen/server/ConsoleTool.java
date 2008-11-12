@@ -66,12 +66,20 @@ public class ConsoleTool {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input.getBytes());
             BigInteger number = new BigInteger(1,messageDigest);
-            return number.toString(16);
+            return pad(number.toString(16),32,'0');
         }
         catch(NoSuchAlgorithmException e)
         {
             throw new RuntimeException(e);
         }
     }
+	
+	private static String pad(String s, int length, char pad) {
+		StringBuffer buffer = new StringBuffer(s);
+		while (buffer.length() < length) {
+			buffer.insert(0, pad);
+		}
+		return buffer.toString();
+	}
 	
 }
