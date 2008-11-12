@@ -2,30 +2,32 @@ package spelstegen.client.widgets;
 
 import spelstegen.client.League;
 import spelstegen.client.Season;
-import spelstegen.client.widgets.chart.ScoreHistoryChart;
 
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 
 /**
  * Statistics panel
  * 
  * @author Per Mattsson
  */
-public class StatisticsPanel extends VerticalPanel {
+public class StatisticsPanel extends TabPanel {
 	
-	private final static int VERTICAL_SPACING = 15;
-	private ScoreHistoryChart scoreHistoryChart;
+	private ScoreHistoryPanel scoreHistoryPanel;
+	private PlayerStatisticsPanel playerStatisticsPanel;
+	private HeadToHeadComparisonPanel headToHeadComparisonPanel;
 
 	public StatisticsPanel() {
 		setWidth("100%");
-		setSpacing(VERTICAL_SPACING);
-		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		add(scoreHistoryChart = new ScoreHistoryChart());
+		scoreHistoryPanel = new ScoreHistoryPanel();
+		playerStatisticsPanel = new PlayerStatisticsPanel();
+		headToHeadComparisonPanel = new HeadToHeadComparisonPanel();
+		add(scoreHistoryPanel, "Poänghistorik");
+		add(playerStatisticsPanel, "Toppnoteringar");
+		add(headToHeadComparisonPanel, "Inbördes möten");
+		selectTab(0);
 	}
 	
 	public void setData(League league, Season season) {
-		scoreHistoryChart.setData(league, season);
+		scoreHistoryPanel.setData(league, season);
 	}
 }
