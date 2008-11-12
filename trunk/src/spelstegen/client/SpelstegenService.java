@@ -26,6 +26,13 @@ public interface SpelstegenService extends RemoteService {
 	public boolean addPlayer(Player player);
 	
 	/**
+	 * Save new details of a player.
+	 * @param player
+	 * @return
+	 */
+	public boolean updatePlayer(Player player);
+	
+	/**
 	 * Get the list of all players.
 	 * @return
 	 */

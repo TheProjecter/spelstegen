@@ -47,6 +47,11 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 	public boolean addPlayer(Player player) {
 		return storage.addPlayer(player);
 	}
+	
+	@Override
+	public boolean updatePlayer(Player player) {
+		return storage.updatePlayer(player);
+	}
 
 	public void addMatch(Match match, League league) {
 		storage.addMatch(match, league);
@@ -76,4 +81,6 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 		
 		return leagues;
 	}
+
+
 }

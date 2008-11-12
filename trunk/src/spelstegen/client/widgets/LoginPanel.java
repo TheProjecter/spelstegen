@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class LoginPanel extends PopupPanel {
 	
-	private Player player;
 	private TextBox usernameBox;
 	private PasswordTextBox passwordBox;
 	
@@ -62,8 +61,7 @@ public class LoginPanel extends PopupPanel {
 
 			public void onSuccess(Player result) {
 				if (result != null) {
-					LoginPanel.this.player = result;
-					mainApplication.loggedIn();
+					mainApplication.loggedIn(result);
 					MainApplication.showStatus("Inloggad: " + result.getPlayerName());
 				} else {
 					Window.alert("Fel lösenord eller epostadress, försök igen.");
@@ -92,9 +90,5 @@ public class LoginPanel extends PopupPanel {
 		mainPanel.add(buttonPanel);
 		
 		this.add(mainPanel);
-	}
-	
-	public Player getPlayer() {
-		return player;
 	}
 }

@@ -14,6 +14,8 @@ public interface SpelstegenServiceAsync {
 	
 	public void addPlayer(Player player, AsyncCallback<Boolean> callback);
 	
+	public void updatePlayer(Player player, AsyncCallback<Boolean> callback);
+	
 	public void getPlayers(AsyncCallback<List<Player>> callback);
 	
 	public void addMatch(Match match, League league, AsyncCallback<Void> callback);

@@ -160,6 +160,16 @@ public class MySQLStorageImpl implements StorageInterface {
 		// TODO check if email is unique and return false.
 		return true;
 	}
+	
+	@Override
+	public boolean updatePlayer(Player player) {
+		String sql = "UPDATE " + PLAYERS_TABLE + " SET " + PLAYER_NAME + "=?," + PLAYER_EMAIL + "=?," + PLAYER_PASSWORD
+		 + "=?," + PLAYER_NICKNAME + "=?," + PLAYER_IMAGE + "=? WHERE " + PLAYER_ID + "=?";
+		simpleJdbcTemplate.update(sql, player.getPlayerName(), player.getEmail(), player.getEncryptedPassword(), 
+				player.getNickName(), player.getImageURL(), player.getId());
+		// TODO check if email is unique and return false.
+ 		return true;
+	}
 
 	@Override
 	public List<Player> getPlayers() {
@@ -177,8 +187,8 @@ public class MySQLStorageImpl implements StorageInterface {
 	
 	@Override
 	public Player getPlayer(int id) {
-		String sql = "select * from " + PLAYERS_TABLE + " where " + PLAYER_ID + "=" + id;
-		List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
+		String sql = "select * from " + PLAYERS_TABLE + " where " + PLAYER_ID + "=?";
+		List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper(), id);
 		if (players.isEmpty())
 			return null;
 		return players.get(0);
@@ -326,6 +336,7 @@ public class MySQLStorageImpl implements StorageInterface {
 		String sql = "INSERT INTO " + LEAGUE_PLAYERS_TABLE + " VALUES(?,?)";
 		simpleJdbcTemplate.update(sql, leagueid, playerid);
 	}
+
 
 
 }
