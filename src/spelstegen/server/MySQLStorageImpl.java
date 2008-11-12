@@ -143,7 +143,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	public boolean addPlayer(Player player) {
 		String sql = "insert into " + PLAYERS_TABLE + "(" + PLAYER_NAME + "," + PLAYER_EMAIL + "," + PLAYER_PASSWORD 
 						+ ") values(?,?,?)";
-		simpleJdbcTemplate.update(sql, player.getEmail(), player.getPlayerName(), player.getEncryptedPassword());
+		simpleJdbcTemplate.update(sql, player.getPlayerName(), player.getEmail(), player.getEncryptedPassword());
 		// TODO check if email is unique and return false.
 		return true;
 	}
@@ -164,7 +164,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	
 	@Override
 	public Player getPlayer(int id) {
-		String sql = "select * from players where id=" + id;
+		String sql = "select * from " + PLAYERS_TABLE + " where " + PLAYER_ID + "=" + id;
 		List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
 		if (players.isEmpty())
 			return null;
@@ -201,7 +201,7 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public Player getPlayer(String email) {
-		String sql = "select * where " + PLAYER_EMAIL + " = ?";
+		String sql = "select * from " + PLAYERS_TABLE + " where " + PLAYER_EMAIL + "=?";
 		List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper(), email);
 		if (players.isEmpty())
 			return null;
@@ -211,7 +211,7 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public List<Sport> getSports() {
-		String sql = "select * from sports";
+		String sql = "select * from " + SPORTS_TABLE;
 		return simpleJdbcTemplate.query(sql, new SportRowMapper());
 	}
 	
@@ -222,7 +222,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	 * @return Sport object if found; otherwise null.
 	 */
 	private Sport getSport(int id) {
-		String sql = "select * from sports where id=" + id;
+		String sql = "select * from " + SPORTS_TABLE + " where "+ SPORTS_ID + "=" + id;
 		List<Sport> sports = simpleJdbcTemplate.query(sql, new SportRowMapper());
 		if (sports.isEmpty())
 			return null;

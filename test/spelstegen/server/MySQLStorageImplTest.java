@@ -46,11 +46,13 @@ public class MySQLStorageImplTest extends TestCase {
 	}
 
 	public void testGetPlayerInt() {
-		fail("Not yet implemented");
+		Player p = storage.getPlayer(1);
+		assertNotNull(p);
 	}
 
 	public void testGetPlayerString() {
-		fail("Not yet implemented");
+		Player p = storage.getPlayer("h@h.se");
+		assertNotNull(p);
 	}
 
 	public void testGetSports() {
