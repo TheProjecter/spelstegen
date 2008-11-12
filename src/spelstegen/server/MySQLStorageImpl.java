@@ -95,6 +95,18 @@ public class MySQLStorageImpl implements StorageInterface {
 	private static final String LEAGUES_ID = "id";
 	private static final String LEAGUES_NAME = "name";
 	
+	private class LeagueRowMapper implements ParameterizedRowMapper<League> {
+
+		@Override
+		public League mapRow(ResultSet rs, int rowNum) throws SQLException {
+			League league = new League();
+			league.setId(rs.getInt(LEAGUES_ID));
+			league.setName(rs.getString(LEAGUES_NAME));
+			return league;
+		}
+		
+	}
+	
 	// League players
 	private static final String LEAGUE_PLAYERS_TABLE = "leaguePlayers";
 	private static final String LEAGUE_PLAYERS_LEAGUE_ID = "league_id";
@@ -142,8 +154,9 @@ public class MySQLStorageImpl implements StorageInterface {
 	@Override
 	public boolean addPlayer(Player player) {
 		String sql = "insert into " + PLAYERS_TABLE + "(" + PLAYER_NAME + "," + PLAYER_EMAIL + "," + PLAYER_PASSWORD 
-						+ ") values(?,?,?)";
-		simpleJdbcTemplate.update(sql, player.getPlayerName(), player.getEmail(), player.getEncryptedPassword());
+						+ "," + PLAYER_NICKNAME + "," + PLAYER_IMAGE + ") values(?,?,?,?,?)";
+		simpleJdbcTemplate.update(sql, player.getPlayerName(), player.getEmail(), player.getEncryptedPassword(), 
+				player.getNickName(), player.getImageURL());
 		// TODO check if email is unique and return false.
 		return true;
 	}
@@ -258,14 +271,19 @@ public class MySQLStorageImpl implements StorageInterface {
 	@Override
 	public List<League> getLeagues(Player player) {
 		
-		String sql = "SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagueplayers.player_id="+player.getId()+") GROUP BY leagues.id, leagues.name";
+		String sql = "SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers " +
+				"ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id " +
+				"WHERE (leagueplayers.player_id="+player.getId()+") GROUP BY leagues.id, leagues.name";
 		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(sql);
 		List<League> leagues = new ArrayList<League>(result.size());
 		for (Map<String, Object> map : result) {
 			League league = new League();
 			league.setId( (Integer)map.get(LEAGUES_ID) );
 			league.setName( (String)map.get(LEAGUES_NAME) );
-			sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, players.image_url FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagues.id="+league.getId()+") GROUP BY players.id, players.name, players.email, players.nickname, players.password, players.image_url";
+			sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, " +
+					"players.image_url FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) " +
+					"INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagues.id="+league.getId()+") " +
+					"GROUP BY players.id, players.name, players.email, players.nickname, players.password, players.image_url";
 			List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
 			league.setPlayers(players);
 			
@@ -274,6 +292,12 @@ public class MySQLStorageImpl implements StorageInterface {
 			leagues.add(league);
 		}
 		return leagues;
+	}
+	
+	@Override
+	public List<League> getLeagues() {
+		String sql = "SELECT * FROM " + LEAGUES_TABLE;
+		return simpleJdbcTemplate.query(sql, new LeagueRowMapper());
 	}
 	
 	/**
@@ -296,4 +320,12 @@ public class MySQLStorageImpl implements StorageInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void addPlayerToLeague(int leagueid, int playerid) {
+		String sql = "INSERT INTO " + LEAGUE_PLAYERS_TABLE + " VALUES(?,?)";
+		simpleJdbcTemplate.update(sql, leagueid, playerid);
+	}
+
+
 }
