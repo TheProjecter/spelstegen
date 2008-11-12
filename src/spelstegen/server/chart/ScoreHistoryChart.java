@@ -34,7 +34,7 @@ public class ScoreHistoryChart extends Chart {
 	 */
 	public ScoreHistoryChart(Map<Player, List<Score>> playerScoreHistory) {
 		chart = ChartFactory.createTimeSeriesChart(
-				"Poänghistorik", // title
+				"", // title
 				"", // x-axis label
 				"", // y-axis label
 				getDataset(playerScoreHistory), // data
