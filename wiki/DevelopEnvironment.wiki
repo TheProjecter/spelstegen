@@ -8,6 +8,7 @@ This is a small guide on how to set up the development environment.
 = Steps =
 
   # Install [http://www.eclipse.org/downloads/ Eclipse].
+  # Set text file encoding in eclipse to UTF-8 (Under Windows->Preferences->General->Workspace)
   # Check out trunk with subversion.
     * You can do this from Eclipse using the [http://subclipse.tigris.org/install.html Subversive plugin].
     * Or you can use [http://subversion.tigris.org/links.html#clients Any other SVN client].
