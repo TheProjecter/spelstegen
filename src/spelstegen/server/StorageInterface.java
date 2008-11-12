@@ -23,6 +23,13 @@ public interface StorageInterface {
 	public boolean addPlayer(Player player);
 	
 	/**
+	 * Update player data
+	 * @param player
+	 * @return
+	 */
+	public boolean updatePlayer(Player player);
+	
+	/**
 	 * Get the list of all players.
 	 * @return
 	 */

@@ -25,27 +25,55 @@ public class PlayerPanel extends PopupPanel {
 
 	private TextBox nameBox;
 	private TextBox emailBox;
+	private TextBox nickNameBox;
+	private TextBox imageUrlBox;
 	private PasswordTextBox passwordBox;
 	private PasswordTextBox passwordBox2;
 	
-	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication parent) {
+	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication parent, final Player player) {
 		super(false);
 		
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
 		
-		mainPanel.add(new Label("Lägg till ny spelare"));
+		if (player == null) {
+			mainPanel.add(new Label("Lägg till ny spelare"));
+		} else {
+			mainPanel.add(new Label("Spelarprofil"));
+		}
 		
 		HorizontalPanel namePanel = MainApplication.createHorizontalPanel();
-		namePanel.add(new Label("Spelarens namn:"));
+		namePanel.add(new Label("Namn:"));
 		nameBox = new TextBox();
+		if (player != null) {
+			nameBox.setText(player.getPlayerName());
+		}
 		namePanel.add(nameBox);
 		
 		HorizontalPanel emailPanel = MainApplication.createHorizontalPanel();
 		emailPanel.add(new Label("E-postadress:"));
 		emailBox = new TextBox();
+		if (player != null) {
+			emailBox.setText(player.getEmail());
+		}
 		emailPanel.add(emailBox);
+		
+		HorizontalPanel nickNamePanel = MainApplication.createHorizontalPanel();
+		nickNamePanel.add(new Label("Smeknamn:"));
+		nickNameBox = new TextBox();
+		if (player != null) {
+			nickNameBox.setText(player.getNickName());
+		}
+		nickNamePanel.add(nickNameBox);
+		
+		HorizontalPanel imageUrlPanel = MainApplication.createHorizontalPanel();
+		imageUrlPanel.add(new Label("Avatar URL:"));
+		imageUrlBox = new TextBox();
+		if (player != null) {
+			imageUrlBox.setText(player.getImageURL());
+		}
+		imageUrlPanel.add(imageUrlBox);
 		
 		HorizontalPanel passwordPanel = MainApplication.createHorizontalPanel();
 		passwordPanel.add(new Label("Lösenord:"));
@@ -62,6 +90,8 @@ public class PlayerPanel extends PopupPanel {
 		fieldPanel.setSpacing(10);
 		fieldPanel.add(namePanel);
 		fieldPanel.add(emailPanel);
+		fieldPanel.add(nickNamePanel);
+		fieldPanel.add(imageUrlPanel);
 		fieldPanel.add(passwordPanel);
 		fieldPanel.add(repeatPwPanel);
 		
@@ -84,13 +114,24 @@ public class PlayerPanel extends PopupPanel {
 			
 		};
 		
-		PushButton createButton = new PushButton("Spara");
-		createButton.addClickListener(new ClickListener() {
+		PushButton saveButton = new PushButton("Spara");
+		saveButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				if (passwordBox.getText().trim().equals(passwordBox2.getText().trim())) {
-					Player player = new Player(nameBox.getText().trim(), emailBox.getText().trim());
-					player.changePassword(passwordBox.getText().trim());
-					spelstegenService.addPlayer(player, callback);
+				if (player != null) {
+					player.setEmail(emailBox.getText().trim());
+					player.setPlayerName(nameBox.getText().trim());
+					player.setNickName(nickNameBox.getText().trim());
+					player.setImageURL(imageUrlBox.getText().trim());
+					String pw = getNewPassword();
+					if (pw != null && !pw.equals("")) {
+						player.changePassword(pw);
+					}
+					spelstegenService.updatePlayer(player, callback);
+				} else {
+						Player player = new Player(nameBox.getText().trim(), emailBox.getText().trim());
+						String pw = getNewPassword();
+						player.changePassword(pw);
+						spelstegenService.addPlayer(player, callback);
 				}
 			}
 		});
@@ -103,13 +144,25 @@ public class PlayerPanel extends PopupPanel {
 		});
 		
 		HorizontalPanel buttonPanel = MainApplication.createHorizontalPanel();
-		buttonPanel.add(createButton);
+		buttonPanel.add(saveButton);
 		buttonPanel.add(cancelButton);
 		
 		mainPanel.add(fieldPanel);
 		mainPanel.add(buttonPanel);
 		
 		this.add(mainPanel);
+	}
+	
+	private String getNewPassword() {
+		if (passwordBox.getText().trim().equals("") && passwordBox2.getText().trim().equals("")) {
+			return "";
+		}
+		if (passwordBox.getText().trim().equals(passwordBox2.getText().trim())) {
+			return passwordBox.getText().trim();
+		} else {
+			Window.alert("Lösenorden matchar inte. Försök igen.");
+			return null;
+		}
 	}
 	
 }

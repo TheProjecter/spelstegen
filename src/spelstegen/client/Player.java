@@ -92,6 +92,11 @@ public class Player implements Serializable, Comparable<Player> {
 		return password;
 	}
 	
+	public String toString() {
+		return "Id: " + id + ", namn: " + playerName + ", epost: " + email + 
+				", smeknamn: " + nickName + ", bildURL: " + imageURL;
+	}
+	
 
 	public int compareTo(Player o) {
 		if (points == o.getPoints()) {

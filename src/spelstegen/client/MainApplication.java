@@ -53,6 +53,7 @@ public class MainApplication implements EntryPoint {
 	private PushButton inputMatchButton;
 	private PushButton addPlayerButton;
 	private PushButton loginButton;
+	private PushButton changeProfileButton;
 	private Label leagueNameLabel;
 	private LoginClickListener loginClickListener;
 	private League currentLeague;
@@ -60,6 +61,7 @@ public class MainApplication implements EntryPoint {
 	static Map<String,Player> players;
 	private List<Match> matches;
 	private List<Player> playerList;
+	private Player loggedInPlayer;
 	
 	private VerticalPanel contentPanel = new VerticalPanel();
 	
@@ -149,29 +151,33 @@ public class MainApplication implements EntryPoint {
 				});
 			}
 		});
+		
 		loginButton = new PushButton("Logga in");
 		loginClickListener = new LoginClickListener();
 		loginButton.addClickListener(loginClickListener);
+		
 		addPlayerButton = new PushButton("Lägg till spelare");
 		addPlayerButton.setEnabled(false);
 		addPlayerButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final PlayerPanel playerPanel = new PlayerPanel(spelstegenService, MainApplication.this);
-				playerPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-					public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (Window.getClientWidth() - offsetWidth) / 3;
-			            int top = (Window.getClientHeight() - offsetHeight) / 3;
-			            playerPanel.setPopupPosition(left + 100, top);
-			          }
-				});
+				showPlayerWindow(null);
+			}
+		});
+		
+		changeProfileButton = new PushButton("Ändra min profil");
+		changeProfileButton.setEnabled(false);
+		changeProfileButton.addClickListener(new ClickListener() {
+			public void onClick(Widget arg0) {
+				showPlayerWindow(loggedInPlayer);
 			}
 		});
 		
 		HorizontalPanel bottomButtonPanel = new HorizontalPanel();
 		bottomButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		bottomButtonPanel.setSpacing(HORISONTAL_SPACING);
-		bottomButtonPanel.add(inputMatchButton);
 		bottomButtonPanel.add(loginButton);
+		bottomButtonPanel.add(inputMatchButton);
+		bottomButtonPanel.add(changeProfileButton);
 		bottomButtonPanel.add(addPlayerButton);
 		
 		mainPanel.add(bottomButtonPanel);
@@ -219,6 +225,17 @@ public class MainApplication implements EntryPoint {
 			matchTable.setHTML(i, 2, getPlayerNameHtml(match, match.getPlayer2()));
 			matchTable.setText(i, 3, LadderCalculator.getResultsString(match));
 		}
+	}
+	
+	private void showPlayerWindow(Player player) {
+		final PlayerPanel playerPanel = new PlayerPanel(spelstegenService, MainApplication.this, player);
+		playerPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+			public void setPosition(int offsetWidth, int offsetHeight) {
+	            int left = (Window.getClientWidth() - offsetWidth) / 3;
+	            int top = (Window.getClientHeight() - offsetHeight) / 3;
+	            playerPanel.setPopupPosition(left + 100, top);
+	          }
+		});
 	}
 	
 	/**
@@ -295,11 +312,13 @@ public class MainApplication implements EntryPoint {
     	spelstegenService.getMatches(currentLeague, getMatchesCallback);
     }
     
-    public void loggedIn() {
+    public void loggedIn(Player player) {
+    	this.loggedInPlayer = player;
     	addPlayerButton.setEnabled(true);
     	inputMatchButton.setEnabled(true);
     	loginButton.setText("Logga ut");
     	loginClickListener.setLoggedIn(true);
+    	changeProfileButton.setEnabled(true);
     }
     
     private class GetMatchesCallback implements AsyncCallback<List<Match>> {
@@ -365,6 +384,7 @@ public class MainApplication implements EntryPoint {
     		} else {
     			addPlayerButton.setEnabled(false);
     			inputMatchButton.setEnabled(false);
+    			changeProfileButton.setEnabled(false);
     			loggedIn = false;
     			loginButton.setText("Logga in");
     		}
