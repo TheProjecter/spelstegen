@@ -1,5 +1,7 @@
 package spelstegen.client.widgets;
 
+import spelstegen.client.LoginHandler;
+import spelstegen.client.LoginListener;
 import spelstegen.client.MainApplication;
 import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
@@ -37,12 +39,12 @@ public class LoginPanel extends PopupPanel {
 		
 		mainPanel.add(new Label("Logga in"));
 		
-		HorizontalPanel usernamePanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel usernamePanel = MainApplication.createStandardHorizontalPanel();
 		usernamePanel.add(new Label("Användarnamn (epost):"));
 		usernameBox = new TextBox();
 		usernamePanel.add(usernameBox);
 		
-		HorizontalPanel passwordPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel passwordPanel = MainApplication.createStandardHorizontalPanel();
 		passwordPanel.add(new Label("Lösenord:"));
 		passwordBox = new PasswordTextBox();
 		passwordPanel.add(passwordBox);
@@ -62,7 +64,6 @@ public class LoginPanel extends PopupPanel {
 			public void onSuccess(Player result) {
 				if (result != null) {
 					mainApplication.loggedIn(result);
-					MainApplication.showStatus("Inloggad: " + result.getPlayerName());
 				} else {
 					Window.alert("Fel lösenord eller epostadress, försök igen.");
 				}
@@ -82,7 +83,7 @@ public class LoginPanel extends PopupPanel {
 				LoginPanel.this.hide();
 			}
 		});
-		HorizontalPanel buttonPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
 		buttonPanel.add(loginButton);
 		buttonPanel.add(cancelButton);
 		
@@ -91,4 +92,5 @@ public class LoginPanel extends PopupPanel {
 		
 		this.add(mainPanel);
 	}
+
 }

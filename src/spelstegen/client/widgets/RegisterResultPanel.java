@@ -55,7 +55,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		Label vsLabel = new Label(" spelade mot ");
 		player2Box = new ListBox(false);
 		populatePlayerBox(player2Box);
-		HorizontalPanel playerPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel playerPanel = MainApplication.createStandardHorizontalPanel();
 		playerPanel.add(player1Box);
 		playerPanel.add(vsLabel);
 		playerPanel.add(player2Box);
@@ -70,7 +70,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		threeSet.addClickListener(setClickListener);
 		fiveSet.addClickListener(setClickListener);
 		Label setLabel2 = new Label(" set");
-		HorizontalPanel setPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel setPanel = MainApplication.createStandardHorizontalPanel();
 		setPanel.add(setLabel);
 		setPanel.add(oneSet);
 		setPanel.add(threeSet);
@@ -95,7 +95,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 				RegisterResultPanel.this.hide();
 			}
 		});
-		HorizontalPanel buttonPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
 		buttonPanel.add(saveButton);
 		buttonPanel.add(cancelButton);
 		
@@ -121,7 +121,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 	}
 	
 	private HorizontalPanel createScoreRow() {
-		HorizontalPanel scorePanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel scorePanel = MainApplication.createStandardHorizontalPanel();
 		TextBox p1Score = new TextBox();
 		player1Score.add(p1Score);
 		scorePanel.add(p1Score);
