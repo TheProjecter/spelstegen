@@ -44,7 +44,7 @@ public class PlayerPanel extends PopupPanel {
 			mainPanel.add(new Label("Spelarprofil"));
 		}
 		
-		HorizontalPanel namePanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel namePanel = MainApplication.createStandardHorizontalPanel();
 		namePanel.add(new Label("Namn:"));
 		nameBox = new TextBox();
 		if (player != null) {
@@ -52,7 +52,7 @@ public class PlayerPanel extends PopupPanel {
 		}
 		namePanel.add(nameBox);
 		
-		HorizontalPanel emailPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel emailPanel = MainApplication.createStandardHorizontalPanel();
 		emailPanel.add(new Label("E-postadress:"));
 		emailBox = new TextBox();
 		if (player != null) {
@@ -60,7 +60,7 @@ public class PlayerPanel extends PopupPanel {
 		}
 		emailPanel.add(emailBox);
 		
-		HorizontalPanel nickNamePanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel nickNamePanel = MainApplication.createStandardHorizontalPanel();
 		nickNamePanel.add(new Label("Smeknamn:"));
 		nickNameBox = new TextBox();
 		if (player != null) {
@@ -68,7 +68,7 @@ public class PlayerPanel extends PopupPanel {
 		}
 		nickNamePanel.add(nickNameBox);
 		
-		HorizontalPanel imageUrlPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel imageUrlPanel = MainApplication.createStandardHorizontalPanel();
 		imageUrlPanel.add(new Label("Avatar URL:"));
 		imageUrlBox = new TextBox();
 		if (player != null) {
@@ -76,12 +76,12 @@ public class PlayerPanel extends PopupPanel {
 		}
 		imageUrlPanel.add(imageUrlBox);
 		
-		HorizontalPanel passwordPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel passwordPanel = MainApplication.createStandardHorizontalPanel();
 		passwordPanel.add(new Label("Lösenord:"));
 		passwordBox = new PasswordTextBox();
 		passwordPanel.add(passwordBox);
 		
-		HorizontalPanel repeatPwPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel repeatPwPanel = MainApplication.createStandardHorizontalPanel();
 		repeatPwPanel.add(new Label("Upprepa lösenordet:"));
 		passwordBox2 = new PasswordTextBox();
 		repeatPwPanel.add(passwordBox2);
@@ -143,7 +143,7 @@ public class PlayerPanel extends PopupPanel {
 			}
 		});
 		
-		HorizontalPanel buttonPanel = MainApplication.createHorizontalPanel();
+		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
 		buttonPanel.add(saveButton);
 		buttonPanel.add(cancelButton);
 		
