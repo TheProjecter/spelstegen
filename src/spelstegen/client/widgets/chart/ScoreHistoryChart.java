@@ -1,21 +1,23 @@
 package spelstegen.client.widgets.chart;
 
 import spelstegen.client.League;
-import spelstegen.client.Season;
+import spelstegen.client.LeagueUpdateListener;
+import spelstegen.client.LeagueUpdater;
 
 /**
  * Score history chart
  * 
  * @author Per Mattsson
  */
-public class ScoreHistoryChart extends AbstractChart {
+public class ScoreHistoryChart extends AbstractChart implements LeagueUpdateListener {
 
-    public ScoreHistoryChart() {
+    public ScoreHistoryChart(LeagueUpdater leagueUpdater) {
         super();
+        leagueUpdater.addLeagueUpdateListener(this);
     }
-    
-    public void setData(League league, Season season) {
-    	// Make the call to the chart generator service.
+
+	public void leagueUpdated(League league) {
+		// Make the call to the chart generator service.
         chartGeneratorService.generateScoreHistoryChart(league, null, callback);
-    }
+	}
 }

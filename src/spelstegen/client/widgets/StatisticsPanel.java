@@ -1,7 +1,6 @@
 package spelstegen.client.widgets;
 
-import spelstegen.client.League;
-import spelstegen.client.Season;
+import spelstegen.client.LeagueUpdater;
 
 import com.google.gwt.user.client.ui.TabPanel;
 
@@ -16,18 +15,14 @@ public class StatisticsPanel extends TabPanel {
 	private PlayerStatisticsPanel playerStatisticsPanel;
 	private HeadToHeadComparisonPanel headToHeadComparisonPanel;
 
-	public StatisticsPanel() {
+	public StatisticsPanel(LeagueUpdater leagueUpdater) {
 		setWidth("100%");
-		scoreHistoryPanel = new ScoreHistoryPanel();
+		scoreHistoryPanel = new ScoreHistoryPanel(leagueUpdater);
 		playerStatisticsPanel = new PlayerStatisticsPanel();
 		headToHeadComparisonPanel = new HeadToHeadComparisonPanel();
 		add(scoreHistoryPanel, "Poänghistorik");
 		add(playerStatisticsPanel, "Toppnoteringar");
 		add(headToHeadComparisonPanel, "Inbördes möten");
 		selectTab(0);
-	}
-	
-	public void setData(League league, Season season) {
-		scoreHistoryPanel.setData(league, season);
 	}
 }
