@@ -2,11 +2,11 @@ package spelstegen.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import spelstegen.client.widgets.LoginPanel;
+import spelstegen.client.widgets.MainLeaguePanel;
+import spelstegen.client.widgets.MatchesTable;
 import spelstegen.client.widgets.PlayerPanel;
 import spelstegen.client.widgets.RegisterResultPanel;
 import spelstegen.client.widgets.StatisticsPanel;
@@ -17,7 +17,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -26,7 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,21 +34,21 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Henrik Segesten
  */
-public class MainApplication implements EntryPoint {
+public class MainApplication implements EntryPoint, LeagueUpdater {
 
 	public final static int NUMBER_OF_COLUMNS = 3;
 	public final static int HORISONTAL_SPACING = 5;
 	public final static int VERTICAL_SPACING = 15;
-	private Grid mainTable;
-	private Grid matchTable;
-	private StatisticsPanel statisticsPanel = new StatisticsPanel();;
-	private ToggleButton tableButton = new ToggleButton("Tabell");
-	private ToggleButton matchesButton = new ToggleButton("Matcher");
-	private ToggleButton statisticsButton = new ToggleButton("Statistik");
-	private static PopupPanel popup;
+	
+	
 	private static SpelstegenServiceAsync spelstegenService;
 	private GetLeaguesCallBack getLeaguesCallBack = new GetLeaguesCallBack();
-	private GetMatchesCallback getMatchesCallback = new GetMatchesCallback();
+	private VerticalPanel contentPanel = new VerticalPanel();
+	private TabPanel tabPanel = new TabPanel();
+	private StatisticsPanel statisticsPanel;
+	private MainLeaguePanel mainLeaguePanel;
+	private MatchesTable matchesTable;
+	private static PopupPanel popup;
 	private PushButton inputMatchButton;
 	private PushButton addPlayerButton;
 	private PushButton loginButton;
@@ -57,13 +56,10 @@ public class MainApplication implements EntryPoint {
 	private Label leagueNameLabel;
 	private LoginClickListener loginClickListener;
 	private League currentLeague;
-	private List<League> allLeaguesForPlayer;
-	static Map<String,Player> players;
-	private List<Match> matches;
-	private List<Player> playerList;
+	private List<League> allPlayerLeagues;
 	private Player loggedInPlayer;
-	
-	private VerticalPanel contentPanel = new VerticalPanel();
+
+	private List<LeagueUpdateListener> leagueUpdateListeners = new ArrayList<LeagueUpdateListener>();
 	
 	/**
 	 * This is the entry point method.
@@ -75,15 +71,6 @@ public class MainApplication implements EntryPoint {
 		String moduleRelativeURL = GWT.getModuleBaseURL() + "spelstegenService";
 		enpoint.setServiceEntryPoint(moduleRelativeURL);
 		
-		// Init
-		players = new HashMap<String, Player>();
-		playerList = new ArrayList<Player>();
-		matches = new ArrayList<Match>();
-		updatePlayerList();
-		mainTable = new Grid(players.size() > 0 ? players.size() : 3, NUMBER_OF_COLUMNS);
-		matchTable = new Grid(3, 4);
-		
-		
 		// Construct gui
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setWidth("100%");
@@ -93,42 +80,15 @@ public class MainApplication implements EntryPoint {
 		leagueNameLabel.setStylePrimaryName("toplabel");
 		mainPanel.add(leagueNameLabel);
 		
-		// Top buttons
-		tableButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				if (tableButton.isDown()) {
-					matchesButton.setDown(false);
-					statisticsButton.setDown(false);
-					showTableView();
-				}
-			}
-		});
-		matchesButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				if (matchesButton.isDown()) {
-					tableButton.setDown(false);
-					statisticsButton.setDown(false);
-					showMatchView();
-				}
-			}
-		});
-		statisticsButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				if (statisticsButton.isDown()) {
-					tableButton.setDown(false);
-					matchesButton.setDown(false);
-					showStatisticsView();
-				}
-			}
-		});	
-		tableButton.setDown(true);
-		HorizontalPanel topButtonPanel = new HorizontalPanel();
-		topButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		topButtonPanel.setSpacing(HORISONTAL_SPACING);
-		topButtonPanel.add(tableButton);
-		topButtonPanel.add(matchesButton);
-		topButtonPanel.add(statisticsButton);
-		mainPanel.add(topButtonPanel);
+		// Tab panel
+		statisticsPanel = new StatisticsPanel(this);
+		mainLeaguePanel = new MainLeaguePanel(this);
+		matchesTable = new MatchesTable(spelstegenService, this);
+		tabPanel.add(mainLeaguePanel, "Tabell");
+		tabPanel.add(matchesTable, "Matcher");
+		tabPanel.add(statisticsPanel, "Statistik");
+		tabPanel.selectTab(0);
+		mainPanel.add(tabPanel);
 		
 		contentPanel.setSpacing(VERTICAL_SPACING);
 		contentPanel.setStylePrimaryName("outer-border");
@@ -141,7 +101,7 @@ public class MainApplication implements EntryPoint {
 		inputMatchButton.setEnabled(false);
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, playerList, MainApplication.this);
+				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, MainApplication.this);
 				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -181,50 +141,9 @@ public class MainApplication implements EntryPoint {
 		bottomButtonPanel.add(addPlayerButton);
 		
 		mainPanel.add(bottomButtonPanel);
-		
-		showTableView();
 		RootPanel.get().add(mainPanel);
 		
-
-	}
-	
-	private void showTableView() {
-		contentPanel.clear();
-		
-		mainTable.setCellSpacing(0);
-		mainTable.setWidth("600px");
-		mainTable.setText(0, 0, "#");
-		mainTable.setText(0, 1, "Spelare");
-		mainTable.setText(0, 2, "Poäng");
-		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			mainTable.getCellFormatter().setStyleName(0, i, "table-caption"); 
-		}
-		
-		contentPanel.add(mainTable);
-	}
-	
-	private void showMatchView() {
-		contentPanel.clear();
-		updateMatchList();
-		matchTable.setCellSpacing(0);
-		matchTable.setWidth("600px");
-		contentPanel.add(matchTable);
-	}
-	
-	public void showStatisticsView() {
-		contentPanel.clear();
-		contentPanel.add(statisticsPanel);
-	}
-
-	public void populateMatches() {
-		matchTable.resize(matches.size(), 4);
-		for (int i = 0; i < matches.size(); i++) {
-			Match match = matches.get(i);
-			matchTable.setText(i, 0, match.getDate().toString());
-			matchTable.setHTML(i, 1, getPlayerNameHtml(match, match.getPlayer1()));
-			matchTable.setHTML(i, 2, getPlayerNameHtml(match, match.getPlayer2()));
-			matchTable.setText(i, 3, LadderCalculator.getResultsString(match));
-		}
+		updateLeague();
 	}
 	
 	private void showPlayerWindow(Player player) {
@@ -238,38 +157,6 @@ public class MainApplication implements EntryPoint {
 		});
 	}
 	
-	/**
-	 * Returns player name. If player is winner of match, name will be
-	 * returned in bold; otherwise plain text.
-	 */
-	private String getPlayerNameHtml(Match match, Player player) {
-		try {
-			boolean isWinner = LadderCalculator.getWinner(match).equals(player);
-			if (isWinner) {
-				return "<b>"+player.getPlayerName()+"</b>";
-			}
-		} catch (MatchDrawException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return player.getPlayerName();
-	}
-	
-	public void populateTable() {
-		int col = 0;
-		Player p = null;
-		mainTable.resize(playerList.size()+1, NUMBER_OF_COLUMNS);
-		for (int i = 0; i < playerList.size(); i++) {
-			p = playerList.get(i);
-			mainTable.setText(i+1, col++, i+1 + "");
-			mainTable.setText(i+1, col++, p.getPlayerName());
-			mainTable.setText(i+1, col++, p.getPoints() + "");
-			col = 0;
-		}
-		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			mainTable.getCellFormatter().setStyleName(playerList.size(), i, "table-caption");
-		}
-	}
 	
 	public static HorizontalPanel createHorizontalPanel() {
 		HorizontalPanel panel = new HorizontalPanel();
@@ -298,20 +185,6 @@ public class MainApplication implements EntryPoint {
 		});
     }
     
-    public static Player getPlayer(String email) {
-    	return players.get(email);
-    }
-    
-    public void updatePlayerList() {
-    	Player player = new Player();
-    	player.setId(1);
-		spelstegenService.getLeagues(player, getLeaguesCallBack);
-    }
-    
-    public void updateMatchList() {
-    	spelstegenService.getMatches(currentLeague, getMatchesCallback);
-    }
-    
     public void loggedIn(Player player) {
     	this.loggedInPlayer = player;
     	addPlayerButton.setEnabled(true);
@@ -319,21 +192,7 @@ public class MainApplication implements EntryPoint {
     	loginButton.setText("Logga ut");
     	loginClickListener.setLoggedIn(true);
     	changeProfileButton.setEnabled(true);
-    }
-    
-    private class GetMatchesCallback implements AsyncCallback<List<Match>> {
-
-		public void onFailure(Throwable caught) {
-			Window.alert("Failed to get matches. " + caught.getMessage());
-		}
-
-		public void onSuccess(List<Match> result) {
-			matches = result;
-			populateMatches();
-			Collections.sort(playerList);
-			populateTable();
-		}
-    	
+    	updateLeague();
     }
     
     private class GetLeaguesCallBack implements AsyncCallback<List<League>> {
@@ -343,19 +202,11 @@ public class MainApplication implements EntryPoint {
 		}
 
 		public void onSuccess(List<League> result) {
-			players.clear();
-			allLeaguesForPlayer = result;
-			currentLeague = allLeaguesForPlayer.get(0);
-			for (Player player : currentLeague.getPlayers()) {
-				players.put(player.getEmail(), player);
-			}
+			allPlayerLeagues = result;
+			currentLeague = allPlayerLeagues.get(0);
 			leagueNameLabel.setText(currentLeague.getName());
-			playerList = currentLeague.getPlayers();
-			Collections.sort(playerList);
-			updateMatchList();
-			statisticsPanel.setData(currentLeague, null);
-			
-			populateTable();
+			Collections.sort(currentLeague.getPlayers());
+			notifyLeagueUpdated();
 		}
     }
 
@@ -390,4 +241,27 @@ public class MainApplication implements EntryPoint {
     		}
 		}
     }
+    
+    private void notifyLeagueUpdated() {
+    	for (LeagueUpdateListener listener : leagueUpdateListeners) {
+			listener.leagueUpdated(currentLeague);
+		}
+    }
+
+	public void addLeagueUpdateListener(LeagueUpdateListener listener) {
+		leagueUpdateListeners.add(listener);
+		
+	}
+
+	public void updateLeague() {
+		
+		if (loggedInPlayer == null) {
+			//TODO: Remove this code
+			loggedInPlayer = new Player();
+			loggedInPlayer.setId(1);
+		}
+		spelstegenService.getLeagues(loggedInPlayer, getLeaguesCallBack);
+	}
+
+	
 }

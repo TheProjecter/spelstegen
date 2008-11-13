@@ -1,5 +1,6 @@
 package spelstegen.client.widgets;
 
+import spelstegen.client.LeagueUpdater;
 import spelstegen.client.MainApplication;
 import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
@@ -30,7 +31,7 @@ public class PlayerPanel extends PopupPanel {
 	private PasswordTextBox passwordBox;
 	private PasswordTextBox passwordBox2;
 	
-	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication parent, final Player player) {
+	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final LeagueUpdater leagueUpdater, final Player player) {
 		super(false);
 		
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -104,8 +105,7 @@ public class PlayerPanel extends PopupPanel {
 			public void onSuccess(Boolean result) {
 				if (result) {
 					MainApplication.showStatus("Sparade spelaren.");
-					parent.updatePlayerList();
-					parent.populateTable();
+					leagueUpdater.updateLeague();
 					PlayerPanel.this.hide();
 				} else {
 					Window.alert("Emailadressen är inte unik, försök igen");

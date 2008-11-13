@@ -3,7 +3,11 @@ package spelstegen.client.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import spelstegen.client.League;
+import spelstegen.client.LeagueUpdateListener;
+import spelstegen.client.LeagueUpdater;
 import spelstegen.client.MainApplication;
+import spelstegen.client.Match;
 import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
 
@@ -26,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Henrik Segesten
  *
  */
-public class RegisterResultPanel extends PopupPanel {
+public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListener {
 
 	private List<TextBox> player1Score;
 	private List<TextBox> player2Score;
@@ -39,13 +43,12 @@ public class RegisterResultPanel extends PopupPanel {
 	private ListBox player1Box;
 	private ListBox player2Box;
 	private SpelstegenServiceAsync spelstegenService;
-	private MainApplication mainApplication;
+	private LeagueUpdater leagueUpdater;
 	
-	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, List<Player> players, MainApplication mainApplication) {
+	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, LeagueUpdater leagueUpdater) {
 		super(false);
-		this.players = players;
 		this.spelstegenService = spelstegenService;
-		this.mainApplication = mainApplication;
+		this.leagueUpdater = leagueUpdater;
 		
 		player1Box = new ListBox(false);
 		populatePlayerBox(player1Box);
@@ -168,12 +171,14 @@ public class RegisterResultPanel extends PopupPanel {
 
 			public void onSuccess(Void result) {
 				MainApplication.showMessage("Sparade match.", false);
-				mainApplication.updateMatchList();
-				mainApplication.populateMatches();
+				leagueUpdater.updateLeague();
 				RegisterResultPanel.this.hide();
 			}
 		};
 		spelstegenService.addMatch(m, callback);*/
 	}
-	
+
+	public void leagueUpdated(League league) {
+		this.players = league.getPlayers();
+	}
 }
