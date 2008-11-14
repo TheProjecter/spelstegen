@@ -58,5 +58,12 @@ public class MySQLStorageImplTest extends TestCase {
 	public void testGetSports() {
 		fail("Not yet implemented");
 	}
+	
+	public void testGetLeagues() {
+		List<League> leagues = storage.getLeagues(null);
+		for (League league : leagues) {
+			System.out.println("league.getName() = " + league.getName());
+		}
+	}
 
 }
