@@ -88,7 +88,7 @@ public class ConsoleTool {
 		System.out.println("");
 		System.out.println("");
 		System.out.println("Tillgängliga ligor:");
-		for (League league : storage.getLeagues()) {
+		for (League league : storage.getLeagues(null)) {
 			System.out.println("Id: " + league.getId() + " Namn: " + league.getName());
 		}
 		System.out.println("");

@@ -82,5 +82,4 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 		return leagues;
 	}
 
-
 }

@@ -69,12 +69,6 @@ public interface StorageInterface {
 	public List<League> getLeagues(Player player);
 	
 	/**
-	 * Get all leagues in the system.
-	 * @return 
-	 */
-	public List<League> getLeagues();
-	
-	/**
 	 * Gets all available sports.
 	 */
 	public List<Sport> getSports();

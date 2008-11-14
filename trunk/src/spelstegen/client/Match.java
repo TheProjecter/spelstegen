@@ -89,4 +89,9 @@ public class Match implements Serializable {
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
+	
+	public String toString() {
+		return "Match " + id + ", datum: " + date.toString() + ", sport: " + sport.getName() + ", spelare1: " + player1
+		+ ", spelare2: " + player2 + ", sets: " + LadderCalculator.getResultsString(this); 
+	}
 }

@@ -1,7 +1,5 @@
 package spelstegen.client.widgets;
 
-import spelstegen.client.LoginHandler;
-import spelstegen.client.LoginListener;
 import spelstegen.client.MainApplication;
 import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
