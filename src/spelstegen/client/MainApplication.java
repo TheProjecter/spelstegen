@@ -6,6 +6,7 @@ import java.util.List;
 
 import spelstegen.client.widgets.LeaguePanel;
 import spelstegen.client.widgets.LoginPanel;
+import spelstegen.client.widgets.OverviewPanel;
 import spelstegen.client.widgets.PlayerPanel;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -30,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Henrik Segesten
  */
-public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler {
+public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger {
 
 	public final static int NUMBER_OF_COLUMNS = 3;
 	public final static int HORISONTAL_SPACING = 5;
@@ -48,6 +49,9 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
 	private League currentLeague;
 	private List<League> allPlayerLeagues;
 	private Player loggedInPlayer;
+	private VerticalPanel contentPanel;
+	private LeaguePanel leaguePanel;
+	private OverviewPanel overviewPanel;
 
 	private List<LeagueUpdateListener> leagueUpdateListeners = new ArrayList<LeagueUpdateListener>();
 	private List<LoginListener> loginListeners = new ArrayList<LoginListener>();
@@ -68,8 +72,12 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
 		topLabel.setStylePrimaryName("toplabel");
 		mainPanel.add(topLabel);
 		
-		LeaguePanel leaguePanel = new LeaguePanel(this, spelstegenService);
-		mainPanel.add(leaguePanel);
+		contentPanel = createStandardVerticalPanel();
+		
+		leaguePanel = new LeaguePanel(this, spelstegenService);
+		overviewPanel = new OverviewPanel(spelstegenService, this);
+		
+		mainPanel.add(contentPanel);
 		
 		loginButton = new PushButton("Logga in");
 		loginClickListener = new LoginClickListener();
@@ -101,7 +109,17 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
 		mainPanel.add(bottomButtonPanel);
 		RootPanel.get().add(mainPanel);
 		
-		updateLeague();
+		showOverview();
+	}
+	
+	private void showLeagueView() {
+		contentPanel.clear();
+		contentPanel.add(leaguePanel);
+	}
+	
+	private void showOverview() {
+		contentPanel.clear();
+		contentPanel.add(overviewPanel);
 	}
 	
 	private void showPlayerWindow(Player player) {
@@ -181,8 +199,6 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
 
 		public void onSuccess(List<League> result) {
 			allPlayerLeagues = result;
-			currentLeague = allPlayerLeagues.get(0);
-			Collections.sort(currentLeague.getPlayers());
 			notifyLeagueUpdated();
 		}
     }
@@ -217,9 +233,12 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
     }
     
     private void notifyLeagueUpdated() {
-    	for (LeagueUpdateListener listener : leagueUpdateListeners) {
-			listener.leagueUpdated(currentLeague);
-		}
+    	if (currentLeague != null) {
+    		Collections.sort(currentLeague.getPlayers());
+    		for (LeagueUpdateListener listener : leagueUpdateListeners) {
+    			listener.leagueUpdated(currentLeague);
+    		}
+    	}
     }
 
 	public void addLeagueUpdateListener(LeagueUpdateListener listener) {
@@ -239,6 +258,12 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler 
 
 	public void addLoginListener(LoginListener listener) {
 		loginListeners.add(listener);
+	}
+
+	public void changeToLeague(League league) {
+		currentLeague = league;
+		notifyLeagueUpdated();
+		showLeagueView();
 	}
 
 	

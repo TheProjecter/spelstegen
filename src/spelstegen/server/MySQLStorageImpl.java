@@ -280,17 +280,19 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public List<League> getLeagues(Player player) {
-		
-		String sql = "SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers " +
-				"ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id " +
-				"WHERE (leagueplayers.player_id="+player.getId()+") GROUP BY leagues.id, leagues.name";
-		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(sql);
+		StringBuilder buffer = new StringBuilder("SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers " +
+				"ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id ");
+		if (player != null) {
+			buffer.append("WHERE (leagueplayers.player_id="+player.getId()+")");
+		} 
+		buffer.append(" GROUP BY leagues.id, leagues.name");
+		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(buffer.toString());
 		List<League> leagues = new ArrayList<League>(result.size());
 		for (Map<String, Object> map : result) {
 			League league = new League();
 			league.setId( (Integer)map.get(LEAGUES_ID) );
 			league.setName( (String)map.get(LEAGUES_NAME) );
-			sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, " +
+			String sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, " +
 					"players.image_url FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) " +
 					"INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagues.id="+league.getId()+") " +
 					"GROUP BY players.id, players.name, players.email, players.nickname, players.password, players.image_url";
@@ -303,12 +305,7 @@ public class MySQLStorageImpl implements StorageInterface {
 		}
 		return leagues;
 	}
-	
-	@Override
-	public List<League> getLeagues() {
-		String sql = "SELECT * FROM " + LEAGUES_TABLE;
-		return simpleJdbcTemplate.query(sql, new LeagueRowMapper());
-	}
+
 	
 	/**
 	 * Returns a player with a specified id that is part of a league.

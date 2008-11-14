@@ -23,5 +23,4 @@ public interface SpelstegenServiceAsync {
 	public void getMatches(League league, AsyncCallback<List<Match>> callback);
 	
 	public void getLeagues(Player player, AsyncCallback<List<League>> callback);
-	
 }

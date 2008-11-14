@@ -53,7 +53,7 @@ public interface SpelstegenService extends RemoteService {
 	public List<Match> getMatches(League league);
 	
 	/**
-	 * Gets all leagues that a player is a member of
+	 * Gets all leagues that a player is a member of or all leagues if player is null
 	 * @param player the player
 	 */
 	public List<League> getLeagues(Player player);
