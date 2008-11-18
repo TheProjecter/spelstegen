@@ -292,7 +292,7 @@ public class MySQLStorageImpl implements StorageInterface {
 			+ PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
 			+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID);
 		if (player != null) {
-			buffer.append("WHERE (" +  LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
+			buffer.append(" WHERE (" +  LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
 				+ "="+player.getId()+")");
 		} 
 		buffer.append(" GROUP BY " + LEAGUES_TABLE + "."+  LEAGUES_ID + "," + LEAGUES_TABLE 
