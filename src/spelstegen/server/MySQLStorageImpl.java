@@ -173,7 +173,7 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public List<Player> getPlayers() {
-		String sql = "select * from players";
+		String sql = "select * from " + PLAYERS_TABLE;
 		return simpleJdbcTemplate.query(sql, new PlayerRowMapper());
 	}
 
@@ -197,13 +197,12 @@ public class MySQLStorageImpl implements StorageInterface {
 	@Override
 	public List<Match> getMatches(League league) {
 		
-		String sql = "select * from " + MATCHES_TABLE;;
+		String sql = "select * from " + MATCHES_TABLE;
 		Object param = null;
 		if (league != null) {
 			sql += " where " + MATCH_LEAGUE_ID + "=?";
 			param = new Object[] {new Integer(league.getId())};
 		} else {
-			sql = "select * from " + MATCHES_TABLE;
 			param = new Object[] {};
 		}
 		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(sql, param);
@@ -251,7 +250,12 @@ public class MySQLStorageImpl implements StorageInterface {
 			return null;
 		Sport sport = sports.get(0);
 		// Look for child sports
-		sql = "SELECT sports.id, sports.name, sports.iconUrl FROM childsports INNER JOIN sports ON childsports.childSportId = sports.id WHERE (childsports.parentSportId="+ id +") GROUP BY sports.id, sports.name, sports.iconUrl";
+		sql = "select " + SPORTS_TABLE + "." + SPORTS_ID + "," + SPORTS_TABLE + "." + SPORTS_NAME +
+		"," + SPORTS_TABLE + "." + SPORTS_ICON_URL + " from " + CHILD_SPORTS_TABLE + " INNER JOIN "
+		+ SPORTS_TABLE + " on " + CHILD_SPORTS_TABLE + "." + CHILD_SPORTS_CHILD_SPORT_ID +
+		"= " + SPORTS_TABLE + "." + SPORTS_ID + " where (" + CHILD_SPORTS_TABLE + "." +
+		CHILD_SPORTS_PARENT_SPORT_ID + "="+ id +") group by " + SPORTS_TABLE + "." + SPORTS_ID +
+		"," + SPORTS_TABLE + "." + SPORTS_NAME + "," + SPORTS_TABLE + "." + SPORTS_ICON_URL;
 		List<Sport> childSports = simpleJdbcTemplate.query(sql, new SportRowMapper());
 		sport.setChildSports(childSports);
 		return sport;
@@ -264,7 +268,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	 * @return A list with all sets that belongs to the match
 	 */
 	private List<Set> getSets(int matchId) {
-		String sql = "select * from sets where match_id=" + matchId;
+		String sql = "select * from " + SETS_TABLE + " where " + SETS_MATCH_ID + "=" + matchId;
 		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(sql);
 		List<Set> sets = new ArrayList<Set>(result.size());
 		for (Map<String, Object> map : result) {
@@ -280,30 +284,42 @@ public class MySQLStorageImpl implements StorageInterface {
 
 	@Override
 	public List<League> getLeagues(Player player) {
-		StringBuilder buffer = new StringBuilder("SELECT leagues.id, leagues.name FROM (leagues INNER JOIN leagueplayers " +
-				"ON leagues.id = leagueplayers.league_id) INNER JOIN players ON leagueplayers.player_id = players.id ");
+		StringBuilder buffer = new StringBuilder("SELECT " + 
+			LEAGUES_TABLE + "."+  LEAGUES_ID + ", " + LEAGUES_TABLE + "."+  LEAGUES_NAME 
+			+ " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE + " ON " 
+			+ LEAGUES_TABLE + "."+  LEAGUES_ID + " = "
+			+ LEAGUE_PLAYERS_TABLE + "." + LEAGUE_PLAYERS_LEAGUE_ID + ") INNER JOIN " 
+			+ PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
+			+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID);
 		if (player != null) {
-			buffer.append("WHERE (leagueplayers.player_id="+player.getId()+")");
+			buffer.append("WHERE (" +  LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
+				+ "="+player.getId()+")");
 		} 
-		buffer.append(" GROUP BY leagues.id, leagues.name");
-		List<Map<String,Object>> result = simpleJdbcTemplate.queryForList(buffer.toString());
-		List<League> leagues = new ArrayList<League>(result.size());
-		for (Map<String, Object> map : result) {
-			League league = new League();
-			league.setId( (Integer)map.get(LEAGUES_ID) );
-			league.setName( (String)map.get(LEAGUES_NAME) );
-			String sql = "SELECT players.id, players.name, players.email, players.nickname, players.password, " +
-					"players.image_url FROM (leagues INNER JOIN leagueplayers ON leagues.id = leagueplayers.league_id) " +
-					"INNER JOIN players ON leagueplayers.player_id = players.id WHERE (leagues.id="+league.getId()+") " +
-					"GROUP BY players.id, players.name, players.email, players.nickname, players.password, players.image_url";
+		buffer.append(" GROUP BY " + LEAGUES_TABLE + "."+  LEAGUES_ID + "," + LEAGUES_TABLE 
+			+ "."+  LEAGUES_NAME);
+		String sql = buffer.toString();
+		List<League> result = simpleJdbcTemplate.query(sql, new LeagueRowMapper());
+		for (League league : result) {
+			String allPlayerData = PLAYERS_TABLE + "." + PLAYER_ID + ", " 
+							+ PLAYERS_TABLE + "." + PLAYER_NAME + ", "
+							+ PLAYERS_TABLE + "." + PLAYER_EMAIL +  ", "
+							+ PLAYERS_TABLE + "." + PLAYER_NICKNAME + ", "
+							+ PLAYERS_TABLE + "." + PLAYER_PASSWORD + ", "
+							+ PLAYERS_TABLE + "." + PLAYER_IMAGE;
+			sql = "SELECT " + allPlayerData + " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE +
+					" ON " + LEAGUES_TABLE + "."+  LEAGUES_ID + " = " 
+					+ LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_LEAGUE_ID + ") " +
+					"INNER JOIN " + PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
+					+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID + 
+					" WHERE (" + LEAGUES_TABLE + "."+  LEAGUES_ID + "="+league.getId()+") " +
+					"GROUP BY " + allPlayerData;
 			List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
 			league.setPlayers(players);
 			
 			// TODO Add league sports and seasons
 			
-			leagues.add(league);
 		}
-		return leagues;
+		return result;
 	}
 
 	
