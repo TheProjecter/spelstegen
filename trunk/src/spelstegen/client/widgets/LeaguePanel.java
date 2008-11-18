@@ -40,7 +40,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		// Construct gui
 		VerticalPanel mainPanel = MainApplication.createStandardVerticalPanel();
 		mainPanel.setWidth("100%");
-		mainPanel.setStyleName("outer-border");
+		//mainPanel.setStyleName("outer-border");
 		leagueNameLabel = new Label("", false);
 		leagueNameLabel.setStylePrimaryName("leagueLabel");
 		mainPanel.add(leagueNameLabel);
@@ -53,6 +53,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		tabPanel.add(matchesTable, "Matcher");
 		tabPanel.add(statisticsPanel, "Statistik");
 		tabPanel.selectTab(0);
+		tabPanel.getDeckPanel().setSize("780px", "500px");
 		mainPanel.add(tabPanel);
 		
 		// Bottom buttons

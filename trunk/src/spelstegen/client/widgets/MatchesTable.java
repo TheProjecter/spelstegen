@@ -17,6 +17,8 @@ import spelstegen.client.SpelstegenServiceAsync;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -33,10 +35,13 @@ public class MatchesTable extends VerticalPanel implements LeagueUpdateListener 
 	
 	public MatchesTable(SpelstegenServiceAsync spelstegenService, LeagueUpdater leagueUpdater) {
 		this.spelstegenService = spelstegenService;
+		this.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		this.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		this.setSpacing(10);
 		leagueUpdater.addLeagueUpdateListener(this);
 		matchTable = new Grid(3, 4);
 		matchTable.setCellSpacing(0);
-		matchTable.setWidth("600px");
+		matchTable.setWidth("100%");
 		add(matchTable);
 	}
 	
