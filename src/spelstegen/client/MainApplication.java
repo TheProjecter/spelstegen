@@ -33,6 +33,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger {
 
+	public final static int MAINPANEL_WIDTH = 800;
+	public final static int MAINPANEL_HEIGHT = 600;
 	public final static int NUMBER_OF_COLUMNS = 3;
 	public final static int HORISONTAL_SPACING = 5;
 	public final static int VERTICAL_SPACING = 15;
@@ -67,9 +69,11 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		enpoint.setServiceEntryPoint(moduleRelativeURL);
 		
 		VerticalPanel mainPanel = createStandardVerticalPanel();
+		mainPanel.setSpacing(0);
+		mainPanel.setSize(String.valueOf(MAINPANEL_WIDTH) + "px", String.valueOf(MAINPANEL_HEIGHT) + "px");
 		
-		Label topLabel = new Label("Spelstegen version 0.1");
-		topLabel.setStylePrimaryName("toplabel");
+		Label topLabel = new Label("Spelstegen - version 0.1");
+		topLabel.setStylePrimaryName("header");
 		mainPanel.add(topLabel);
 		
 		contentPanel = createStandardVerticalPanel();
@@ -106,8 +110,12 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		bottomButtonPanel.add(changeProfileButton);
 		bottomButtonPanel.add(addPlayerButton);
 		
+		//mainPanel.setBorderWidth(1);
+		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.add(bottomButtonPanel);
 		RootPanel.get().add(mainPanel);
+		RootPanel.get().setStyleName("rootpanel");
+		mainPanel.setStyleName("mainpanel");
 		
 		showOverview();
 	}
@@ -220,9 +228,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
     			final LoginPanel loginPanel = new LoginPanel(spelstegenService, MainApplication.this);
     			loginPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
     				public void setPosition(int offsetWidth, int offsetHeight) {
-    					int left = (Window.getClientWidth() - offsetWidth) / 3;
-    					int top = (Window.getClientHeight() - offsetHeight) / 3;
-    					loginPanel.setPopupPosition(left + 100, top);
+    					loginPanel.center();
     				}
     			});
     		} else {

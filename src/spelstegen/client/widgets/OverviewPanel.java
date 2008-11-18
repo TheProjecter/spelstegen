@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -33,13 +34,15 @@ public class OverviewPanel extends Composite implements HistoryListener {
 	
 	public OverviewPanel(SpelstegenServiceAsync spelstegenServiceAsync, LeagueChanger leagueChanger) {
 		this.leagueChanger = leagueChanger;
-		VerticalPanel mainPanel = MainApplication.createStandardVerticalPanel();
-		mainPanel.setStyleName("outer-border");
 		
 		leaguesPanel = new VerticalPanel();
 		leaguesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		ScrollPanel scrollPanel = new ScrollPanel(leaguesPanel);
+		scrollPanel.setSize("780px", "500px");
 		allLeagues = new HashMap<Integer, League>();
-		
+		//mainPanel.add(leaguesPanel);
+		History.addHistoryListener(this);
+		initWidget(scrollPanel);
 		AsyncCallback<List<League>> callback = new AsyncCallback<List<League>>() {
 
 			public void onFailure(Throwable arg0) {
@@ -55,9 +58,6 @@ public class OverviewPanel extends Composite implements HistoryListener {
 			
 		};
 		spelstegenServiceAsync.getLeagues(null, callback);
-		mainPanel.add(leaguesPanel);
-		History.addHistoryListener(this);
-		initWidget(mainPanel);
 	}
 	
 	private void addLeagueRow(League league) {

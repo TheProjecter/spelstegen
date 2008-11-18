@@ -9,6 +9,8 @@ import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.Player;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -26,8 +28,11 @@ public class MainLeaguePanel extends VerticalPanel implements LeagueUpdateListen
 	public MainLeaguePanel(LeagueUpdater leagueUpdater) {
 		leagueUpdater.addLeagueUpdateListener(this);
 		mainTable = new Grid(1, NUMBER_OF_COLUMNS);
+		this.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		this.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		this.setSpacing(10);
 		mainTable.setCellSpacing(0);
-		mainTable.setWidth("600px");
+		mainTable.setWidth("100%");
 		mainTable.setText(0, 0, "#");
 		mainTable.setText(0, 1, "Spelare");
 		mainTable.setText(0, 2, "Poäng");

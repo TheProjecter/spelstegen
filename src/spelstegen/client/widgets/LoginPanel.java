@@ -27,10 +27,12 @@ public class LoginPanel extends PopupPanel {
 	
 	private TextBox usernameBox;
 	private PasswordTextBox passwordBox;
+	public static final int WIDTH = 400;
+	public static final int HEIGHT = 300;
 	
 	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication mainApplication) {
 		super(false);
-
+		this.setSize(String.valueOf(WIDTH) + "px", String.valueOf(HEIGHT) + "px");
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
@@ -38,13 +40,21 @@ public class LoginPanel extends PopupPanel {
 		mainPanel.add(new Label("Logga in"));
 		
 		HorizontalPanel usernamePanel = MainApplication.createStandardHorizontalPanel();
-		usernamePanel.add(new Label("Användarnamn (epost):"));
+		Label lblUserName = new Label("Användarnamn (epost):");
+		lblUserName.setWidth("200px");
+		lblUserName.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		usernamePanel.add(lblUserName);
 		usernameBox = new TextBox();
 		usernamePanel.add(usernameBox);
+		usernameBox.setWidth("200px");
 		
 		HorizontalPanel passwordPanel = MainApplication.createStandardHorizontalPanel();
-		passwordPanel.add(new Label("Lösenord:"));
+		Label lblPassword = new Label("Lösenord:");
+		lblPassword.setWidth("200px");
+		lblPassword.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		passwordPanel.add(lblPassword);
 		passwordBox = new PasswordTextBox();
+		passwordBox.setWidth("200px");
 		passwordPanel.add(passwordBox);
 		
 		VerticalPanel fieldPanel = new VerticalPanel();

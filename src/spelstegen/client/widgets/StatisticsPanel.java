@@ -16,7 +16,8 @@ public class StatisticsPanel extends TabPanel {
 	private HeadToHeadComparisonPanel headToHeadComparisonPanel;
 
 	public StatisticsPanel(LeagueUpdater leagueUpdater) {
-		setWidth("100%");
+		this.getDeckPanel().setSize("780px", "480px");
+		this.getDeckPanel().setStyleName("statistics");
 		scoreHistoryPanel = new ScoreHistoryPanel(leagueUpdater);
 		playerStatisticsPanel = new PlayerStatisticsPanel();
 		headToHeadComparisonPanel = new HeadToHeadComparisonPanel();
