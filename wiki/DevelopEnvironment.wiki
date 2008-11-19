@@ -32,5 +32,5 @@ This is a small guide on how to set up the development environment.
   # Install [http://dev.mysql.com/downloads/mysql/5.0.html#downloads mysql] and create a user named stegusr with password stegpw and with permissions on the spelstegen schema.
   # To create the tables in mysql execute the following command from a prompt:
      * {{{mysql -u stegusr -p < generated_create_tables.sql}}}
-  # Run {{{MainApplication.launch}}} from Eclipse to start the application in Google Web Toolikt browser. You will have to change the path to {{{gwt-dev-windows.jar}}} under the classpath tab in the launch configuration to match your location.
+  # Run {{{MainApplication.launch}}} from Eclipse to start the application in Google Web Toolikt browser. You will have to change the path to {{{gwt-dev-<os>.jar}}} under the classpath tab in the launch configuration to match your location.
   # You can also build the project with Ant. The target for deployment is build.war.
