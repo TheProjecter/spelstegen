@@ -53,8 +53,8 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 		return storage.updatePlayer(player);
 	}
 
-	public void addMatch(Match match, League league) {
-		storage.addMatch(match, league);
+	public void addMatch(Match match, int leagueId) {
+		storage.addMatch(match, leagueId);
 	}
 
 	public List<Match> getMatches(League league) {

@@ -1,15 +1,17 @@
 package spelstegen.client.widgets;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import spelstegen.client.League;
-import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.LeagueUpdater;
 import spelstegen.client.MainApplication;
 import spelstegen.client.Match;
 import spelstegen.client.Player;
+import spelstegen.client.Set;
 import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.Sport;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -30,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Henrik Segesten
  *
  */
-public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListener {
+public class RegisterResultPanel extends PopupPanel {
 
 	private List<TextBox> player1Score;
 	private List<TextBox> player2Score;
@@ -39,15 +41,17 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 	private RadioButton threeSet;
 	private RadioButton fiveSet;
 	private int setMode = 1;
-	private List<Player> players;
+	private League league;
 	private ListBox player1Box;
 	private ListBox player2Box;
+	private ListBox sportBox;
 	private SpelstegenServiceAsync spelstegenService;
-	private LeagueUpdater leagueUpdater;
-	
-	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, LeagueUpdater leagueUpdater) {
+	final LeagueUpdater leagueUpdater;
+
+	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, League league, LeagueUpdater leagueUpdater) {
 		super(false);
 		this.spelstegenService = spelstegenService;
+		this.league = league;
 		this.leagueUpdater = leagueUpdater;
 		
 		player1Box = new ListBox(false);
@@ -60,6 +64,22 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		playerPanel.add(vsLabel);
 		playerPanel.add(player2Box);
 		
+		
+		sportBox = new ListBox(false);
+		if (league.getSports().size() > 1) {
+			sportBox.addItem("Välj sport");
+			for (Sport sport : league.getSports()) {
+				sportBox.addItem(sport.getName());
+			}
+		} else {
+			sportBox.addItem(league.getSports().get(0).getName());
+			sportBox.setEnabled(false);
+		}
+		
+		HorizontalPanel sportPanel = MainApplication.createStandardHorizontalPanel();
+		sportPanel.add(new Label("i:"));
+		sportPanel.add(sportBox);
+
 		Label setLabel = new Label("Spel om bäst av");
 		oneSet = new RadioButton("setSelection", "1");
 		threeSet = new RadioButton("setSelection", "3");
@@ -82,7 +102,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		scorePanel = new VerticalPanel();
 		scorePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		setScoreBoxes(1);
-		
+
 		PushButton saveButton = new PushButton("Spara");
 		saveButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
@@ -98,18 +118,19 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
 		buttonPanel.add(saveButton);
 		buttonPanel.add(cancelButton);
-		
+
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
 		mainPanel.add(new Label("Registrera ny match"));
 		mainPanel.add(playerPanel);
+		mainPanel.add(sportPanel);
 		mainPanel.add(setPanel);
 		mainPanel.add(scorePanel);
 		mainPanel.add(buttonPanel);
 		this.add(mainPanel);
 	}
-	
+
 	private void setScoreBoxes(int sets) {
 		player1Score.clear();
 		player2Score.clear();
@@ -119,7 +140,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		}
 		setMode = sets;
 	}
-	
+
 	private HorizontalPanel createScoreRow() {
 		HorizontalPanel scorePanel = MainApplication.createStandardHorizontalPanel();
 		TextBox p1Score = new TextBox();
@@ -131,7 +152,7 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 		scorePanel.add(p2Score);
 		return scorePanel;
 	}
-	
+
 	private class SetClickListener implements ClickListener {
 
 		public void onClick(Widget sender) {
@@ -147,21 +168,23 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 
 	private void populatePlayerBox(ListBox playerBox) {
 		playerBox.addItem("Välj en spelare");
-		for (Player player : players) {
+		for (Player player : league.getPlayers()) {
 			playerBox.addItem(player.getPlayerName());
 		}
 	}
-	
+
 	private void submitMatch() {
-		/*Match m = new Match(0, new Date(), players.get(player1Box.getSelectedIndex()-1).getEmail(), 
-				players.get(player2Box.getSelectedIndex()-1).getEmail());
+		Match m = new Match(new Date(), league.getSports().get(sportBox.getSelectedIndex()), 
+				league.getPlayers().get(player1Box.getSelectedIndex()-1), 
+				league.getPlayers().get(player2Box.getSelectedIndex()-1));
 		for (int i = 0; i < player1Score.size(); i++) {
 			try {
-				m.addSet(Integer.parseInt(player1Score.get(i).getText()), Integer.parseInt(player2Score.get(i).getText()));
+				if (!player1Score.get(i).getText().equals("") && !player2Score.get(i).getText().equals("")) {
+					m.addSet(new Set(m.getSport(), Integer.parseInt(player1Score.get(i).getText()), 
+							Integer.parseInt(player2Score.get(i).getText())));
+				}
 			} catch (NumberFormatException e) {
 				Window.alert("Failed to parse number: " + e.getMessage());
-			} catch (MatchDoneException e) {
-				Window.alert("Failed to add set to match: " + e.getMessage());
 			}
 		}
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -171,14 +194,11 @@ public class RegisterResultPanel extends PopupPanel implements LeagueUpdateListe
 
 			public void onSuccess(Void result) {
 				MainApplication.showMessage("Sparade match.", false);
-				leagueUpdater.updateLeague();
 				RegisterResultPanel.this.hide();
+				leagueUpdater.updateLeague();
 			}
 		};
-		spelstegenService.addMatch(m, callback);*/
+		spelstegenService.addMatch(m, league.getId(), callback);
 	}
 
-	public void leagueUpdated(League league) {
-		this.players = league.getPlayers();
-	}
 }

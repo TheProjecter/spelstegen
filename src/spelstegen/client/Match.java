@@ -1,6 +1,7 @@
 package spelstegen.client;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,10 +23,15 @@ public class Match implements Serializable {
 	private List<Set> sets;
 	
 	public Match() {}
+	
+	public Match(Date date, Sport sport, Player player1, Player player2) {
+		this(date, sport, player1, player2, null);
+		sets = new ArrayList<Set>();
+	}
 
 	public Match(Date date, Sport sport, Player player1,
 			Player player2, List<Set> sets) {
-		this(0, date, sport, player1, player2, sets);
+		this(-1, date, sport, player1, player2, sets);
 	}
 
 	public Match(int id, Date date, Sport sport, Player player1,
@@ -84,6 +90,10 @@ public class Match implements Serializable {
 
 	public void setSets(List<Set> sets) {
 		this.sets = sets;
+	}
+	
+	public void addSet(Set set) {
+		sets.add(set);
 	}
 
 	public static long getSerialVersionUID() {
