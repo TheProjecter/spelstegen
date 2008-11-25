@@ -213,6 +213,13 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 
 		 public void onSuccess(List<League> result) {
 			 allPlayerLeagues = result;
+			 if (currentLeague != null) {
+				 for (League league : result) {
+					 if (league.getId() == currentLeague.getId()) {
+						 currentLeague = league;
+					 }
+				 }
+			 }
 			 notifyLeagueUpdated();
 		 }
 	 }
@@ -259,12 +266,6 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	 }
 
 	 public void updateLeague() {
-
-		 if (loggedInPlayer == null) {
-			 //TODO: Remove this code
-			 loggedInPlayer = new Player();
-			 loggedInPlayer.setId(1);
-		 }
 		 spelstegenService.getLeagues(loggedInPlayer, getLeaguesCallBack);
 	 }
 
