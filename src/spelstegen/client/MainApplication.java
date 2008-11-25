@@ -48,7 +48,6 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	private PushButton changeProfileButton;
 	private LoginClickListener loginClickListener;
 	private League currentLeague;
-	private List<League> allPlayerLeagues;
 	private Player loggedInPlayer;
 	private VerticalPanel contentPanel;
 	private LeaguePanel leaguePanel;
@@ -212,7 +211,6 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		 }
 
 		 public void onSuccess(List<League> result) {
-			 allPlayerLeagues = result;
 			 if (currentLeague != null) {
 				 for (League league : result) {
 					 if (league.getId() == currentLeague.getId()) {

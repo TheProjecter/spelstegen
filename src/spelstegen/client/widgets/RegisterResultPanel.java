@@ -16,11 +16,11 @@ import spelstegen.client.Sport;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Henrik Segesten
  *
  */
-public class RegisterResultPanel extends PopupPanel {
+public class RegisterResultPanel extends DialogBox {
 
 	private List<TextBox> player1Score;
 	private List<TextBox> player2Score;
@@ -50,6 +50,9 @@ public class RegisterResultPanel extends PopupPanel {
 
 	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, League league, LeagueUpdater leagueUpdater) {
 		super(false);
+		setText("Registrera match");
+		setAnimationEnabled(true);
+		
 		this.spelstegenService = spelstegenService;
 		this.league = league;
 		this.leagueUpdater = leagueUpdater;
@@ -122,7 +125,6 @@ public class RegisterResultPanel extends PopupPanel {
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
-		mainPanel.add(new Label("Registrera ny match"));
 		mainPanel.add(playerPanel);
 		mainPanel.add(sportPanel);
 		mainPanel.add(setPanel);
