@@ -7,11 +7,11 @@ import spelstegen.client.SpelstegenServiceAsync;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Henrik Segesten
  *
  */
-public class LoginPanel extends PopupPanel {
+public class LoginPanel extends DialogBox {
 	
 	private TextBox usernameBox;
 	private PasswordTextBox passwordBox;
@@ -32,12 +32,13 @@ public class LoginPanel extends PopupPanel {
 	
 	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication mainApplication) {
 		super(false);
+		setText("Logga in");
+		setAnimationEnabled(true);
+		
 		this.setSize(String.valueOf(WIDTH) + "px", String.valueOf(HEIGHT) + "px");
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
-		
-		mainPanel.add(new Label("Logga in"));
 		
 		HorizontalPanel usernamePanel = MainApplication.createStandardHorizontalPanel();
 		Label lblUserName = new Label("Användarnamn (epost):");

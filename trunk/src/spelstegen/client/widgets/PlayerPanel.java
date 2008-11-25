@@ -8,11 +8,11 @@ import spelstegen.client.SpelstegenServiceAsync;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Panel that shows details of a Player
  * @author Henrik Segesten
  */
-public class PlayerPanel extends PopupPanel {
+public class PlayerPanel extends DialogBox {
 
 	private TextBox nameBox;
 	private TextBox emailBox;
@@ -33,15 +33,16 @@ public class PlayerPanel extends PopupPanel {
 	
 	public PlayerPanel(final SpelstegenServiceAsync spelstegenService, final LeagueUpdater leagueUpdater, final Player player) {
 		super(false);
+		setAnimationEnabled(true);
 		
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
 		
 		if (player == null) {
-			mainPanel.add(new Label("Lägg till ny spelare"));
+			setText("Lägg till ny spelare");
 		} else {
-			mainPanel.add(new Label("Spelarprofil"));
+			setText("Spelarprofil");
 		}
 		
 		HorizontalPanel namePanel = MainApplication.createStandardHorizontalPanel();
