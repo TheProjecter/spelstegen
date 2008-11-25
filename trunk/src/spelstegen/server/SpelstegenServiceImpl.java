@@ -28,7 +28,6 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 	
 	private Log logger = LogFactory.getLog("spelstegenservice.server");
 	private StorageInterface storage = new MySQLStorageImpl();
-
 	
 	public SpelstegenServiceImpl () {
 		
@@ -73,6 +72,7 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 
 	@Override
 	public List<League> getLeagues(Player player) {
+		logger.debug("getLeagues called");
 		List<League> leagues = storage.getLeagues(player);
 		for (League league : leagues) {
 			// Call getMatches to calculate player scores for league

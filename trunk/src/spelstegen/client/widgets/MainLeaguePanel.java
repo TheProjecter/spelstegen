@@ -8,7 +8,6 @@ import spelstegen.client.LeagueUpdater;
 import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.Player;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -45,7 +44,6 @@ public class MainLeaguePanel extends VerticalPanel implements LeagueUpdateListen
 
 	public void leagueUpdated(League league) {
 		this.league = league;
-		Window.alert("updated");
 		updateTable();
 	}
 	
