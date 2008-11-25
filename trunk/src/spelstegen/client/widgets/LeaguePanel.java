@@ -31,6 +31,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	private MainLeaguePanel mainLeaguePanel;
 	private MatchesTable matchesTable;
 	private PushButton inputMatchButton;
+	private League league;
 	
 
 	public LeaguePanel(final MainApplication parent, final SpelstegenServiceAsync spelstegenService) {
@@ -54,14 +55,13 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		tabPanel.add(statisticsPanel, "Statistik");
 		tabPanel.selectTab(0);
 		tabPanel.getDeckPanel().setSize("780px", "500px");
-		mainPanel.add(tabPanel);
 		
 		// Bottom buttons
 		inputMatchButton = new PushButton("Registrera match");
 		inputMatchButton.setEnabled(false);
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, parent);
+				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, league, parent);
 				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -76,6 +76,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		HorizontalPanel leagueButtons = MainApplication.createStandardHorizontalPanel();
 		leagueButtons.add(inputMatchButton);
 		mainPanel.add(leagueButtons);
+		mainPanel.add(tabPanel);
 		
 		
 		initWidget(mainPanel);
@@ -83,6 +84,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 
 	public void leagueUpdated(League league) {
 		leagueNameLabel.setText(league.getName());
+		this.league = league;
 	}
 
 	public void loggedIn(Player player) {

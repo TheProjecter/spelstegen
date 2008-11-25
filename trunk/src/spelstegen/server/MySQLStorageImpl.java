@@ -1,15 +1,23 @@
 package spelstegen.server;
 
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.CallableStatementCallback;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -136,6 +144,8 @@ public class MySQLStorageImpl implements StorageInterface {
 	private String password = "stegpw";
 	private SimpleJdbcTemplate simpleJdbcTemplate;
 	
+	private DriverManagerDataSource dataSource;
+	
 	private Log logger = LogFactory.getLog("spelstegenservice.server");
 	
 	public MySQLStorageImpl() {
@@ -143,7 +153,7 @@ public class MySQLStorageImpl implements StorageInterface {
 	}
 	
 	private void initDB() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + dbname);
 		dataSource.setUsername(username);
@@ -178,11 +188,22 @@ public class MySQLStorageImpl implements StorageInterface {
 	}
 
 	@Override
-	public void addMatch(Match match, League league) {
-		/*String sql = "insert into " + MATCHES_TABLE + "(" + MATCH_DATE + "," + MATCH_PLAYER1_ID + "," + MATCH_PLAYER2_ID
-			+ "," + MATCH_SETS + "," + MATCH_SEASON + ") values(?,?,?,?,?)";
-		simpleJdbcTemplate.update(sql, match.getDate(), match.getPlayers()[0], match.getPlayers()[1], 
-				match.getScores(false), match.getSeason());*/
+	public void addMatch(Match match, int leagueId) {
+		SimpleJdbcInsert matchInsert = new SimpleJdbcInsert(dataSource).withTableName(MATCHES_TABLE)
+																		.usingGeneratedKeyColumns(MATCH_ID);
+		Map<String, Object> matchParams = new HashMap<String, Object>();
+		matchParams.put(MATCH_DATE, match.getDate());
+		matchParams.put(MATCH_SPORT_ID, match.getSport().getId());
+		matchParams.put(MATCH_LEAGUE_ID, leagueId);
+		matchParams.put(MATCH_PLAYER1_ID, match.getPlayer1().getId());
+		matchParams.put(MATCH_PLAYER2_ID, match.getPlayer2().getId());
+		Number matchId = matchInsert.executeAndReturnKey(matchParams);
+		
+		String sql = "insert into " + SETS_TABLE + "(" + SETS_SPORT_ID + ", " + SETS_PLAYER1_SCORE + "," 
+			+ SETS_PLAYER2_SCORE + "," + SETS_MATCH_ID + ") values(?,?,?,?)";
+		for (Set set : match.getSets()) {
+			simpleJdbcTemplate.update(sql, set.getSport().getId(), set.getPlayer1Score(), set.getPlayer2Score(),matchId);
+		}
 	}
 	
 	@Override
@@ -300,24 +321,29 @@ public class MySQLStorageImpl implements StorageInterface {
 		String sql = buffer.toString();
 		List<League> result = simpleJdbcTemplate.query(sql, new LeagueRowMapper());
 		for (League league : result) {
-			String allPlayerData = PLAYERS_TABLE + "." + PLAYER_ID + ", " 
+			String allPlayerHeaders = PLAYERS_TABLE + "." + PLAYER_ID + ", " 
 							+ PLAYERS_TABLE + "." + PLAYER_NAME + ", "
 							+ PLAYERS_TABLE + "." + PLAYER_EMAIL +  ", "
 							+ PLAYERS_TABLE + "." + PLAYER_NICKNAME + ", "
 							+ PLAYERS_TABLE + "." + PLAYER_PASSWORD + ", "
 							+ PLAYERS_TABLE + "." + PLAYER_IMAGE;
-			sql = "SELECT " + allPlayerData + " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE +
+			sql = "SELECT " + allPlayerHeaders + " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE +
 					" ON " + LEAGUES_TABLE + "."+  LEAGUES_ID + " = " 
 					+ LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_LEAGUE_ID + ") " +
 					"INNER JOIN " + PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
 					+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID + 
 					" WHERE (" + LEAGUES_TABLE + "."+  LEAGUES_ID + "="+league.getId()+") " +
-					"GROUP BY " + allPlayerData;
-			List<Player> players = simpleJdbcTemplate.query(sql, new PlayerRowMapper());
-			league.setPlayers(players);
+					"GROUP BY " + allPlayerHeaders;
+			league.setPlayers(simpleJdbcTemplate.query(sql, new PlayerRowMapper()));
 			
-			// TODO Add league sports and seasons
+			String allSportHeaders = SPORTS_TABLE + "." + SPORTS_ID + ", "
+							+ SPORTS_TABLE + "." + SPORTS_NAME + ", "
+							+ SPORTS_TABLE + "." + SPORTS_ICON_URL;
+			sql = "select " + allSportHeaders + " from " + SPORTS_TABLE + " where " + SPORTS_ID 
+				+ "=(select " + LEAGUE_SPORTS_SPORT_ID + " from " + LEAGUE_SPORTS_TABLE
+				+ " where " + LEAGUE_SPORTS_LEAGUE_ID + "=?)";
 			
+			league.setSports(simpleJdbcTemplate.query(sql, new SportRowMapper(), league.getId()));
 		}
 		return result;
 	}

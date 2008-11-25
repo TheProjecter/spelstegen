@@ -52,9 +52,9 @@ public interface StorageInterface {
 	/**
 	 * Add a new match
 	 * @param match
-	 * @param league the league to which the match belongs
+	 * @param leagueId the league to which the match belongs
 	 */
-	public void addMatch(Match match, League league);
+	public void addMatch(Match match, int leagueId);
 	
 	/**
 	 * Gets all matches in a league.

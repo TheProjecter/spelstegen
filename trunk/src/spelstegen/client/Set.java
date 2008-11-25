@@ -18,6 +18,10 @@ public class Set implements Serializable {
 	
 	public Set() {}
 
+	public Set(Sport sport, int player1Score, int player2Score) {
+		this(-1, sport, player1Score, player2Score);
+	}
+	
 	public Set(int id, Sport sport, int player1Score, int player2Score) {
 		super();
 		this.id = id;
