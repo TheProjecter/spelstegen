@@ -70,11 +70,14 @@
       <fileset dir="www/spelstegen.MainApplication" />
       <lib dir="lib">
         <include name="gwt-servlet.jar" />
-	<include name="jdbc-mysql.jar"/>
-	<include name="spring-beans.jar"/>
-	<include name="spring-core.jar"/>
-	<include name="spring-jdbc.jar"/>
-	<include name="spring-tx.jar"/>
+		<include name="mysql-connector-java-5.1.7-bin.jar"/>
+		<include name="spring-beans.jar"/>
+		<include name="spring-core.jar"/>
+		<include name="spring-jdbc.jar"/>
+		<include name="spring-tx.jar"/>
+    	<include name="commons-logging.jar"/>
+      	<include name="jcommon-1.0.14.jar" />
+      	<include name="jfreechart-1.0.11.jar" />
       </lib>
       <classes dir="bin">
         <include name="**/**" />

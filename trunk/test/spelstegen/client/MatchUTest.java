@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import spelstegen.client.entities.Player;
+
 import junit.framework.TestCase;
 
 public class MatchUTest extends TestCase {
