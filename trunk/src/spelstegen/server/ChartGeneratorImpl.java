@@ -10,12 +10,12 @@ import org.jfree.chart.servlet.ServletUtilities;
 
 import spelstegen.client.ChartGenerator;
 import spelstegen.client.LadderCalculator;
-import spelstegen.client.League;
-import spelstegen.client.Match;
-import spelstegen.client.MatchDrawException;
-import spelstegen.client.Player;
-import spelstegen.client.Score;
-import spelstegen.client.Season;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.MatchDrawException;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Score;
+import spelstegen.client.entities.Season;
 import spelstegen.server.chart.Chart;
 import spelstegen.server.chart.ScoreHistoryChart;
 

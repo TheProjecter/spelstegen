@@ -6,13 +6,13 @@ package spelstegen.client.widgets;
 import java.util.List;
 
 import spelstegen.client.LadderCalculator;
-import spelstegen.client.League;
 import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.LeagueUpdater;
-import spelstegen.client.Match;
-import spelstegen.client.MatchDrawException;
-import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.MatchDrawException;
+import spelstegen.client.entities.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;

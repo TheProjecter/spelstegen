@@ -1,11 +1,11 @@
 package spelstegen.client.widgets;
 
-import spelstegen.client.League;
 import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.LoginListener;
 import spelstegen.client.MainApplication;
-import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;

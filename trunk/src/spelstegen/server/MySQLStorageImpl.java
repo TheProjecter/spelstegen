@@ -21,12 +21,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import spelstegen.client.League;
-import spelstegen.client.Match;
-import spelstegen.client.Player;
-import spelstegen.client.ScoreHistory;
-import spelstegen.client.Set;
-import spelstegen.client.Sport;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.ScoreHistory;
+import spelstegen.client.entities.Set;
+import spelstegen.client.entities.Sport;
 
 public class MySQLStorageImpl implements StorageInterface {
 

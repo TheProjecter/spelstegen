@@ -5,8 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
-import spelstegen.client.League;
-import spelstegen.client.Player;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Player;
 
 /**
  * This is the main class of the console administration tool.
