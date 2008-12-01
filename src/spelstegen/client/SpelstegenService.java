@@ -2,6 +2,10 @@ package spelstegen.client;
 
 import java.util.List;
 
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.Player;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 /**

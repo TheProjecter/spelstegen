@@ -1,8 +1,8 @@
 package spelstegen.client.widgets.chart;
 
-import spelstegen.client.League;
 import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.LeagueUpdater;
+import spelstegen.client.entities.League;
 
 /**
  * Score history chart

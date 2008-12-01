@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import spelstegen.client.League;
 import spelstegen.client.LeagueUpdater;
 import spelstegen.client.MainApplication;
-import spelstegen.client.Match;
-import spelstegen.client.Player;
-import spelstegen.client.Set;
 import spelstegen.client.SpelstegenServiceAsync;
-import spelstegen.client.Sport;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Set;
+import spelstegen.client.entities.Sport;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;

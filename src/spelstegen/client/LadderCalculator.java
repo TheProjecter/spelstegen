@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.MatchDrawException;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Score;
+import spelstegen.client.entities.Set;
+
 /**
  * This class handles the calculation of points.
  * 

@@ -2,8 +2,8 @@ package spelstegen.client.widgets;
 
 import spelstegen.client.LeagueUpdater;
 import spelstegen.client.MainApplication;
-import spelstegen.client.Player;
 import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.entities.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;

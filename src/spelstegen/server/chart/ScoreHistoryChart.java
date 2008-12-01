@@ -17,8 +17,8 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import spelstegen.client.Player;
-import spelstegen.client.Score;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Score;
 
 /**
  * Chart that displays history of points for players

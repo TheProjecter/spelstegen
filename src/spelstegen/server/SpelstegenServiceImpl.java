@@ -6,11 +6,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import spelstegen.client.LadderCalculator;
-import spelstegen.client.League;
-import spelstegen.client.Match;
-import spelstegen.client.MatchDrawException;
-import spelstegen.client.Player;
 import spelstegen.client.SpelstegenService;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.MatchDrawException;
+import spelstegen.client.entities.Player;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

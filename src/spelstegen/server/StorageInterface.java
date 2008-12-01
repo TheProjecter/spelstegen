@@ -2,11 +2,11 @@ package spelstegen.server;
 
 import java.util.List;
 
-import spelstegen.client.League;
-import spelstegen.client.Match;
-import spelstegen.client.Player;
-import spelstegen.client.ScoreHistory;
-import spelstegen.client.Sport;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Match;
+import spelstegen.client.entities.Player;
+import spelstegen.client.entities.ScoreHistory;
+import spelstegen.client.entities.Sport;
 
 /**
  * This is the main interface to data storage.

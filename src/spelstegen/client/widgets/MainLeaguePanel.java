@@ -3,10 +3,10 @@
  */
 package spelstegen.client.widgets;
 
-import spelstegen.client.League;
 import spelstegen.client.LeagueUpdater;
 import spelstegen.client.LeagueUpdateListener;
-import spelstegen.client.Player;
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Player;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;

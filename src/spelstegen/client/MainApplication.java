@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import spelstegen.client.entities.League;
+import spelstegen.client.entities.Player;
 import spelstegen.client.widgets.LeaguePanel;
 import spelstegen.client.widgets.LoginPanel;
 import spelstegen.client.widgets.OverviewPanel;

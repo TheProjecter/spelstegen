@@ -3,6 +3,8 @@
  */
 package spelstegen.client;
 
+import spelstegen.client.entities.League;
+
 /**
  * Interface that should be implemented by classes who wants
  * to be notified when current league is updated.

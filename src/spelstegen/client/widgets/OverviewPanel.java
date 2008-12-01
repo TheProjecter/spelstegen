@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import spelstegen.client.League;
 import spelstegen.client.LeagueChanger;
 import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
+import spelstegen.client.entities.League;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
