@@ -43,6 +43,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 
 	private static SpelstegenServiceAsync spelstegenService;
 	private GetLeaguesCallBack getLeaguesCallBack = new GetLeaguesCallBack();
+	private GetLeagueCallback getLeagueCallback = new GetLeagueCallback();
 
 	private static PopupPanel popup;
 	private PushButton addPlayerButton;
@@ -273,11 +274,23 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		 loginListeners.add(listener);
 	 }
 
-	 public void changeToLeague(League league) {
-		 currentLeague = league;
-		 notifyLeagueUpdated();
-		 showLeagueView();
+	 public void changeToLeague(int leagueId) {
+		 spelstegenService.getLeague(leagueId, getLeagueCallback);
 	 }
 
+	 private class GetLeagueCallback implements AsyncCallback<League> {
+
+		public void onFailure(Throwable arg0) {
+			Window.alert("Failed to get league: " + arg0.getMessage());
+		}
+
+		public void onSuccess(League league) {
+			currentLeague = league;
+			notifyLeagueUpdated();
+			showLeagueView();
+			
+		}
+		 
+	 }
 
 }

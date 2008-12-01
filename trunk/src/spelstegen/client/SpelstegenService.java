@@ -3,6 +3,7 @@ package spelstegen.client;
 import java.util.List;
 
 import spelstegen.client.entities.League;
+import spelstegen.client.entities.LeagueSummary;
 import spelstegen.client.entities.Match;
 import spelstegen.client.entities.Player;
 
@@ -61,5 +62,17 @@ public interface SpelstegenService extends RemoteService {
 	 * @param player the player
 	 */
 	public List<League> getLeagues(Player player);
+	
+	/**
+	 * Gets a summary of all leagues.
+	 */
+	public List<LeagueSummary> getLeagueSummaries();
+	
+	/**
+	 * Get a single league based on it's id.
+	 * @param id
+	 * @return
+	 */
+	public League getLeague(int id);
 	
 }

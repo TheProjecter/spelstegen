@@ -8,6 +8,7 @@ import spelstegen.client.LeagueChanger;
 import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
 import spelstegen.client.entities.League;
+import spelstegen.client.entities.LeagueSummary;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
@@ -29,7 +30,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class OverviewPanel extends Composite implements HistoryListener {
 	
 	private VerticalPanel leaguesPanel;
-	private Map<Integer, League> allLeagues;
 	private LeagueChanger leagueChanger;
 	
 	public OverviewPanel(SpelstegenServiceAsync spelstegenServiceAsync, LeagueChanger leagueChanger) {
@@ -39,31 +39,29 @@ public class OverviewPanel extends Composite implements HistoryListener {
 		leaguesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		ScrollPanel scrollPanel = new ScrollPanel(leaguesPanel);
 		scrollPanel.setSize("780px", "500px");
-		allLeagues = new HashMap<Integer, League>();
 		//mainPanel.add(leaguesPanel);
 		History.addHistoryListener(this);
 		initWidget(scrollPanel);
-		AsyncCallback<List<League>> callback = new AsyncCallback<List<League>>() {
+		AsyncCallback<List<LeagueSummary>> callback = new AsyncCallback<List<LeagueSummary>>() {
 
 			public void onFailure(Throwable arg0) {
 				Window.alert("Misslyckades att hämta ligor. " + arg0.getMessage());
 			}
 
-			public void onSuccess(List<League> result) {
-				for (League league : result) {
+			public void onSuccess(List<LeagueSummary> result) {
+				for (LeagueSummary league : result) {
 					addLeagueRow(league);
-					allLeagues.put(league.getId(), league);
 				}
 			}
 			
 		};
-		spelstegenServiceAsync.getLeagues(null, callback);
+		spelstegenServiceAsync.getLeagueSummaries(callback);
 	}
 	
-	private void addLeagueRow(League league) {
-		Hyperlink leagueLink = new Hyperlink(league.getName(), league.getId()+"");
+	private void addLeagueRow(LeagueSummary leagueSummary) {
+		Hyperlink leagueLink = new Hyperlink(leagueSummary.getName(), leagueSummary.getId()+"");
 		leagueLink.setStylePrimaryName("toplabel");
-		Label nrMembers = new Label(league.getPlayers().size() + " spelare");
+		Label nrMembers = new Label(leagueSummary.getNumberOfPlayers() + " spelare");
 		HorizontalPanel firstRow = MainApplication.createStandardHorizontalPanel();
 		firstRow.add(leagueLink);
 		firstRow.add(nrMembers);
@@ -72,7 +70,7 @@ public class OverviewPanel extends Composite implements HistoryListener {
 
 	public void onHistoryChanged(String arg) {
 		int leagueId = Integer.parseInt(arg.trim());
-		leagueChanger.changeToLeague(allLeagues.get(leagueId));
+		leagueChanger.changeToLeague(leagueId);
 	}
 	
 }

@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import spelstegen.client.LadderCalculator;
 import spelstegen.client.SpelstegenService;
 import spelstegen.client.entities.League;
+import spelstegen.client.entities.LeagueSummary;
 import spelstegen.client.entities.Match;
 import spelstegen.client.entities.MatchDrawException;
 import spelstegen.client.entities.Player;
@@ -80,6 +81,18 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 		}
 		
 		return leagues;
+	}
+
+	@Override
+	public League getLeague(int id) {
+		League league = storage.getLeague(id);
+		getMatches(league);
+		return league;
+	}
+
+	@Override
+	public List<LeagueSummary> getLeagueSummaries() {
+		return storage.getLeagueSummaries();
 	}
 
 }

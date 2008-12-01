@@ -3,6 +3,7 @@ package spelstegen.server;
 import java.util.List;
 
 import spelstegen.client.entities.League;
+import spelstegen.client.entities.LeagueSummary;
 import spelstegen.client.entities.Match;
 import spelstegen.client.entities.Player;
 import spelstegen.client.entities.ScoreHistory;
@@ -84,4 +85,17 @@ public interface StorageInterface {
 	 * @param leagueid to this league
 	 */
 	public void addPlayerToLeague(int leagueid, int playerid);
+	
+	/**
+	 * Get a summary of all leagues
+	 * @return
+	 */
+	public List<LeagueSummary> getLeagueSummaries();
+	
+	/**
+	 * Get a single league based on it's id.
+	 * @param id
+	 * @return
+	 */
+	public League getLeague(int id);
 }

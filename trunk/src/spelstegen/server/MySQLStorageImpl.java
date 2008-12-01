@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import spelstegen.client.entities.League;
+import spelstegen.client.entities.LeagueSummary;
 import spelstegen.client.entities.Match;
 import spelstegen.client.entities.Player;
 import spelstegen.client.entities.ScoreHistory;
@@ -321,31 +322,37 @@ public class MySQLStorageImpl implements StorageInterface {
 		String sql = buffer.toString();
 		List<League> result = simpleJdbcTemplate.query(sql, new LeagueRowMapper());
 		for (League league : result) {
-			String allPlayerHeaders = PLAYERS_TABLE + "." + PLAYER_ID + ", " 
-							+ PLAYERS_TABLE + "." + PLAYER_NAME + ", "
-							+ PLAYERS_TABLE + "." + PLAYER_EMAIL +  ", "
-							+ PLAYERS_TABLE + "." + PLAYER_NICKNAME + ", "
-							+ PLAYERS_TABLE + "." + PLAYER_PASSWORD + ", "
-							+ PLAYERS_TABLE + "." + PLAYER_IMAGE;
-			sql = "SELECT " + allPlayerHeaders + " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE +
-					" ON " + LEAGUES_TABLE + "."+  LEAGUES_ID + " = " 
-					+ LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_LEAGUE_ID + ") " +
-					"INNER JOIN " + PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
-					+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID + 
-					" WHERE (" + LEAGUES_TABLE + "."+  LEAGUES_ID + "="+league.getId()+") " +
-					"GROUP BY " + allPlayerHeaders;
-			league.setPlayers(simpleJdbcTemplate.query(sql, new PlayerRowMapper()));
-			
-			String allSportHeaders = SPORTS_TABLE + "." + SPORTS_ID + ", "
-							+ SPORTS_TABLE + "." + SPORTS_NAME + ", "
-							+ SPORTS_TABLE + "." + SPORTS_ICON_URL;
-			sql = "select " + allSportHeaders + " from " + SPORTS_TABLE + " where " + SPORTS_ID 
-				+ "=(select " + LEAGUE_SPORTS_SPORT_ID + " from " + LEAGUE_SPORTS_TABLE
-				+ " where " + LEAGUE_SPORTS_LEAGUE_ID + "=?)";
-			
-			league.setSports(simpleJdbcTemplate.query(sql, new SportRowMapper(), league.getId()));
+			fillInPlayers(league);
+			fillInSports(league);
 		}
 		return result;
+	}
+	
+	private void fillInPlayers(League league) {
+		String allPlayerHeaders = PLAYERS_TABLE + "." + PLAYER_ID + ", " 
+			+ PLAYERS_TABLE + "." + PLAYER_NAME + ", "
+			+ PLAYERS_TABLE + "." + PLAYER_EMAIL +  ", "
+			+ PLAYERS_TABLE + "." + PLAYER_NICKNAME + ", "
+			+ PLAYERS_TABLE + "." + PLAYER_PASSWORD + ", "
+			+ PLAYERS_TABLE + "." + PLAYER_IMAGE;
+		String sql = "SELECT " + allPlayerHeaders + " FROM (" + LEAGUES_TABLE + " INNER JOIN " + LEAGUE_PLAYERS_TABLE +
+			" ON " + LEAGUES_TABLE + "."+  LEAGUES_ID + " = " 
+			+ LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_LEAGUE_ID + ") " +
+			"INNER JOIN " + PLAYERS_TABLE + " ON " + LEAGUE_PLAYERS_TABLE + "."+  LEAGUE_PLAYERS_PLAYER_ID 
+			+ " = " + PLAYERS_TABLE + "."+ PLAYER_ID + 
+			" WHERE (" + LEAGUES_TABLE + "."+  LEAGUES_ID + "="+league.getId()+") " +
+			"GROUP BY " + allPlayerHeaders;
+		league.setPlayers(simpleJdbcTemplate.query(sql, new PlayerRowMapper()));
+	}
+	
+	private void fillInSports(League league) {
+		String allSportHeaders = SPORTS_TABLE + "." + SPORTS_ID + ", "
+			+ SPORTS_TABLE + "." + SPORTS_NAME + ", "
+			+ SPORTS_TABLE + "." + SPORTS_ICON_URL;
+		String sql = "select " + allSportHeaders + " from " + SPORTS_TABLE + " where " + SPORTS_ID 
+		+ "=(select " + LEAGUE_SPORTS_SPORT_ID + " from " + LEAGUE_SPORTS_TABLE
+		+ " where " + LEAGUE_SPORTS_LEAGUE_ID + "=?)";
+		league.setSports(simpleJdbcTemplate.query(sql, new SportRowMapper(), league.getId()));
 	}
 
 	
@@ -374,6 +381,28 @@ public class MySQLStorageImpl implements StorageInterface {
 	public void addPlayerToLeague(int leagueid, int playerid) {
 		String sql = "INSERT INTO " + LEAGUE_PLAYERS_TABLE + " VALUES(?,?)";
 		simpleJdbcTemplate.update(sql, leagueid, playerid);
+	}
+
+	@Override
+	public League getLeague(int id) {
+		String sql = "select * from " + LEAGUES_TABLE + " where " + LEAGUES_ID + "= ?";
+		League league = simpleJdbcTemplate.query(sql, new LeagueRowMapper(), id).get(0);
+		fillInPlayers(league);
+		fillInSports(league);
+		return league;
+	}
+
+	@Override
+	public List<LeagueSummary> getLeagueSummaries() {
+		String sql = "select " + LEAGUES_ID + "," + LEAGUES_NAME + " from " + LEAGUES_TABLE;
+		List<League> leagues = simpleJdbcTemplate.query(sql, new LeagueRowMapper(), new Object[] {});
+		sql = "select count(*) from " + LEAGUE_PLAYERS_TABLE + " where " + LEAGUE_PLAYERS_LEAGUE_ID + " =?";
+		List<LeagueSummary> summaries = new ArrayList<LeagueSummary>(leagues.size());
+		for (League league : leagues) {
+			summaries.add(new LeagueSummary(league.getId(), league.getName(), 
+					simpleJdbcTemplate.queryForInt(sql, league.getId())));
+		}
+		return summaries;
 	}
 
 
