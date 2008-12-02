@@ -98,4 +98,11 @@ public interface StorageInterface {
 	 * @return
 	 */
 	public League getLeague(int id);
+	
+	/**
+	 * Create a new league
+	 * @param league
+	 */
+	public void addLeague(League league);
+	
 }
