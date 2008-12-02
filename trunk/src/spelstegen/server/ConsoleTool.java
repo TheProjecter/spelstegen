@@ -3,10 +3,13 @@ package spelstegen.server;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import spelstegen.client.entities.League;
 import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Sport;
 
 /**
  * This is the main class of the console administration tool.
@@ -27,7 +30,8 @@ public class ConsoleTool {
 			System.out.println("");
 			System.out.println("");
 			System.out.println("1 - Lägg till spelare");
-			System.out.println("2 - Lägg till spelare till liga");
+			System.out.println("2 - Lägg till liga");
+			System.out.println("3 - Lägg till spelare till liga");
 		}
 		if (args.length == 1) {
 			switch (Integer.parseInt(args[0].trim())) {
@@ -35,6 +39,9 @@ public class ConsoleTool {
 				ct.addPlayer();
 				break;
 			case 2:
+				ct.addLeague();
+				break;
+			case 3:
 				ct.addPlayerToLeague();
 				break;
 			default:
@@ -43,6 +50,30 @@ public class ConsoleTool {
 		}
 	}
 	
+	private void addLeague() {
+		String name;
+		List<Sport> sports = storage.getSports();
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Skriv in namnet på ligan");
+		name = sc.nextLine();
+		List<Sport> selectedSports = new ArrayList<Sport>();
+		while (true) {
+			System.out.println("Möjliga sporter:");
+			for (Sport sport : sports) {
+				System.out.println("Id: " + sport.getId() + " Namn: " + sport.getName());
+			}
+			System.out.println("Välj sport genom att ange sportens id eller -1 om du inte vill lägga till fler sporter.");
+			int sport = sc.nextInt();
+			if (sport == -1) {
+				break;
+			}
+			selectedSports.add(sports.get(sport));
+		}
+		League league = new League(name);
+		league.setSports(selectedSports);
+		storage.addLeague(league);
+	}
+
 	private void addPlayer() {
 		String name;
 		String email;

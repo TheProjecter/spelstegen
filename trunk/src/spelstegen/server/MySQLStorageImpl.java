@@ -405,6 +405,22 @@ public class MySQLStorageImpl implements StorageInterface {
 		return summaries;
 	}
 
+	@Override
+	public void addLeague(League league) {
+		SimpleJdbcInsert leagueInsert = new SimpleJdbcInsert(dataSource).withTableName(LEAGUES_TABLE)
+																		.usingGeneratedKeyColumns(LEAGUES_ID);
+		Map<String, Object> leagueParams = new HashMap<String, Object>();
+		leagueParams.put(LEAGUES_NAME, league.getName());
+		Number leagueId = leagueInsert.executeAndReturnKey(leagueParams);
+
+		if (league.getSports() != null && league.getSports().size() != 0) {
+			String sql = "insert into " + LEAGUE_SPORTS_TABLE + " values(?,?)";
+			for (Sport sport : league.getSports()) {
+				simpleJdbcTemplate.update(sql, leagueId, sport.getId());	
+			}
+		}
+	}
+
 
 
 }
