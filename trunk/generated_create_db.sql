@@ -229,7 +229,50 @@ CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueSports` (
 ENGINE = InnoDB
 COMMENT = 'The sports that are part of a league.';
 
+-- -----------------------------------------------------
+-- Table `spelstegen`.`leagueMatchAdmins`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`leagueMatchAdmins` ;
 
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueMatchAdmins` (
+  `league_id` INT NOT NULL ,
+  `player_id` INT NOT NULL ,
+  INDEX `fk_leagueMatchAdmins_leagues` (`league_id` ASC) ,
+  INDEX `fk_leagueMatchAdmins_players` (`player_id` ASC) ,
+  CONSTRAINT `fk_leagueMatchAdmins_leagues`
+    FOREIGN KEY (`league_id` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_leagueMatchAdmins_players`
+    FOREIGN KEY (`player_id` )
+    REFERENCES `spelstegen`.`players` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `spelstegen`.`leagueAdmins`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `spelstegen`.`leagueAdmins` ;
+
+CREATE  TABLE IF NOT EXISTS `spelstegen`.`leagueAdmins` (
+  `league_id` INT NOT NULL ,
+  `player_id` INT NOT NULL ,
+  INDEX `fk_leagueAdmins_leagues` (`league_id` ASC) ,
+  INDEX `fk_leagueAdmins_players` (`player_id` ASC) ,
+  CONSTRAINT `fk_leagueAdmins_leagues`
+    FOREIGN KEY (`league_id` )
+    REFERENCES `spelstegen`.`leagues` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_leagueAdmins_players`
+    FOREIGN KEY (`player_id` )
+    REFERENCES `spelstegen`.`players` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
