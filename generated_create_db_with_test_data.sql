@@ -365,7 +365,7 @@ COMMIT;
 -- Data for table `spelstegen`.`leagues`
 -- -----------------------------------------------------
 SET AUTOCOMMIT=0;
-INSERT INTO `leagues` (`id`, `name`) VALUES (0, 'Epsilon IT Väst Squashstege');
+INSERT INTO `leagues` (`id`, `name`) VALUES (0, 'Epsilon IT VÃ¤st Squashstege');
 INSERT INTO `leagues` (`id`, `name`) VALUES (0, 'Telia GBG Racketlon');
 
 COMMIT;
