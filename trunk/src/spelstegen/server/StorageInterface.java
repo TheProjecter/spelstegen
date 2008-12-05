@@ -32,9 +32,10 @@ public interface StorageInterface {
 	
 	/**
 	 * Get the list of all players.
+	 * @param leagueId the league whose players to get, or -1 if for all leagues.
 	 * @return
 	 */
-	public List<Player> getPlayers();
+	public List<Player> getPlayers(int leagueId);
 	
 	/**
 	 * Gets a single player based on id.
@@ -104,5 +105,51 @@ public interface StorageInterface {
 	 * @param league
 	 */
 	public void addLeague(League league);
+
+	/**
+	 * Check if the player is part of a league
+	 * @param playerId
+	 * @param leagueId
+	 * @return
+	 */
+	public boolean isPlayerInLeague(int playerId, int leagueId);
 	
+	/**
+	 * Check if the player is a leagueMatchAdmin for the league
+	 * @param leagueId
+	 * @param playerId
+	 * @return true if the player is leagueMatchAdmin, false otherwise
+	 */
+	public boolean isPlayerLeagueMatchAdmin(int playerId, int leagueId);
+	
+	/**
+	 * Check if the player is a leagueAdmin for the league
+	 * @param playerId
+	 * @param leagueId
+	 * @return true if the player is leagueAdmin, false otherwise
+	 */
+	public boolean isPlayerLeagueAdmin(int playerId, int leagueId);
+	
+	/**
+	 * Adds admin roles to a player for a certain league.
+	 * @param leagueId the league to add admin roles for
+	 * @param playerId the player to add admin roles for
+	 * @param leagueAdmin true if the player should be leagueAdmin
+	 * @param matchAdmin true if the player should be matchAdmin
+	 */
+	public void addLeagueAdminRoles(int playerId, int leagueId, boolean leagueAdmin, boolean matchAdmin);
+	
+	/**
+	 * Get all league admins for a league.
+	 * @param leagueId
+	 * @return
+	 */
+	public List<Integer> getAllLeagueAdmins(int leagueId);
+	
+	/**
+	 * Get all match admins for a league.
+	 * @param leagueId
+	 * @return
+	 */
+	public List<Integer> getAllMatchAdmins(int leagueId);
 }

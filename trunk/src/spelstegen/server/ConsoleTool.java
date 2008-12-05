@@ -125,7 +125,12 @@ public class ConsoleTool {
 		System.out.println("");
 		System.out.println("Välj vilken liga du vill lägga till spelaren till genom att mata in ligans id");
 		leagueId = sc.nextInt();
+		System.out.println("Ska spelaren vara administratör för den här ligan? (J/N)");
+		String admin = sc.nextLine();
 		storage.addPlayerToLeague(leagueId, playerId);
+		if (admin.toLowerCase().equals("j")) {
+			storage.addLeagueAdminRoles(playerId, leagueId, true, true);
+		}
 	}
 	
 	static String getMd5Digest(String input) {

@@ -9,6 +9,16 @@ import java.io.Serializable;
  */
 public class Player implements Serializable, Comparable<Player> {
 	
+	/**
+	 * Describes a players status in a league.
+	 * NON_MEMBER = player is not a member of this league.
+	 * MEMBER = ordinary player with no extra rights.
+	 * MATCH_ADMIN = the player is allowed to administer matches.
+	 * LEAGUE_ADMIN = the player is allowed to add and remove players from the league.
+	 * SUPER_USER = the player is both a league admin and match admin. 
+	 */
+	public enum PlayerStatus {NON_MEMBER, MEMBER, MATCH_ADMIN, LEAGUE_ADMIN, SUPER_USER}
+	
 	private static final long serialVersionUID = 1L;
 	
 	private int id;

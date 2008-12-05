@@ -1,5 +1,6 @@
 package spelstegen.client.widgets;
 
+import spelstegen.client.LoginListener;
 import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
 import spelstegen.client.entities.Player;
@@ -30,7 +31,7 @@ public class LoginPanel extends DialogBox {
 	public static final int WIDTH = 400;
 	public static final int HEIGHT = 300;
 	
-	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final MainApplication mainApplication) {
+	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final LoginListener loginHandler) {
 		super(false);
 		setText("Logga in");
 		setAnimationEnabled(true);
@@ -72,7 +73,7 @@ public class LoginPanel extends DialogBox {
 
 			public void onSuccess(Player result) {
 				if (result != null) {
-					mainApplication.loggedIn(result);
+					loginHandler.loggedIn(result);
 				} else {
 					Window.alert("Fel lösenord eller epostadress, försök igen.");
 				}

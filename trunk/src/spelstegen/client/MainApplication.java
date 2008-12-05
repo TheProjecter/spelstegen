@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Henrik Segesten
  */
-public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger {
+public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger, LoginListener {
 
 	public final static int MAINPANEL_WIDTH = 800;
 	public final static int MAINPANEL_HEIGHT = 600;

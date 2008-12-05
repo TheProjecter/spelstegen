@@ -1,11 +1,13 @@
 package spelstegen.client;
 
 import java.util.List;
+import java.util.Map;
 
 import spelstegen.client.entities.League;
 import spelstegen.client.entities.LeagueSummary;
 import spelstegen.client.entities.Match;
 import spelstegen.client.entities.Player;
+import spelstegen.client.entities.Player.PlayerStatus;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -47,8 +49,17 @@ public interface SpelstegenService extends RemoteService {
 	 * Add a new match
 	 * @param match
 	 * @param leagueId the league to which the match belongs
+	 * @param playerId the player which adds the match
 	 */
-	public void addMatch(Match match, int leagueId);
+	public boolean addMatch(Match match, int leagueId, int playerId);
+	
+	/**
+	 * Add a player to a league
+	 * @param leagueId the league to add the player to
+	 * @param playerIdToAdd the id of the player to add
+	 * @param playerIdAdder the id of the player which adds
+	 */
+	public void addPlayerToLeague(int leagueId, int playerIdToAdd, int playerIdAdder);
 	
 	/**
 	 * Get a list of all matches for a specific league.
@@ -74,5 +85,41 @@ public interface SpelstegenService extends RemoteService {
 	 * @return
 	 */
 	public League getLeague(int id);
+	
+	
+	/**
+	 * Gets a players status in a league.
+	 * @param leagueId
+	 * @param playerId
+	 * @return
+	 */
+	public PlayerStatus getPlayerStatus(int leagueId, int playerId);
+	
+	/**
+	 * Get the player status of all players in a league.
+	 * @param leagueId
+	 * @return
+	 */
+	public Map<Integer, PlayerStatus> getLeaguePlayersStatus(int leagueId);
+	
+	/**
+	 * Adds this player as a league administrator
+	 * @param leagueId the league the player should be admin of.
+	 * @param playerToAddId the player to add.
+	 * @param playerAddingId the player doing the add.
+	 * @return true if success, false otherwise
+	 */
+	public boolean addLeageAdmin(int leagueId, int playerToAddId, int playerAddingId);
+	
+	/**
+	 * Adds this player as a league match administrator
+	 * @param leagueId the league the player should be match admin of.
+	 * @param playerToAddId the player to add.
+	 * @param playerAddingId the player doing the add.
+	 * @return true if success, false otherwise
+	 */
+	public boolean addLeagueMatchAdmin(int leagueId, int playerToAddId, int playerAddingId);
+	
+
 	
 }

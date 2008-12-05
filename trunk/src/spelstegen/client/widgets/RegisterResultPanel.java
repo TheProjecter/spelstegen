@@ -47,8 +47,10 @@ public class RegisterResultPanel extends DialogBox {
 	private ListBox sportBox;
 	private SpelstegenServiceAsync spelstegenService;
 	final LeagueUpdater leagueUpdater;
+	private Player loggedInPlayer;
 
-	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, League league, LeagueUpdater leagueUpdater) {
+	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, League league, LeagueUpdater leagueUpdater, 
+			Player loggedInPlayer) {
 		super(false);
 		setText("Registrera match");
 		setAnimationEnabled(true);
@@ -56,6 +58,7 @@ public class RegisterResultPanel extends DialogBox {
 		this.spelstegenService = spelstegenService;
 		this.league = league;
 		this.leagueUpdater = leagueUpdater;
+		this.loggedInPlayer = loggedInPlayer;
 		
 		player1Box = new ListBox(false);
 		populatePlayerBox(player1Box);
@@ -189,18 +192,23 @@ public class RegisterResultPanel extends DialogBox {
 				Window.alert("Failed to parse number: " + e.getMessage());
 			}
 		}
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Failed to save match. " + caught.getMessage());
 			}
 
-			public void onSuccess(Void result) {
-				MainApplication.showMessage("Sparade match.", false);
-				RegisterResultPanel.this.hide();
-				leagueUpdater.updateLeague();
+			public void onSuccess(Boolean result) {
+				if (result) {
+					MainApplication.showMessage("Sparade match.", false);
+					RegisterResultPanel.this.hide();
+					leagueUpdater.updateLeague();
+				} else {
+					Window.alert("Kunde inte spara matchen då du inte är matchadministrator för den här ligan.");
+					RegisterResultPanel.this.hide();
+				}
 			}
 		};
-		spelstegenService.addMatch(m, league.getId(), callback);
+		spelstegenService.addMatch(m, league.getId(), loggedInPlayer.getId(), callback);
 	}
 
 }

@@ -28,10 +28,12 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	private Label leagueNameLabel;
 	private TabPanel tabPanel = new TabPanel();
 	private StatisticsPanel statisticsPanel;
-	private MainLeaguePanel mainLeaguePanel;
+	private LeagueTablePanel mainLeaguePanel;
 	private MatchesTable matchesTable;
+	private LeagueAdminPanel leagueAdminPanel;
 	private PushButton inputMatchButton;
 	private League league;
+	private Player loggedInPlayer;
 	
 
 	public LeaguePanel(final MainApplication parent, final SpelstegenServiceAsync spelstegenService) {
@@ -48,11 +50,14 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		
 		// Tab panel
 		statisticsPanel = new StatisticsPanel(parent);
-		mainLeaguePanel = new MainLeaguePanel(parent);
+		mainLeaguePanel = new LeagueTablePanel(parent);
 		matchesTable = new MatchesTable(spelstegenService, parent);
+		leagueAdminPanel = new LeagueAdminPanel(spelstegenService, parent);
+		parent.addLoginListener(leagueAdminPanel);
 		tabPanel.add(mainLeaguePanel, "Tabell");
 		tabPanel.add(matchesTable, "Matcher");
 		tabPanel.add(statisticsPanel, "Statistik");
+		tabPanel.add(leagueAdminPanel, "Administration");
 		tabPanel.selectTab(0);
 		tabPanel.getDeckPanel().setSize("780px", "500px");
 		
@@ -61,7 +66,8 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		inputMatchButton.setEnabled(false);
 		inputMatchButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, league, parent);
+				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, league, 
+						parent, loggedInPlayer);
 				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					public void setPosition(int offsetWidth, int offsetHeight) {
 			            int left = (Window.getClientWidth() - offsetWidth) / 3;
@@ -88,6 +94,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	}
 
 	public void loggedIn(Player player) {
+		this.loggedInPlayer = player;
 		inputMatchButton.setEnabled(true);
 	}
 

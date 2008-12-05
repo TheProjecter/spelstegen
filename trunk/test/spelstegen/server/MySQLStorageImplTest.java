@@ -30,7 +30,7 @@ public class MySQLStorageImplTest extends TestCase {
 	}
 
 	public void testGetPlayers() {
-		List<Player> players = storage.getPlayers();
+		List<Player> players = storage.getPlayers(-1);
 		assertNotNull(players);
 	}
 
