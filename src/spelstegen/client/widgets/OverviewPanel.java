@@ -1,13 +1,10 @@
 package spelstegen.client.widgets;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import spelstegen.client.LeagueChanger;
 import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
-import spelstegen.client.entities.League;
 import spelstegen.client.entities.LeagueSummary;
 
 import com.google.gwt.user.client.History;

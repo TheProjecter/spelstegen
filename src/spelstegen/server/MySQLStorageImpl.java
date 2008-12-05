@@ -1,6 +1,5 @@
 package spelstegen.server;
 
-import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,11 +10,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.CallableStatementCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -138,6 +132,16 @@ public class MySQLStorageImpl implements StorageInterface {
 	private static final String LEAGUE_SEASONS_LEAGUE_ID = "league_id";
 	private static final String LEAGUE_SEASONS_SEASON_ID = "season_id";
 	
+	// League admins
+	private static final String LEAGUE_ADMINS_TABLE = "leagueAdmins";
+	private static final String LEAGUE_ADMINS_LEAGUE_ID = "league_id";
+	private static final String LEAGUE_ADMINS_PLAYER_ID = "player_id";
+	
+	// League match admins
+	private static final String LEAGUE_MATCH_ADMINS_TABLE = "leagueMatchAdmins";
+	private static final String LEAGUE_MATCH_ADMINS_LEAGUE_ID = "league_id";
+	private static final String LEAGUE_MATCH_ADMINS_PLAYER_ID = "player_id";
+	
 	private String host = "localhost";
 	private String port = "3306";
 	private String dbname = "spelstegen";
@@ -183,9 +187,17 @@ public class MySQLStorageImpl implements StorageInterface {
 	}
 
 	@Override
-	public List<Player> getPlayers() {
-		String sql = "select * from " + PLAYERS_TABLE;
-		return simpleJdbcTemplate.query(sql, new PlayerRowMapper());
+	public List<Player> getPlayers(int leagueId) {
+//		if (leagueId == -1) { 
+			String sql = "select * from " + PLAYERS_TABLE;
+			return simpleJdbcTemplate.query(sql, new PlayerRowMapper());
+			// TODO needs some more work.
+//		} else {
+//			String sql = "select * from " + PLAYERS_TABLE + " where " + PLAYER_ID + " = ( select " 
+//				+ LEAGUE_PLAYERS_PLAYER_ID + " from " + LEAGUE_PLAYERS_TABLE + " where " + LEAGUE_PLAYERS_LEAGUE_ID 
+//				+ " = ?)";
+//			return simpleJdbcTemplate.query(sql, new PlayerRowMapper(), leagueId);
+//		}
 	}
 
 	@Override
@@ -275,7 +287,7 @@ public class MySQLStorageImpl implements StorageInterface {
 		sql = "select " + SPORTS_TABLE + "." + SPORTS_ID + "," + SPORTS_TABLE + "." + SPORTS_NAME +
 		"," + SPORTS_TABLE + "." + SPORTS_ICON_URL + " from " + CHILD_SPORTS_TABLE + " INNER JOIN "
 		+ SPORTS_TABLE + " on " + CHILD_SPORTS_TABLE + "." + CHILD_SPORTS_CHILD_SPORT_ID +
-		"= " + SPORTS_TABLE + "." + SPORTS_ID + " where (" + CHILD_SPORTS_TABLE + "." +
+		" = " + SPORTS_TABLE + "." + SPORTS_ID + " where (" + CHILD_SPORTS_TABLE + "." +
 		CHILD_SPORTS_PARENT_SPORT_ID + "="+ id +") group by " + SPORTS_TABLE + "." + SPORTS_ID +
 		"," + SPORTS_TABLE + "." + SPORTS_NAME + "," + SPORTS_TABLE + "." + SPORTS_ICON_URL;
 		List<Sport> childSports = simpleJdbcTemplate.query(sql, new SportRowMapper());
@@ -421,6 +433,62 @@ public class MySQLStorageImpl implements StorageInterface {
 		}
 	}
 
+	@Override
+	public void addLeagueAdminRoles(int playerId, int leagueId,	boolean leagueAdmin, boolean matchAdmin) {
+		if (leagueAdmin && !isPlayerLeagueAdmin(playerId, leagueId)) {
+			String sql = "insert into " + LEAGUE_ADMINS_TABLE + " values(?,?)";
+			simpleJdbcTemplate.update(sql, leagueId, playerId);
+		}
+		if (matchAdmin && !isPlayerLeagueMatchAdmin(playerId, leagueId)) {
+			String sql = "insert into " + LEAGUE_MATCH_ADMINS_TABLE + " values(?,?)";
+			simpleJdbcTemplate.update(sql, leagueId, playerId);
+		}
+	}
+
+	@Override
+	public boolean isPlayerLeagueAdmin(int playerId, int leagueId) {
+		String sql = "select count(*) " + " from " + LEAGUE_ADMINS_TABLE + " where " 
+					+ LEAGUE_ADMINS_LEAGUE_ID + " = ? and " + LEAGUE_ADMINS_PLAYER_ID + " = ?";
+		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+	}
+
+	@Override
+	public boolean isPlayerLeagueMatchAdmin(int playerId, int leagueId) {
+		String sql = "select count(*) from " + LEAGUE_MATCH_ADMINS_TABLE + " where " 
+					+ LEAGUE_MATCH_ADMINS_LEAGUE_ID + " = ? and " + LEAGUE_MATCH_ADMINS_PLAYER_ID + " = ?";
+		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+	}
+
+	@Override
+	public boolean isPlayerInLeague(int playerId, int leagueId) {
+		String sql  = "select count(*) from " + LEAGUE_PLAYERS_TABLE + " where " + LEAGUE_PLAYERS_LEAGUE_ID + 
+			" = ? and "	+ LEAGUE_PLAYERS_PLAYER_ID + " = ?";
+		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+	}
+
+	@Override
+	public List<Integer> getAllLeagueAdmins(int leagueId) {
+		String sql = "select " + LEAGUE_ADMINS_PLAYER_ID + " from " + LEAGUE_ADMINS_TABLE + " where " 
+				+ LEAGUE_ADMINS_LEAGUE_ID + " = ?";
+		List<Map<String,Object>> dbResult = simpleJdbcTemplate.queryForList(sql, leagueId);
+		List<Integer> result = new ArrayList<Integer>(dbResult.size());
+		for (Map<String, Object> map : dbResult) {
+			result.add((Integer)map.get(LEAGUE_ADMINS_PLAYER_ID));
+		}
+		return result;
+	}
+
+	@Override
+	public List<Integer> getAllMatchAdmins(int leagueId) {
+		String sql = "select " + LEAGUE_MATCH_ADMINS_PLAYER_ID + " from " + LEAGUE_MATCH_ADMINS_TABLE + " where " 
+			+ LEAGUE_MATCH_ADMINS_LEAGUE_ID + " = ?";
+		List<Map<String,Object>> dbResult = simpleJdbcTemplate.queryForList(sql, leagueId);
+		List<Integer> result = new ArrayList<Integer>(dbResult.size());
+		for (Map<String, Object> map : dbResult) {
+			result.add((Integer)map.get(LEAGUE_MATCH_ADMINS_PLAYER_ID));
+		}
+		return result;
+	}
 
 
 }
