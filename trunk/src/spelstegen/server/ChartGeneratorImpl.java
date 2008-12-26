@@ -18,6 +18,7 @@ import spelstegen.client.entities.Score;
 import spelstegen.client.entities.Season;
 import spelstegen.server.chart.Chart;
 import spelstegen.server.chart.ScoreHistoryChart;
+import spelstegen.server.chart.TestPieChart;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -33,13 +34,13 @@ public class ChartGeneratorImpl extends RemoteServiceServlet implements ChartGen
 	
 	protected StorageInterface storage = new MySQLStorageImpl();
 	
-    public String generateScoreHistoryChart(League league, Season season) {
+    public String generateScoreHistoryChart(League league, Season season, int width, int height) {
         
     	List<Match> matches = storage.getMatches(league);
     	try {
 			Map<Player, List<Score>> playerScoreHistory = LadderCalculator.calculateScore(matches);
 			Chart chart = new ScoreHistoryChart(playerScoreHistory);
-	    	return saveChartAsPNG(chart);
+	    	return saveChartAsPNG(chart, width, height);
 		} catch (MatchDrawException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,19 +48,27 @@ public class ChartGeneratorImpl extends RemoteServiceServlet implements ChartGen
     	return "";
     }
     
+    public String generatePieChart(int width, int height) {
+        
+    	Chart chart = new TestPieChart();
+    	return saveChartAsPNG(chart, width, height);
+    }
+    
     /**
      * Saves a chart in PNG format
      * 
      * @param chart the chart to save
+     * @param width image width
+     * @param height image height
      * @return filename to chart image
      */
-    private String saveChartAsPNG(Chart chart) {
+    private String saveChartAsPNG(Chart chart, int width, int height) {
         String chartName = "";
         
         JFreeChart jFreeChart = chart.getChart();
         try {
             HttpSession session = getThreadLocalRequest().getSession();
-            chartName = ServletUtilities.saveChartAsPNG(jFreeChart, chart.getWidth(), chart.getHeight(), null, session);
+            chartName = ServletUtilities.saveChartAsPNG(jFreeChart, width, height, null, session);
         } catch(Exception e) {
             // handle exception
         }

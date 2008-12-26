@@ -19,6 +19,7 @@
       <servlet path="/spelstegenService" class='spelstegen.server.SpelstegenServiceImpl' />
       <servlet path="/chartGenerator" class='spelstegen.server.ChartGeneratorImpl'/>
       <servlet path="/displayChart" class='org.jfree.chart.servlet.DisplayChart'/> 
+      <servlet path="/displayPieChart" class='org.jfree.chart.servlet.DisplayChart'/>
     
       <!-- Specify the application specific style sheet.              -->
       <stylesheet src='styles.css' />

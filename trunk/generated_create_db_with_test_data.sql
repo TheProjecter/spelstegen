@@ -281,12 +281,12 @@ USE `spelstegen`;
 -- Data for table `spelstegen`.`players`
 -- -----------------------------------------------------
 SET AUTOCOMMIT=0;
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Anders Andersson', 'a@a.se', 'Adde', 'test', '');
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Bengt Bengtsson', 'b@b.se', 'Bengan', 'test', '');
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Carl Carlsson', 'c@c.se', 'Calle', 'test', '');
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Daniel Danielsson', 'd@d.se', 'Danne', 'test', '');
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Erik Eriksson', 'e@e.se', 'Erkan', 'test', '');
-INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Filip Filipsson', 'f@f.se', 'Fille', 'test', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Anders Andersson', 'a@a.se', 'Adde', '098f6bcd4621d373cade4e832627b4f6', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Bengt Bengtsson', 'b@b.se', 'Bengan', '098f6bcd4621d373cade4e832627b4f6', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Carl Carlsson', 'c@c.se', 'Calle', '098f6bcd4621d373cade4e832627b4f6', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Daniel Danielsson', 'd@d.se', 'Danne', '098f6bcd4621d373cade4e832627b4f6', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Erik Eriksson', 'e@e.se', 'Erkan', '098f6bcd4621d373cade4e832627b4f6', '');
+INSERT INTO `players` (`id`, `name`, `email`, `nickname`, `password`, `image_url`) VALUES (0, 'Filip Filipsson', 'f@f.se', 'Fille', '098f6bcd4621d373cade4e832627b4f6', '');
 
 COMMIT;
 
@@ -424,6 +424,15 @@ COMMIT;
 SET AUTOCOMMIT=0;
 INSERT INTO `leagueSports` (`leagueId`, `sportId`) VALUES (1, 3);
 INSERT INTO `leagueSports` (`leagueId`, `sportId`) VALUES (2, 5);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `spelstegen`.`leagueMatchAdmins`
+-- -----------------------------------------------------
+SET AUTOCOMMIT=0;
+INSERT INTO `leagueMatchAdmins` (`league_id`, `player_id`) VALUES (1, 1);
+INSERT INTO `leagueMatchAdmins` (`league_id`, `player_id`) VALUES (2, 6);
 
 COMMIT;
 

@@ -7,18 +7,18 @@ import spelstegen.client.entities.League;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Score history chart
+ * Pie chart
  * 
  * @author Per Mattsson
  */
-public class ScoreHistoryChart extends AbstractChart implements LeagueUpdateListener {
+public class PieChart extends AbstractChart implements LeagueUpdateListener {
 	
 	private AsyncCallback callback;
 	
-    public ScoreHistoryChart(int width, int height, LeagueUpdater leagueUpdater) {
-        super(width, height);
-        
-        // Setup the callback from the chart generator service.
+    public PieChart(int width, int height, LeagueUpdater leagueUpdater) {
+    	super(width, height);
+   
+    	// Setup the callback from the chart generator service.
         callback = new AsyncCallback() {
             /*
              * If the call was successful, we will get back the name of the chart
@@ -26,7 +26,7 @@ public class ScoreHistoryChart extends AbstractChart implements LeagueUpdateList
              */
             public void onSuccess(Object s) {
                 String chartName = (String)s;
-                String imageUrl = "./displayChart?filename=" + chartName;
+                String imageUrl = "./displayPieChart?filename=" + chartName;
                 setUrl(imageUrl);
             }
            
@@ -42,6 +42,6 @@ public class ScoreHistoryChart extends AbstractChart implements LeagueUpdateList
 
 	public void leagueUpdated(League league) {
 		// Make the call to the chart generator service.
-        chartGeneratorService.generateScoreHistoryChart(league, null, width, height, callback);
+        chartGeneratorService.generatePieChart(width, height, callback);
 	}
 }
