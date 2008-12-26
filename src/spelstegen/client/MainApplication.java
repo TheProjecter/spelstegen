@@ -13,6 +13,8 @@ import spelstegen.client.widgets.PlayerPanel;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -35,8 +37,11 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger, LoginListener {
 
-	public final static int MAINPANEL_WIDTH = 800;
-	public final static int MAINPANEL_HEIGHT = 600;
+	private final static int MAINPANEL_WIDTH = 800;
+  private final static int MAINPANEL_HEIGHT = 600;
+  private final static int PADDING = 3;
+  private final static int CHILDPANEL_WIDTH = MAINPANEL_WIDTH - (2 * PADDING);
+  private final static int CHILDPANEL_HEIGHT = MAINPANEL_HEIGHT - (2 * PADDING);
 	public final static int NUMBER_OF_COLUMNS = 3;
 	public final static int HORISONTAL_SPACING = 5;
 	public final static int VERTICAL_SPACING = 15;
@@ -79,7 +84,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 
 		 contentPanel = createStandardVerticalPanel();
 
-		 leaguePanel = new LeaguePanel(this, spelstegenService);
+		 leaguePanel = new LeaguePanel(this, spelstegenService, CHILDPANEL_WIDTH, CHILDPANEL_HEIGHT);
 		 overviewPanel = new OverviewPanel(spelstegenService, this);
 
 		 PushButton overviewButton = new PushButton("Välj liga");
@@ -243,8 +248,17 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 				 loginPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 					 public void setPosition(int offsetWidth, int offsetHeight) {
 						 loginPanel.center();
+						 
 					 }
 				 });
+				// Set focus on the widget. We have to use a deferred command
+	            // since GWT will lose it again if we set it in-line here
+				DeferredCommand.addCommand(new Command() {
+					public void execute() {
+						loginPanel.setUserNameFocus(true);
+					}
+				});
+				 
 			 } else {
 				 loggedIn = false;
 				 loggedOut();

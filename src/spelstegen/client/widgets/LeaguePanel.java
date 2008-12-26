@@ -25,6 +25,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class LeaguePanel extends Composite implements LeagueUpdateListener, LoginListener {
 	
+	private static final int TAB_BAR_HEIGHT = 40;
+	
 	private Label leagueNameLabel;
 	private TabPanel tabPanel = new TabPanel();
 	private StatisticsPanel statisticsPanel;
@@ -36,7 +38,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	private Player loggedInPlayer;
 	
 
-	public LeaguePanel(final MainApplication parent, final SpelstegenServiceAsync spelstegenService) {
+	public LeaguePanel(final MainApplication parent, final SpelstegenServiceAsync spelstegenService, int width, int height) {
 		parent.addLeagueUpdateListener(this);
 		parent.addLoginListener(this);
 		
@@ -49,7 +51,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		mainPanel.add(leagueNameLabel);
 		
 		// Tab panel
-		statisticsPanel = new StatisticsPanel(parent);
+		statisticsPanel = new StatisticsPanel(parent, width, height - TAB_BAR_HEIGHT);
 		mainLeaguePanel = new LeagueTablePanel(parent);
 		matchesTable = new MatchesTable(spelstegenService, parent);
 		leagueAdminPanel = new LeagueAdminPanel(spelstegenService, parent);
@@ -59,7 +61,7 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		tabPanel.add(statisticsPanel, "Statistik");
 		tabPanel.add(leagueAdminPanel, "Administration");
 		tabPanel.selectTab(0);
-		tabPanel.getDeckPanel().setSize("780px", "500px");
+		tabPanel.getDeckPanel().setSize(String.valueOf(width) + "px", String.valueOf(height) + "px");
 		
 		// Bottom buttons
 		inputMatchButton = new PushButton("Registrera match");

@@ -5,12 +5,15 @@ import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
 import spelstegen.client.entities.Player;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
@@ -80,11 +83,26 @@ public class LoginPanel extends DialogBox {
 				LoginPanel.this.hide();
 			}
 		};
+		final Command loginCommand = new Command() {
+			public void execute() {
+				spelstegenService.logIn(usernameBox.getText().trim(), Player.md5(passwordBox.getText()), callback);
+			}
+		};
+		
+		KeyboardListener keyboardListener = new KeyboardListenerAdapter() {
+			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+				if (keyCode == KEY_ENTER) {
+					loginCommand.execute();
+				}
+			}
+		};
+		usernameBox.addKeyboardListener(keyboardListener);
+		passwordBox.addKeyboardListener(keyboardListener);
 		
 		PushButton loginButton = new PushButton("Ok");
 		loginButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
-				spelstegenService.logIn(usernameBox.getText().trim(), Player.md5(passwordBox.getText()), callback);
+				loginCommand.execute();
 			}
 		});
 		PushButton cancelButton = new PushButton("Avbryt");
@@ -103,4 +121,7 @@ public class LoginPanel extends DialogBox {
 		this.add(mainPanel);
 	}
 
+	public void setUserNameFocus(boolean focused) {
+		usernameBox.setFocus(focused);
+	}
 }
