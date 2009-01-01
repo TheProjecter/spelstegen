@@ -10,6 +10,7 @@ import spelstegen.client.widgets.LeaguePanel;
 import spelstegen.client.widgets.LoginPanel;
 import spelstegen.client.widgets.OverviewPanel;
 import spelstegen.client.widgets.PlayerPanel;
+import spelstegen.client.widgets.SplashPanel;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -38,10 +39,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler, LeagueChanger, LoginListener {
 
 	private final static int MAINPANEL_WIDTH = 800;
-  private final static int MAINPANEL_HEIGHT = 600;
-  private final static int PADDING = 3;
-  private final static int CHILDPANEL_WIDTH = MAINPANEL_WIDTH - (2 * PADDING);
-  private final static int CHILDPANEL_HEIGHT = MAINPANEL_HEIGHT - (2 * PADDING);
+	private final static int MAINPANEL_HEIGHT = 600;
+	private final static int PADDING = 3;
+	private final static int CHILDPANEL_WIDTH = MAINPANEL_WIDTH - (2 * PADDING);
+	private final static int CHILDPANEL_HEIGHT = MAINPANEL_HEIGHT - (2 * PADDING);
 	public final static int NUMBER_OF_COLUMNS = 3;
 	public final static int HORISONTAL_SPACING = 5;
 	public final static int VERTICAL_SPACING = 15;
@@ -51,12 +52,14 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	private GetLeagueCallback getLeagueCallback = new GetLeagueCallback();
 
 	private static PopupPanel popup;
+	private static SplashPanel splashPanel;
 	private PushButton addPlayerButton;
 	private PushButton loginButton;
 	private PushButton changeProfileButton;
 	private LoginClickListener loginClickListener;
 	private League currentLeague;
 	private Player loggedInPlayer;
+	private List<League> loggedInPlayerLeagues;
 	private VerticalPanel contentPanel;
 	private LeaguePanel leaguePanel;
 	private OverviewPanel overviewPanel;
@@ -127,6 +130,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		 RootPanel.get().add(mainPanel);
 		 RootPanel.get().setStyleName("rootpanel");
 		 mainPanel.setStyleName("mainpanel");
+		 splashPanel = new SplashPanel();
 
 
 
@@ -171,10 +175,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	 }
 
 	 public static void showMessage(String text, boolean isError) {
-		 popup = new PopupPanel(true);
-		 popup.setAnimationEnabled(true);
-		 popup.setWidget(new HTML(text));
-		 popup.show();
+		 splashPanel.show(text, 2000);
 	 }
 
 	 public static void showStatus(String text) {
@@ -199,7 +200,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 			 listener.loggedIn(player);
 		 }
 		 showStatus("Inloggad: " + player.getPlayerName());
-		 updateLeague();
+		 fetchPlayerLeagues();
 	 }
 
 	 public void loggedOut() {
@@ -215,18 +216,19 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	 private class GetLeaguesCallBack implements AsyncCallback<List<League>> {
 
 		 public void onFailure(Throwable caught) {
-			 Window.alert("Failed to get players. " + caught.getMessage());
+			 Window.alert("Failed to leagues for player. " + caught.getMessage());
 		 }
 
 		 public void onSuccess(List<League> result) {
-			 if (currentLeague != null) {
-				 for (League league : result) {
-					 if (league.getId() == currentLeague.getId()) {
-						 currentLeague = league;
-					 }
+			 loggedInPlayerLeagues = result;
+			 if ((result != null) && (!result.isEmpty())) {
+				 if (currentLeague == null) {
+					 currentLeague = loggedInPlayerLeagues.get(0);
 				 }
+				 notifyLeagueUpdated();
+			 } else {
+				 Window.alert("Error:" + loggedInPlayer + " does not belong to any league.");
 			 }
-			 notifyLeagueUpdated();
 		 }
 	 }
 
@@ -280,8 +282,12 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 
 	 }
 
-	 public void updateLeague() {
+	 public void fetchPlayerLeagues() {
 		 spelstegenService.getLeagues(loggedInPlayer, getLeaguesCallBack);
+	 }
+	 
+	 public void updateLeague() {
+		 changeToLeague(currentLeague.getId());
 	 }
 
 	 public void addLoginListener(LoginListener listener) {

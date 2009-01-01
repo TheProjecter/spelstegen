@@ -7,16 +7,11 @@ import spelstegen.client.SpelstegenServiceAsync;
 import spelstegen.client.entities.League;
 import spelstegen.client.entities.Player;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This panel is the container for all the league related content.
@@ -32,10 +27,11 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	private StatisticsPanel statisticsPanel;
 	private LeagueTablePanel mainLeaguePanel;
 	private MatchesTable matchesTable;
+	private RegisterResultPanel registerResultPanel;
 	private LeagueAdminPanel leagueAdminPanel;
-	private PushButton inputMatchButton;
 	private League league;
 	private Player loggedInPlayer;
+	private boolean tabsAreVisible = false;
 	
 
 	public LeaguePanel(final MainApplication parent, final SpelstegenServiceAsync spelstegenService, int width, int height) {
@@ -54,38 +50,18 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 		statisticsPanel = new StatisticsPanel(parent, width, height - TAB_BAR_HEIGHT);
 		mainLeaguePanel = new LeagueTablePanel(parent);
 		matchesTable = new MatchesTable(spelstegenService, parent);
+		registerResultPanel = new RegisterResultPanel(spelstegenService, parent, parent);
 		leagueAdminPanel = new LeagueAdminPanel(spelstegenService, parent);
 		parent.addLoginListener(leagueAdminPanel);
 		tabPanel.add(mainLeaguePanel, "Tabell");
 		tabPanel.add(matchesTable, "Matcher");
 		tabPanel.add(statisticsPanel, "Statistik");
-		tabPanel.add(leagueAdminPanel, "Administration");
 		tabPanel.selectTab(0);
 		tabPanel.getDeckPanel().setSize(String.valueOf(width) + "px", String.valueOf(height) + "px");
 		
-		// Bottom buttons
-		inputMatchButton = new PushButton("Registrera match");
-		inputMatchButton.setEnabled(false);
-		inputMatchButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				final RegisterResultPanel registerResultPanel = new RegisterResultPanel(spelstegenService, league, 
-						parent, loggedInPlayer);
-				registerResultPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-					public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (Window.getClientWidth() - offsetWidth) / 3;
-			            int top = (Window.getClientHeight() - offsetHeight) / 3;
-			            registerResultPanel.setPopupPosition(left + 100, top);
-			          }
-				});
-			}
-		});
-		
-		
 		HorizontalPanel leagueButtons = MainApplication.createStandardHorizontalPanel();
-		leagueButtons.add(inputMatchButton);
 		mainPanel.add(leagueButtons);
 		mainPanel.add(tabPanel);
-		
 		
 		initWidget(mainPanel);
 	}
@@ -93,15 +69,30 @@ public class LeaguePanel extends Composite implements LeagueUpdateListener, Logi
 	public void leagueUpdated(League league) {
 		leagueNameLabel.setText(league.getName());
 		this.league = league;
+		updateTabs();
 	}
 
 	public void loggedIn(Player player) {
 		this.loggedInPlayer = player;
-		inputMatchButton.setEnabled(true);
+		updateTabs();
 	}
 
 	public void loggedOut() {
-		inputMatchButton.setEnabled(false);
-	}
+		this.loggedInPlayer = null;
+		updateTabs();
+	}	
 	
+	private void updateTabs() {
+		if ((loggedInPlayer == null) || (league == null) || (!league.getPlayers().contains(loggedInPlayer))) {
+			if (tabsAreVisible) {
+				tabPanel.remove(4);
+				tabPanel.remove(3);
+				tabsAreVisible = false;
+			}
+		} else if (!tabsAreVisible) {
+			tabPanel.add(registerResultPanel, "Registrera match");
+			tabPanel.add(leagueAdminPanel, "Administration");
+			tabsAreVisible = true;
+		}
+	}
 }

@@ -16,7 +16,6 @@ import spelstegen.client.entities.League;
 import spelstegen.client.entities.Player;
 import spelstegen.client.entities.Player.PlayerStatus;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -225,12 +224,10 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 
 	public void leagueUpdated(League league) {
 		this.league = league;
-//		spelstegenService.getLeaguePlayersStatus(league.getId(), getLeaguePlayersStatusCallback);
 	}
 
 	public void loggedIn(Player player) {
 		loggedInPlayer = player;
-		spelstegenService.getPlayerStatus(league.getId(), player.getId(), getPlayerStatusCallback);
 	}
 
 	public void loggedOut() {

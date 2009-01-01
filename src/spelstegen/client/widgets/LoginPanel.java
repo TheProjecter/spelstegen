@@ -31,15 +31,12 @@ public class LoginPanel extends DialogBox {
 	
 	private TextBox usernameBox;
 	private PasswordTextBox passwordBox;
-	public static final int WIDTH = 400;
-	public static final int HEIGHT = 300;
 	
 	public LoginPanel(final SpelstegenServiceAsync spelstegenService, final LoginListener loginHandler) {
 		super(false);
 		setText("Logga in");
 		setAnimationEnabled(true);
 		
-		this.setSize(String.valueOf(WIDTH) + "px", String.valueOf(HEIGHT) + "px");
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
