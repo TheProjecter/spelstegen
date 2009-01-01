@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import spelstegen.client.LeagueUpdateListener;
 import spelstegen.client.LeagueUpdater;
+import spelstegen.client.LoginHandler;
+import spelstegen.client.LoginListener;
 import spelstegen.client.MainApplication;
 import spelstegen.client.SpelstegenServiceAsync;
 import spelstegen.client.entities.League;
@@ -16,7 +19,7 @@ import spelstegen.client.entities.Sport;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -32,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Henrik Segesten
  *
  */
-public class RegisterResultPanel extends DialogBox {
+public class RegisterResultPanel extends Composite implements LeagueUpdateListener, LoginListener {
 
 	private List<TextBox> player1Score;
 	private List<TextBox> player2Score;
@@ -48,92 +51,22 @@ public class RegisterResultPanel extends DialogBox {
 	private SpelstegenServiceAsync spelstegenService;
 	final LeagueUpdater leagueUpdater;
 	private Player loggedInPlayer;
+	private VerticalPanel mainPanel;
+	private boolean panelIsVisible;
 
-	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, League league, LeagueUpdater leagueUpdater, 
-			Player loggedInPlayer) {
-		super(false);
-		setText("Registrera match");
-		setAnimationEnabled(true);
-		
+	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, LeagueUpdater leagueUpdater, 
+			LoginHandler loginHandler) {
+		leagueUpdater.addLeagueUpdateListener(this);
+		loginHandler.addLoginListener(this);
+	
 		this.spelstegenService = spelstegenService;
-		this.league = league;
 		this.leagueUpdater = leagueUpdater;
-		this.loggedInPlayer = loggedInPlayer;
 		
-		player1Box = new ListBox(false);
-		populatePlayerBox(player1Box);
-		Label vsLabel = new Label(" spelade mot ");
-		player2Box = new ListBox(false);
-		populatePlayerBox(player2Box);
-		HorizontalPanel playerPanel = MainApplication.createStandardHorizontalPanel();
-		playerPanel.add(player1Box);
-		playerPanel.add(vsLabel);
-		playerPanel.add(player2Box);
-		
-		
-		sportBox = new ListBox(false);
-		if (league.getSports().size() > 1) {
-			sportBox.addItem("Välj sport");
-			for (Sport sport : league.getSports()) {
-				sportBox.addItem(sport.getName());
-			}
-		} else {
-			sportBox.addItem(league.getSports().get(0).getName());
-			sportBox.setEnabled(false);
-		}
-		
-		HorizontalPanel sportPanel = MainApplication.createStandardHorizontalPanel();
-		sportPanel.add(new Label("i:"));
-		sportPanel.add(sportBox);
-
-		Label setLabel = new Label("Spel om bäst av");
-		oneSet = new RadioButton("setSelection", "1");
-		threeSet = new RadioButton("setSelection", "3");
-		fiveSet = new RadioButton("setSelection", "5");
-		oneSet.setChecked(true);
-		SetClickListener setClickListener = new SetClickListener();
-		oneSet.addClickListener(setClickListener);
-		threeSet.addClickListener(setClickListener);
-		fiveSet.addClickListener(setClickListener);
-		Label setLabel2 = new Label(" set");
-		HorizontalPanel setPanel = MainApplication.createStandardHorizontalPanel();
-		setPanel.add(setLabel);
-		setPanel.add(oneSet);
-		setPanel.add(threeSet);
-		setPanel.add(fiveSet);
-		setPanel.add(setLabel2);
-
-		player1Score = new ArrayList<TextBox>(5);
-		player2Score = new ArrayList<TextBox>(5);
-		scorePanel = new VerticalPanel();
-		scorePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		setScoreBoxes(1);
-
-		PushButton saveButton = new PushButton("Spara");
-		saveButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				submitMatch();
-			}
-		});
-		PushButton cancelButton = new PushButton("Avbryt");
-		cancelButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				RegisterResultPanel.this.hide();
-			}
-		});
-		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
-		buttonPanel.add(saveButton);
-		buttonPanel.add(cancelButton);
-
-		VerticalPanel mainPanel = new VerticalPanel();
+		mainPanel = new VerticalPanel();
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSpacing(MainApplication.VERTICAL_SPACING);
-		mainPanel.add(playerPanel);
-		mainPanel.add(sportPanel);
-		mainPanel.add(setPanel);
-		mainPanel.add(scorePanel);
-		mainPanel.add(buttonPanel);
-		this.add(mainPanel);
+		panelIsVisible = false;
+		initWidget(mainPanel);
 	}
 
 	private void setScoreBoxes(int sets) {
@@ -199,16 +132,110 @@ public class RegisterResultPanel extends DialogBox {
 
 			public void onSuccess(Boolean result) {
 				if (result) {
-					MainApplication.showMessage("Sparade match.", false);
-					RegisterResultPanel.this.hide();
+					MainApplication.showMessage("Match sparad.", false);
 					leagueUpdater.updateLeague();
 				} else {
 					Window.alert("Kunde inte spara matchen då du inte är matchadministrator för den här ligan.");
-					RegisterResultPanel.this.hide();
 				}
 			}
 		};
 		spelstegenService.addMatch(m, league.getId(), loggedInPlayer.getId(), callback);
+	}
+
+	public void leagueUpdated(League league) {
+		this.league = league;
+		updatePanel();
+	}
+
+	public void loggedIn(Player player) {
+		this.loggedInPlayer = player;
+		updatePanel();
+	}
+
+	public void loggedOut() {
+		loggedInPlayer = null;
+		updatePanel();
+	}
+	
+	private void updatePanel() {
+		if ((loggedInPlayer == null) || (league == null) || (!league.getPlayers().contains(loggedInPlayer))) {
+			mainPanel.clear();
+			panelIsVisible = false;
+			return;
+		} else if (!panelIsVisible) {
+			populatePanel();
+			panelIsVisible = true;
+		}
+	}
+	
+	private void populatePanel() {
+		player1Box = new ListBox(false);
+		populatePlayerBox(player1Box);
+		Label vsLabel = new Label(" spelade mot ");
+		player2Box = new ListBox(false);
+		populatePlayerBox(player2Box);
+		HorizontalPanel playerPanel = MainApplication.createStandardHorizontalPanel();
+		playerPanel.add(player1Box);
+		playerPanel.add(vsLabel);
+		playerPanel.add(player2Box);
+		
+		
+		sportBox = new ListBox(false);
+		if (league.getSports().size() > 1) {
+			sportBox.addItem("Välj sport");
+			for (Sport sport : league.getSports()) {
+				sportBox.addItem(sport.getName());
+			}
+		} else {
+			sportBox.addItem(league.getSports().get(0).getName());
+			sportBox.setEnabled(false);
+		}
+		
+		HorizontalPanel sportPanel = MainApplication.createStandardHorizontalPanel();
+		sportPanel.add(new Label("i:"));
+		sportPanel.add(sportBox);
+
+		Label setLabel = new Label("Spel om bäst av");
+		oneSet = new RadioButton("setSelection", "1");
+		threeSet = new RadioButton("setSelection", "3");
+		fiveSet = new RadioButton("setSelection", "5");
+		oneSet.setChecked(true);
+		SetClickListener setClickListener = new SetClickListener();
+		oneSet.addClickListener(setClickListener);
+		threeSet.addClickListener(setClickListener);
+		fiveSet.addClickListener(setClickListener);
+		Label setLabel2 = new Label(" set");
+		HorizontalPanel setPanel = MainApplication.createStandardHorizontalPanel();
+		setPanel.add(setLabel);
+		setPanel.add(oneSet);
+		setPanel.add(threeSet);
+		setPanel.add(fiveSet);
+		setPanel.add(setLabel2);
+
+		player1Score = new ArrayList<TextBox>(5);
+		player2Score = new ArrayList<TextBox>(5);
+		scorePanel = new VerticalPanel();
+		scorePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		setScoreBoxes(1);
+
+		PushButton saveButton = new PushButton("Spara");
+		saveButton.addClickListener(new ClickListener() {
+			public void onClick(Widget sender) {
+				submitMatch();
+			}
+		});
+
+		HorizontalPanel buttonPanel = MainApplication.createStandardHorizontalPanel();
+		buttonPanel.add(saveButton);
+		//buttonPanel.add(cancelButton);
+
+		
+		mainPanel.add(playerPanel);
+		mainPanel.add(sportPanel);
+		mainPanel.add(setPanel);
+		mainPanel.add(scorePanel);
+		mainPanel.add(buttonPanel);
+		
 	}
 
 }
