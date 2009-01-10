@@ -35,19 +35,21 @@ public class LadderCalculator {
 		Map<Player, List<Score>> playerScoreHistory = new HashMap<Player, List<Score>>();
 		for (Match match : matches) {
 			Player winner = getWinner(match);
+			Player looser;
 			float percentage = getPercentage(match);
-			// If player 1 is the winner
+			// Check which player that is the winner.
 			if ( winner.equals(match.getPlayer1()) ) {
-				int points = (int)(percentage * (float)match.getPlayer2().getPoints());
-				match.getPlayer1().setPoints( match.getPlayer1().getPoints() + points );
-				match.getPlayer2().setPoints( match.getPlayer2().getPoints() - points );
+				looser = match.getPlayer2();
+			} else {
+				looser = match.getPlayer1();
 			}
-			// If player 2 is the winner
-			else {
-				int points = (int)(percentage * (float)match.getPlayer1().getPoints());
-				match.getPlayer2().setPoints( match.getPlayer2().getPoints() + points );
-				match.getPlayer1().setPoints( match.getPlayer1().getPoints() - points );
+			int points = (int)(percentage * (float)looser.getPoints());
+			// The looser of the game only looses points if he has more or equal points to start with.
+			if (winner.getPoints() <= looser.getPoints()) {
+				looser.setPoints( looser.getPoints() - points);
 			}
+			// The winner always gets his points.
+			winner.setPoints( winner.getPoints() + points );
 			addPlayerScore(playerScoreHistory, match.getPlayer1(), match.getDate());
 			addPlayerScore(playerScoreHistory, match.getPlayer2(), match.getDate());
 		}
