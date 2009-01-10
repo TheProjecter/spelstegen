@@ -45,8 +45,10 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 	private AlphabeticComparator alphabeticComparator = new AlphabeticComparator();
 	private League league;
 	private Player loggedInPlayer;
+	private CheckBox leagueAdminCheckBox;
 	private Button addPlayerButton;
 	private Grid playerGrid;
+	private CheckBox matchAdminCheckBox;
 	
 	public LeagueAdminPanel(final SpelstegenServiceAsync spelstegenService, final LeagueUpdater leagueUpdater) {
 		this.spelstegenService = spelstegenService;
@@ -82,9 +84,17 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 		addPlayerBox.addFocusListener(this);
 		playerAddPanel.add(addPlayerBox);
 		
+		leagueAdminCheckBox = new CheckBox("L");
+		leagueAdminCheckBox.setTitle("Ska den här spelaren vara administratör för ligan?");
+		playerAddPanel.add(leagueAdminCheckBox);
+		
+		matchAdminCheckBox = new CheckBox("M");
+		matchAdminCheckBox.setTitle("Ska den här spelaren kunna administrera matcher i ligan?");
+		playerAddPanel.add(matchAdminCheckBox);
+		
 		addPlayerButton = new Button("Lägg till");
 		addPlayerButton.setEnabled(false);
-		final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		final AsyncCallback<Void> addPlayerCallback = new AsyncCallback<Void>() {
 			public void onFailure(Throwable arg0) {
 				Window.alert("Failed to add player to league: " + arg0.getMessage());
 			}
@@ -95,11 +105,31 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 			}
 		};
 		
+		final AsyncCallback<Boolean> adminCallback = new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable arg0) {
+				Window.alert("Failed to add player to league: " + arg0.getMessage());
+			}
+
+			public void onSuccess(Boolean arg0) {
+				// Do nothing
+			}
+			
+		};
+		
 		addPlayerButton.addClickListener(new ClickListener() {
 			public void onClick(Widget arg0) {
+				int playerId = allPlayers.get(addPlayerBox.getText().trim()).getId();
 				spelstegenService.addPlayerToLeague(league.getId(), 
-						allPlayers.get(addPlayerBox.getText().trim()).getId(), loggedInPlayer.getId(), callback);
-			}
+						playerId, loggedInPlayer.getId(), addPlayerCallback);
+				boolean leagueAdmin = leagueAdminCheckBox.isChecked();
+				boolean matchAdmin = matchAdminCheckBox.isChecked();
+				if (leagueAdmin) {
+					spelstegenService.addLeageAdmin(league.getId(), playerId, loggedInPlayer.getId(), adminCallback);
+				}
+				if (matchAdmin) {
+					spelstegenService.addLeagueMatchAdmin(league.getId(), playerId, loggedInPlayer.getId(), adminCallback);
+				}
+ 			}
 		});
 		
 		playerAddPanel.add(addPlayerButton);
@@ -131,6 +161,8 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 		public void onSuccess(PlayerStatus result) {
 			if (result == PlayerStatus.LEAGUE_ADMIN || result == PlayerStatus.SUPER_USER) {
 				addPlayerButton.setEnabled(true);
+			} else {
+				addPlayerButton.setEnabled(false);
 			}
 		}
 	}
@@ -224,15 +256,20 @@ public class LeagueAdminPanel extends Composite implements FocusListener, League
 
 	public void leagueUpdated(League league) {
 		this.league = league;
+		if (loggedInPlayer != null) {
+			spelstegenService.getPlayerStatus(league.getId(), loggedInPlayer.getId(), getPlayerStatusCallback);
+		}
 	}
 
 	public void loggedIn(Player player) {
 		loggedInPlayer = player;
+		if (league != null) {
+			spelstegenService.getPlayerStatus(league.getId(), player.getId(), getPlayerStatusCallback);
+		}
 	}
 
 	public void loggedOut() {
 		addPlayerButton.setEnabled(false);
-		
 	}
 	
 }

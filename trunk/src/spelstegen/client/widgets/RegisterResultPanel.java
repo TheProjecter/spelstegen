@@ -15,6 +15,7 @@ import spelstegen.client.entities.Match;
 import spelstegen.client.entities.Player;
 import spelstegen.client.entities.Set;
 import spelstegen.client.entities.Sport;
+import spelstegen.client.entities.Player.PlayerStatus;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -53,6 +54,8 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 	private Player loggedInPlayer;
 	private VerticalPanel mainPanel;
 	private boolean panelIsVisible;
+	private PushButton saveButton;
+	private GetPlayerStatusCallback getPlayerStatusCallback = new GetPlayerStatusCallback();
 
 	public RegisterResultPanel(SpelstegenServiceAsync spelstegenService, LeagueUpdater leagueUpdater, 
 			LoginHandler loginHandler) {
@@ -144,17 +147,38 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 
 	public void leagueUpdated(League league) {
 		this.league = league;
+		if (loggedInPlayer != null) {
+			spelstegenService.getPlayerStatus(league.getId(), loggedInPlayer.getId(), getPlayerStatusCallback);
+		}
 		updatePanel();
 	}
 
 	public void loggedIn(Player player) {
 		this.loggedInPlayer = player;
+		if (league != null) {
+			spelstegenService.getPlayerStatus(league.getId(), player.getId(), getPlayerStatusCallback);
+		}
 		updatePanel();
 	}
 
 	public void loggedOut() {
 		loggedInPlayer = null;
+		saveButton.setEnabled(false);
 		updatePanel();
+	}
+	
+	private class GetPlayerStatusCallback implements AsyncCallback<PlayerStatus> {
+		public void onFailure(Throwable caught) {
+			
+		}
+
+		public void onSuccess(PlayerStatus result) {
+			if (result == PlayerStatus.LEAGUE_ADMIN || result == PlayerStatus.SUPER_USER) {
+				saveButton.setEnabled(true);
+			} else {
+				saveButton.setEnabled(false);
+			}
+		}
 	}
 	
 	private void updatePanel() {
@@ -218,7 +242,7 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 		scorePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		setScoreBoxes(1);
 
-		PushButton saveButton = new PushButton("Spara");
+		saveButton = new PushButton("Spara");
 		saveButton.addClickListener(new ClickListener() {
 			public void onClick(Widget sender) {
 				submitMatch();
