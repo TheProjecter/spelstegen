@@ -72,6 +72,7 @@ public class ConsoleTool {
 		League league = new League(name);
 		league.setSports(selectedSports);
 		storage.addLeague(league);
+		sc.close();
 	}
 
 	private void addPlayer() {
@@ -101,12 +102,14 @@ public class ConsoleTool {
 		p.setNickName(nickName);
 		p.setImageURL(image);
 		storage.addPlayer(p);
+		sc.close();
 	}
 	
 	private void addPlayerToLeague() {
 		int playerId;
 		int leagueId;
 		String playerEmail;
+		String admin;
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Skriv in epostadressen för den spelare som skall läggas till i en liga.");
 		playerEmail = sc.nextLine();
@@ -125,8 +128,10 @@ public class ConsoleTool {
 		System.out.println("");
 		System.out.println("Välj vilken liga du vill lägga till spelaren till genom att mata in ligans id");
 		leagueId = sc.nextInt();
+		sc.nextLine();
 		System.out.println("Ska spelaren vara administratör för den här ligan? (J/N)");
-		String admin = sc.nextLine();
+		admin = sc.nextLine();
+		sc.close();
 		storage.addPlayerToLeague(leagueId, playerId);
 		if (admin.toLowerCase().equals("j")) {
 			storage.addLeagueAdminRoles(playerId, leagueId, true, true);
