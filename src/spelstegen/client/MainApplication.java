@@ -63,6 +63,8 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 	private VerticalPanel contentPanel;
 	private LeaguePanel leaguePanel;
 	private OverviewPanel overviewPanel;
+	private String header = "Spelstegen - version ";
+	private Label topLabel;
 
 	private List<LeagueUpdateListener> leagueUpdateListeners = new ArrayList<LeagueUpdateListener>();
 	private List<LoginListener> loginListeners = new ArrayList<LoginListener>();
@@ -80,9 +82,19 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		VerticalPanel mainPanel = createStandardVerticalPanel();
 		mainPanel.setSpacing(0);
 		mainPanel.setSize(String.valueOf(MAINPANEL_WIDTH) + "px", String.valueOf(MAINPANEL_HEIGHT) + "px");
-
-		Label topLabel = new Label("Spelstegen - version 0.1");
+		
+		
+		topLabel = new Label(header);
 		topLabel.setStylePrimaryName("header");
+		spelstegenService.getVersionString(new AsyncCallback<String>() {
+			public void onFailure(Throwable arg0) {
+				topLabel.setText(header + "-1");
+			}
+
+			public void onSuccess(String version) {
+				topLabel.setText(header + version);
+			}
+		});
 		mainPanel.add(topLabel);
 
 		contentPanel = createStandardVerticalPanel();
