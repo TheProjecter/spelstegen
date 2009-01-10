@@ -66,8 +66,10 @@ public class OverviewPanel extends Composite implements HistoryListener {
 	}
 
 	public void onHistoryChanged(String arg) {
-		int leagueId = Integer.parseInt(arg.trim());
-		leagueChanger.changeToLeague(leagueId);
+		if (arg != null && !arg.equals("")) {
+			int leagueId = Integer.parseInt(arg.trim());
+			leagueChanger.changeToLeague(leagueId);
+		}
 	}
 	
 }
