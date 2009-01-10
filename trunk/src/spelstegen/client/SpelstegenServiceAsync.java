@@ -45,4 +45,6 @@ public interface SpelstegenServiceAsync {
 	
 	public void addLeagueMatchAdmin(int leagueId, int playerToAddId, int playerAddingId, AsyncCallback<Boolean> callback);
 	
+	public void getVersionString(AsyncCallback<String> callback);
+	
 }

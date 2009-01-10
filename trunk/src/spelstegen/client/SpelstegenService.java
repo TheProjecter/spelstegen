@@ -120,6 +120,10 @@ public interface SpelstegenService extends RemoteService {
 	 */
 	public boolean addLeagueMatchAdmin(int leagueId, int playerToAddId, int playerAddingId);
 	
-
+	/**
+	 * Get the version string from the server.
+	 * @return the version string.
+	 */
+	public String getVersionString();
 	
 }
