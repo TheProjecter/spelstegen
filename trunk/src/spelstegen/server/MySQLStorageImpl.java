@@ -362,7 +362,7 @@ public class MySQLStorageImpl implements StorageInterface {
 			+ SPORTS_TABLE + "." + SPORTS_NAME + ", "
 			+ SPORTS_TABLE + "." + SPORTS_ICON_URL;
 		String sql = "select " + allSportHeaders + " from " + SPORTS_TABLE + " where " + SPORTS_ID 
-		+ "=(select " + LEAGUE_SPORTS_SPORT_ID + " from " + LEAGUE_SPORTS_TABLE
+		+ " = ANY (select " + LEAGUE_SPORTS_SPORT_ID + " from " + LEAGUE_SPORTS_TABLE
 		+ " where " + LEAGUE_SPORTS_LEAGUE_ID + "=?)";
 		league.setSports(simpleJdbcTemplate.query(sql, new SportRowMapper(), league.getId()));
 	}

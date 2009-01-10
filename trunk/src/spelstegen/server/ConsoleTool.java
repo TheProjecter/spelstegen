@@ -63,7 +63,7 @@ public class ConsoleTool {
 				System.out.println("Id: " + sport.getId() + " Namn: " + sport.getName());
 			}
 			System.out.println("Välj sport genom att ange sportens id eller -1 om du inte vill lägga till fler sporter.");
-			int sport = sc.nextInt();
+			int sport = sc.nextInt() -1;
 			if (sport == -1) {
 				break;
 			}

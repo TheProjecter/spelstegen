@@ -16,6 +16,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -105,6 +106,7 @@ public class MainApplication implements EntryPoint, LeagueUpdater, LoginHandler,
 		PushButton overviewButton = new PushButton("Välj liga");
 		overviewButton.addClickListener(new ClickListener() {
 			public void onClick(Widget arg0) {
+				History.newItem("");
 				showOverview();
 			}
 		});
