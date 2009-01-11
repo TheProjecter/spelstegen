@@ -108,6 +108,7 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 	}
 
 	private void populatePlayerBox(ListBox playerBox) {
+		playerBox.clear();
 		playerBox.addItem("Välj en spelare");
 		for (Player player : league.getPlayers()) {
 			playerBox.addItem(player.getPlayerName());
@@ -140,6 +141,7 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 				} else {
 					Window.alert("Kunde inte spara matchen då du inte är matchadministrator för den här ligan.");
 				}
+				resetPanel();
 			}
 		};
 		spelstegenService.addMatch(m, league.getId(), loggedInPlayer.getId(), callback);
@@ -190,6 +192,8 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 			populatePanel();
 			panelIsVisible = true;
 		}
+		populatePlayerBox(player1Box);
+		populatePlayerBox(player2Box);
 	}
 	
 	private void populatePanel() {
@@ -260,6 +264,14 @@ public class RegisterResultPanel extends Composite implements LeagueUpdateListen
 		mainPanel.add(scorePanel);
 		mainPanel.add(buttonPanel);
 		
+	}
+	
+	private void resetPanel() {
+		player1Box.setSelectedIndex(0);
+		player2Box.setSelectedIndex(0);
+		sportBox.setSelectedIndex(0);
+		oneSet.setChecked(true);
+		setScoreBoxes(1);
 	}
 
 }
