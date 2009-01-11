@@ -1,7 +1,5 @@
 package spelstegen.server;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -183,7 +181,7 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 	public String getVersionString() {
 		Properties buildProperties = new Properties();
 		try {
-			buildProperties.load(ClassLoader.getSystemResourceAsStream("spelstegen/public/build.properties"));
+			buildProperties.load(getClass().getClassLoader().getResourceAsStream("spelstegen/public/build.properties"));
 		} catch (FileNotFoundException e) {
 			logger.warn("Could not find build.properties in the public dir. Using default version string");
 		} catch (IOException e) {
