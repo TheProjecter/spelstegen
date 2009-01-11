@@ -12,6 +12,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
+import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
@@ -79,7 +80,7 @@ public class ScoreHistoryChart extends Chart {
 			List<Score> scoreHistory = pScoreHistory.getValue();
 			TimeSeries ts = new TimeSeries(player.getPlayerName(), Day.class);
 			for (Score score : scoreHistory) {
-				ts.add(new Day(score.getDate()), score.getScore());
+				ts.addOrUpdate(new Day(score.getDate()), score.getScore());
 			}
 			dataset.addSeries(ts);
 		}
