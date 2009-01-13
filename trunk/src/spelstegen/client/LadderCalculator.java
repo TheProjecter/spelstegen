@@ -44,12 +44,11 @@ public class LadderCalculator {
 				looser = match.getPlayer1();
 			}
 			int points = (int)(percentage * (float)looser.getPoints());
+			winner.setPoints(winner.getPoints() + points);
 			// The looser of the game only looses points if he has more or equal points to start with.
-			if (winner.getPoints() <= looser.getPoints()) {
+			if (winner.getPoints() < looser.getPoints()) {
 				looser.setPoints( looser.getPoints() - points);
 			}
-			// The winner always gets his points.
-			winner.setPoints( winner.getPoints() + points );
 			addPlayerScore(playerScoreHistory, match.getPlayer1(), match.getDate());
 			addPlayerScore(playerScoreHistory, match.getPlayer2(), match.getDate());
 		}
