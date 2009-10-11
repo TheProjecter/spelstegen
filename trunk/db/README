@@ -1,0 +1,19 @@
+This directory contains the following files:
+
+ - [databas_design.mwb] contains the database design for the 
+   MySqlPersistantManager. To view or edit the design use the MySQL 
+   Workbench. This program can be downloaded for free 
+   from: http://dev.mysql.com/downloads/workbench/5.0.html
+
+- [create_db.sql] - SQL script generated from the database design 
+  in MySQL Workbench. This sqript will drop any existing tables and crate
+  new ones. The tables will be empty.
+  
+- [create_db_with_test_data.sql] - SQL script generated from the database design 
+  in MySQL Workbench. This sqript will drop any existing tables and crate
+  new ones. The tables will be populated with some test data. This script can
+  be used during development.
+  
+To execute an SQL script run:
+
+  mysql -u stegusr -p < create_db.sql
