@@ -269,14 +269,20 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-          <id>remove-javax</id>
           <phase>compile</phase>
           <configuration>
-            <!-- This task is needed since Google packs the source code for 
-            javax.servlet into gwt-user.jar. If these classes are added to 
-            the WAR the application won't work when deployed in web app 
-            container like Tomcat -->
             <tasks>
+              <echo message="Downloading avd installing dependecies that 
+                    are not available in maven repo..." />
+              <ant antfile="${basedir}/non-maven-libs/build.xml"
+                     target="download-missing-dependencies">
+              </ant>
+            
+              <!-- This task is needed since Google packs the source code for 
+              javax.servlet into gwt-user.jar. If these classes are added to 
+              the WAR the application won't work when deployed in web app 
+              container like Tomcat -->
+              <echo message="Removing javax.servlet classes..." />
               <delete dir="${project.build.outputDirectory}/javax" />
             </tasks>
           </configuration>
