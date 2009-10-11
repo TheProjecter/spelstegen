@@ -281,4 +281,46 @@ public class ScoreCalculator {
 		}
 		return currentScore;
 	}
+	
+	public static int getHighestScore(Map<Player, List<Score>> playerScoreHistory) {
+		int heighestScore = 0;
+		for (List<Score> scoreHistory : playerScoreHistory.values()) {
+			int score = getHighestScore(scoreHistory);
+			if (score > heighestScore) {
+				heighestScore = score;
+			}
+		}
+		return heighestScore;
+	}
+	
+	private static int getHighestScore(List<Score> scoreHistory) {
+		int heighestScore = 0;
+		for (Score score : scoreHistory) {
+			if (score.getScore() > heighestScore) {
+				heighestScore = score.getScore();
+			}
+		}
+		return heighestScore;
+	}
+	
+	public static int getLowestScore(Map<Player, List<Score>> playerScoreHistory) {
+		int lowestScore = Integer.MAX_VALUE;
+		for (List<Score> scoreHistory : playerScoreHistory.values()) {
+			int score = getLowestScore(scoreHistory);
+			if (score < lowestScore) {
+				lowestScore = score;
+			}
+		}
+		return lowestScore;
+	}
+	
+	private static int getLowestScore(List<Score> scoreHistory) {
+		int lowestScore = Integer.MAX_VALUE;
+		for (Score score : scoreHistory) {
+			if (score.getScore() < lowestScore) {
+				lowestScore = score.getScore();
+			}
+		}
+		return lowestScore;
+	}
 }
