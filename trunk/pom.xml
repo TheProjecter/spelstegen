@@ -121,6 +121,18 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Third-party GWT libs -->
+		<dependency>
+			<groupId>com.allen_sauer</groupId>
+			<artifactId>gwt-log</artifactId>
+			<version>2.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gchart</artifactId>
+			<version>2.6</version>
+		</dependency>
+		
 		<!--
       Data persistence APIs: JPA and JDO. Versions of datanucleus-core
       and datanucleus-jpa are 1.1.1 which is newer than GAE jars (1.1.0)
@@ -142,14 +154,6 @@
       <artifactId>datanucleus-core</artifactId>
       <version>1.1.5</version>
       <scope>provided</scope>
-      <!--
-      <exclusions>
-        <exclusion>
-          <artifactId>transaction-api</artifactId>
-          <groupId>javax.transaction</groupId>
-        </exclusion>
-      </exclusions>
-      -->
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
@@ -163,13 +167,6 @@
       </exclusions>
       <scope>provided</scope>
     </dependency>
-    <!--
-    <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>transaction-api</artifactId>
-            <version>1.1</version>
-    </dependency>
-    -->
     
     <!-- Google App Engine persistence runtime -->
     <dependency>
@@ -192,11 +189,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.allen_sauer</groupId>
-			<artifactId>gwt-log</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 	</dependencies>
 
