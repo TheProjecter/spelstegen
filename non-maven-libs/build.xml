@@ -51,6 +51,7 @@
         <arg value="-DartifactId=${gwt-log.artifactId}"/>
         <arg value="-Dversion=${gwt-log.version}"/>
         <arg value="-Dpackaging=jar"/>
+        <arg value="-DgeneratePom=true"/>
       </exec>
   </target>
   
@@ -69,6 +70,7 @@
         <arg value="-DartifactId=${gwt-log.artifactId}"/>
         <arg value="-Dversion=${gwt-log.version}"/>
         <arg value="-Dpackaging=jar"/>
+        <arg value="-DgeneratePom=true"/>
       </exec>
   </target>
   
@@ -107,6 +109,7 @@
         <arg value="-DartifactId=${gchart.artifactId}"/>
         <arg value="-Dversion=${gchart.version}"/>
         <arg value="-Dpackaging=jar"/>
+        <arg value="-DgeneratePom=true"/>
       </exec>
   </target>
   
@@ -132,6 +135,7 @@
         <arg value="-DartifactId=${gchart.artifactId}"/>
         <arg value="-Dversion=${gchart.version}"/>
         <arg value="-Dpackaging=jar"/>
+        <arg value="-DgeneratePom=true"/>
       </exec>
   </target>
   
