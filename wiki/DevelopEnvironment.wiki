@@ -1,11 +1,8 @@
 #summary Setup development environment
 #labels Featured,Phase-Implementation
-= Introduction =
+= How to setup development environment =
 
-This is a small guide on how to set up the development environment.
-
-
-= Steps =
+Perform the following steps:
 
   * Install [http://java.sun.com/javase/downloads/ Java JDK 6]
 
@@ -46,7 +43,6 @@ Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are l
   * Install Subclipse. Update site: http://subclipse.tigris.org/update_1.4.x/
 
   * Install Subversive SVN Connectors. Update site: http://community.polarion.com/projects/subversive/download/eclipse/2.0/galileo-site/
-  * Install Subversive Integrations (Select only integration for M2Eclipse). Update site: http://community.polarion.com/projects/subversive/download/integrations/galileo-site/
 
   * Install M2Eclipse (Integrates maven with Eclipse). Update site: http://m2eclipse.sonatype.org/update/
   Select the following components to install:
@@ -56,6 +52,8 @@ Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are l
       * Maven SCM handler for Subclipse (Optional)
       * Maven SCM handler for Team/CVS (Optional)
       * Maven SCM Integration (Optional)	
+
+  * Install Subversive Integrations (Select only integration for M2Eclipse). Update site: http://community.polarion.com/projects/subversive/download/integrations/galileo-site/
   
   * Install Google Plugin for Eclipse. Update site: http://dl.google.com/eclipse/plugin/3.5
 
