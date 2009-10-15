@@ -11,8 +11,6 @@ This is a small guide on how to set up the development environment.
 
   * Install the latest version of [http://maven.apache.org/download.html Maven2] 
 
-  * Optionally install a [http://subversion.tigris.org/getting.html Subversion client] to be able to run mvn:scm from command line
-
   * Add SCM properties to your local maven settings ({USER_HOME}/.m2/settings.xml)
 
 {{{
@@ -36,6 +34,10 @@ This is a small guide on how to set up the development environment.
 }}}
 
 Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are logged in at http://code.google.com/p/spelstegen/source/checkout
+
+  * Optionally install a [http://subversion.tigris.org/getting.html Subversion client] to be able to run mvn:scm from command line
+
+  * Optionally install [http://tortoisesvn.net/downloads TortoiseSVN]. TortoiseSVN integrates subversion very nicely with the Windows Explorer.
 
   * Install [http://www.eclipse.org/downloads/ Eclipse IDE for Java EE Developers (3.5 - Galileo)]
 
