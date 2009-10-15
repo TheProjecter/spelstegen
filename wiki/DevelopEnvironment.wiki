@@ -40,8 +40,13 @@ Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are l
 
   * Configure Eclipse to start from installed JDK. Add the following lines to eclipse.ini, i.e:
 {{{
+256m
 -vm
 C:\Program Files\Java\jdk1.6.0_12\bin\javaw.exe
+-vmargs
+-Dosgi.requiredJavaVersion=1.5
+-Xms40m
+-Xmx512m
 }}}
 
   * Set text file encoding in eclipse to UTF-8 (Under Windows->Preferences->General->Workspace) 
