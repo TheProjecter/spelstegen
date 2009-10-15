@@ -74,14 +74,16 @@ C:\Program Files\Java\jdk1.6.0_12\bin\javaw.exe
     # Enter SCM URL: https://spelstegen.googlecode.com/svn/trunk/
     # Click: Finish
   
-  
-  * Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add mysql-connector-java-5.1.X-bin.jar to jre/lib/etc folder of your JDK.
-  * Install [http://dev.mysql.com/downloads/mysql/5.0.html#downloads MySQL] and create a user named _stegusr_ with password _stegpw_ and with permissions on the _spelstegen_ schema.
-  * To create the tables needed for the application in mysql execute one of the following scripts located in the db folder from the command prompt:
+  * Install [http://dev.mysql.com/downloads/mysql/5.0.html#downloads MySQL]
+    * Create a new schema: _spelstegen_
+    * Create a user named _stegusr_ with password _stegpw_ and add all permissions to this user for the _spelstegen_ schema.
 
+  * To create the tables needed for the application in mysql execute one of the following scripts located in the db folder from the command prompt:
     * mysql -u stegusr -p < create_db.sql
     * mysql -u stegusr -p < create_db_with_test_data.sql  (to add som sample test data)
-   
+
+  * Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add mysql-connector-java-5.1.X-bin.jar to jre/lib/etc folder of your JDK.
+
   * Enable GWT for the project. In Eclipse:
     * Right-click your project and select Google > Web Toolkit Settings. Check the Use Google Web Toolkit box and click OK to apply the change.
   
