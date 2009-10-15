@@ -7,30 +7,72 @@ This is a small guide on how to set up the development environment.
 
 = Steps =
 
-  # Install [http://www.eclipse.org/downloads/ Eclipse].
-  # Set text file encoding in eclipse to UTF-8 (Under Windows->Preferences->General->Workspace)
-  # Check out trunk with subversion.
-    * You can do this from Eclipse using the [http://subclipse.tigris.org/install.html Subversive plugin].
-    * Or you can use [http://subversion.tigris.org/links.html#clients Any other SVN client].
-  # Install [http://code.google.com/webtoolkit/ Google Web Toolkit]
-  # Create a {{{lib}}} directory in the checkout.
-  # Download and add the following jars to the {{{lib}}} directory:
-    * From [http://www.springsource.com/download/community?project=Spring%20Framework spring-framework-2.5.6-with-dependencies] add:
-      * {{{spring-beans.jar}}}
-      * {{{spring-core.jar}}} 
-      * {{{spring-jdbc.jar}}} 
-      * {{{spring-tx.jar}}} 
-      * {{{commons-logging.jar}}} 
-    * From [http://code.google.com/webtoolkit/ Google Web Toolkit] add:
-      * {{{gwt-servlet.jar}}} 
-      * {{{gwt-user.jar}}} 
-    * From [http://sourceforge.net/project/showfiles.php?group_id=15494 JFreeChart v1.0.11] add:
-      * {{{jfreechart-1.0.11.jar}}} 
-      * {{{jcommon-1.0.14.jar}}} 
-  # Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add {{{mysql-connector-java-5.1.X-bin.jar}}} to {{{jre/lib/etc}}} folder of your JDK.
-  # Eclipse project and classpath files are checked in as well. You can use these and modify to fit your needs.
-  # Install [http://dev.mysql.com/downloads/mysql/5.0.html#downloads mysql] and create a user named stegusr with password stegpw and with permissions on the spelstegen schema.
-  # To create the tables in mysql execute the following command from a prompt:
-     * {{{mysql -u stegusr -p < generated_create_tables.sql}}}
-  # Run {{{MainApplication.launch}}} from Eclipse to start the application in Google Web Toolikt browser. You will have to change the path to {{{gwt-dev-<os>.jar}}} under the classpath tab in the launch configuration to match your location.
-  # You can also build the project with Ant. The target for deployment is build.war.
+  * Install [http://java.sun.com/javase/downloads/ Java JDK 6]
+
+  * Install the latest version of [http://maven.apache.org/download.html Maven2] 
+
+  * Optionally install a [http://subversion.tigris.org/getting.html Subversion client] to be able to run mvn:scm from command line
+
+  * Add SCM properties to your local maven settings ({USER_HOME}/.m2/settings.xml)
+
+{{{
+<settings>
+
+  <profiles>
+    <profile>
+      <id>spelstegen</id>
+      <properties>
+        <spelstegen-scm-username>{YOUR_USERNAME}</spelstegen-scm-username>
+        <spelstegen-scm-password>{YOUR_PASSWORD}</spelstegen-scm-password>
+      </properties>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>spelstegen</activeProfile>
+  </activeProfiles>
+
+</settings>
+}}}
+
+Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are logged in at http://code.google.com/p/spelstegen/source/checkout
+
+  * Install [http://www.eclipse.org/downloads/ Eclipse IDE for Java EE Developers (3.5 - Galileo)]
+
+  * Set text file encoding in eclipse to UTF-8 (Under Windows->Preferences->General->Workspace) 
+
+  * Install Subclipse. Update site: http://subclipse.tigris.org/update_1.4.x/
+
+  * Install Subversive SVN Connectors. Update site: http://community.polarion.com/projects/subversive/download/eclipse/2.0/galileo-site/
+  * Install Subversive Integrations (Select only integration for M2Eclipse). Update site: http://community.polarion.com/projects/subversive/download/integrations/galileo-site/
+
+  * Install M2Eclipse (Integrates maven with Eclipse). Update site: http://m2eclipse.sonatype.org/update/
+  Select the following components to install:
+    * Maven Integration	(All components)
+    * Maven Optional Components	
+      * Maven issue tracking configurator for Mylyn 3.x (Optional)
+      * Maven SCM handler for Subclipse (Optional)
+      * Maven SCM handler for Team/CVS (Optional)
+      * Maven SCM Integration (Optional)	
+  
+  * Install Google Plugin for Eclipse. Update site: http://dl.google.com/eclipse/plugin/3.5
+
+  * Import project from SCM. In Eclipse:
+    # File->New->Others...->Check out Maven Project from SVN
+    # Choose SCM type: svn
+    # Enter SCM URL: https://spelstegen.googlecode.com/svn/trunk/
+    # Click: Finish
+  
+  
+  * Download [http://dev.mysql.com/downloads/connector/j/5.1.html MySQL Connector/J 5.1] and add mysql-connector-java-5.1.X-bin.jar to jre/lib/etc folder of your JDK.
+  * Install [http://dev.mysql.com/downloads/mysql/5.0.html#downloads MySQL] and create a user named _stegusr_ with password _stegpw_ and with permissions on the _spelstegen_ schema.
+  * To create the tables needed for the application in mysql execute one of the following scripts located in the db folder from the command prompt:
+
+    * mysql -u stegusr -p < create_db.sql
+    * mysql -u stegusr -p < create_db_with_test_data.sql  (to add som sample test data)
+   
+  * Enable GWT for the project. In Eclipse:
+    * Right-click your project and select Google > Web Toolkit Settings. Check the Use Google Web Toolkit box and click OK to apply the change.
+  
+  * To run the project - create a launch configuration. TODO: Automate this step using maven.
+  
