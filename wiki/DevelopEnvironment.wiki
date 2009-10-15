@@ -38,6 +38,12 @@ Replace {YOUR_USERNAME} and {YOUR_PASSWORD} with the ones you see when you are l
 
   * Install [http://www.eclipse.org/downloads/ Eclipse IDE for Java EE Developers (3.5 - Galileo)]
 
+  * Configure Eclipse to start from installed JDK. Add the following lines to eclipse.ini
+{{{
+-vm
+C:\Program Files\Java\jdk1.6.0_12\bin\javaw.exe
+}}}
+
   * Set text file encoding in eclipse to UTF-8 (Under Windows->Preferences->General->Workspace) 
 
   * Install Subclipse. Update site: http://subclipse.tigris.org/update_1.4.x/
