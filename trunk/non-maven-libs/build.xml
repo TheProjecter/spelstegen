@@ -25,7 +25,7 @@
   
   <!-- gwt-log -->
   
-  <property name="work.dir" value="./non-maven-libs/downloads"/>
+  <property name="work.dir" value="./downloads"/>
   <property name="gwt-log.artifactId" value="gwt-log"/>
   <property name="gwt-log.version" value="2.6.2"/>
   <property name="gwt-log.jar" value="${gwt-log.artifactId}-${gwt-log.version}.jar"/>
