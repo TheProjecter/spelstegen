@@ -86,6 +86,13 @@ C:\Program Files\Java\jdk1.6.0_12\bin\javaw.exe
 
   * Enable GWT for the project. In Eclipse:
     * Right-click your project and select Google > Web Toolkit Settings. Check the Use Google Web Toolkit box and click OK to apply the change.
+
+  * Create an Eclipse launch configuration. In Eclipse:
+    # Select the spelstegen project
+    # Run->Run as...->Maven build...
+    # Enter "*gwt:eclipse*" in _goal_ field
+    # Click run
+    # A new file "*com.appspot.spelstegen.Spelstegen.launch*" should be visible after project refresh. 
   
-  * To run the project - create a launch configuration. TODO: Automate this step using maven.
+  * To run the project - right-click on the *com.appspot.spelstegen.Spelstegen.launch* file and select *Run as->com.appspot.spelstegen.Spelstegen*
   
