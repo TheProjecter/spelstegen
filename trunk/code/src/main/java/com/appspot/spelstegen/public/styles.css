@@ -1,0 +1,91 @@
+.table-caption {
+     border-bottom: 1px solid #696969;
+}
+  
+.outer-border {
+     border-bottom: 1px solid #92C1F0;
+     border-top: 1px solid #92C1F0;
+     border-left: 1px solid #92C1F0;
+     border-right: 1px solid #92C1F0;
+}
+
+.TABLE.MYTABLE { 
+     font-family:arial;
+     border-collapse:collapse;
+     font-size:10pt;
+     background-color:#808080;
+     width:100%;
+     border-style:solid;
+     border-color:black;
+     border-width:2px;
+}
+
+.TH.MYTABLE {
+     font-size:10pt;
+     color:white;
+}
+
+.TD.MYTABLE {  
+     font-size:10pt;
+     background-color:#409040;
+     color:white;
+     border-style:solid;
+     border-width:1px;
+     text-align:center;
+}
+  
+.toplabel {
+	font-size:14pt;
+}
+
+.header {
+	font-size:12pt;
+	background-color: #92C1F0;
+	border-bottom: 1px solid gray;
+}
+
+.footer {
+	font-size:12pt;
+	background-color: #92C1F0;
+}
+
+.leagueLabel {
+	font-size:14pt;
+}
+	
+.popup {
+	background-color: #92C1F0;
+	font-size: smaller;
+}
+
+.popupError {
+	background-color: #FF3300;
+	font-size: smaller;
+}
+
+.gwt-TabPanelBottom {
+	padding: 10px 0px 0px 0px;
+}
+
+.gwt-TabPanelBottom.statistics {
+	border-bottom: 0px solid;
+    border-top: 3px solid #92C1F0;
+    border-left: 0px solid;
+    border-right: 0px solid;
+}
+
+.rootpanel {
+	
+	text-align:center;
+	background-color: #EEF5FD;
+	margin: 50px 0px 50px 0px;
+}
+
+.mainpanel {
+	background-color:white;
+	border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    margin: 0px 0px 0px 0px;
+}
