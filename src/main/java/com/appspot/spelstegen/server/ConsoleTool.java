@@ -126,7 +126,7 @@ public class ConsoleTool {
 	}
 	
 	private void addPlayerToLeague() {
-		Integer leagueId;
+		Long leagueId;
 		String playerEmail;
 		String admin;
 		Scanner sc = new Scanner(System.in);
@@ -145,7 +145,7 @@ public class ConsoleTool {
 		}
 		System.out.println("");
 		System.out.println("Välj vilken liga du vill lägga till spelaren till genom att mata in ligans id");
-		leagueId = sc.nextInt();
+		leagueId = sc.nextLong();
 		sc.nextLine();
 		System.out.println("Ska spelaren vara administratör för den här ligan? (J/N)");
 		admin = sc.nextLine();

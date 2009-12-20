@@ -104,7 +104,7 @@ public class MySqlPersistenceManager implements PersistenceManager {
 		@Override
 		public League mapRow(ResultSet rs, int rowNum) throws SQLException {
 			League league = new League();
-			league.setId(rs.getInt(LEAGUES_ID));
+			league.setId((long)rs.getInt(LEAGUES_ID));
 			league.setName(String.valueOf(rs.getString(LEAGUES_NAME)));
 			return league;
 		}
@@ -185,15 +185,15 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	}
 
 	@Override
-	public League getLeague(Integer leagueId) {
+	public League getLeague(Long leagueId) {
 		String sql = "select * from " + LEAGUES_TABLE + " where " + LEAGUES_ID + "= ?";
-		League league = simpleJdbcTemplate.query(sql, new LeagueRowMapper(), leagueId).get(0);
+		League league = simpleJdbcTemplate.query(sql, new LeagueRowMapper(), leagueId.intValue()).get(0);
 		fillInSports(league);
 		return league;
 	}
 
 	@Override
-	public List<Player> getPlayers(Integer leagueId) {
+	public List<Player> getPlayers(Long leagueId) {
 		String allPlayerHeaders = PLAYERS_TABLE + "." + PLAYER_ID + ", "
 				+ PLAYERS_TABLE + "." + PLAYER_NAME + ", " + PLAYERS_TABLE
 				+ "." + PLAYER_EMAIL + ", " + PLAYERS_TABLE + "."
@@ -307,13 +307,13 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	}
 
 	@Override
-	public List<Match> getMatches(Integer leagueId) {
+	public List<Match> getMatches(Long leagueId) {
 		
 		String sql = "select * from " + MATCHES_TABLE;
 		Object param = null;
 		if (leagueId != null) {
 			sql += " where " + MATCH_LEAGUE_ID + "=?";
-			param = new Object[] {Integer.valueOf(leagueId)};
+			param = new Object[] {Integer.valueOf(leagueId.intValue())};
 		} else {
 			param = new Object[] {};
 		}
@@ -437,7 +437,7 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * 
 	 * @param leagueId id of the league
 	 */
-	private Map<Integer, Player> getPlayerMap(Integer leagueId) {
+	private Map<Integer, Player> getPlayerMap(Long leagueId) {
 		List<Player> playersInLeague = getPlayers(leagueId);
 		Map<Integer, Player> playerMap = new HashMap<Integer, Player>();
 		for (Player player : playersInLeague) {
@@ -453,9 +453,9 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 *            the player
 	 */
 	private void storeLeagueRoles(Player player) {
-		for (Entry<Integer, java.util.Set<LeagueRole>> leagueRolesEntry : player
+		for (Entry<Long, java.util.Set<LeagueRole>> leagueRolesEntry : player
 				.getAllLeagueRoles().entrySet()) {
-			Integer leagueId = leagueRolesEntry.getKey();
+			Long leagueId = leagueRolesEntry.getKey();
 			java.util.Set<LeagueRole> leagueRoles = leagueRolesEntry.getValue();
 			for (LeagueRole leagueRole : leagueRoles) {
 				if (LeagueRole.MEMBER.equals(leagueRole)) {
@@ -477,9 +477,9 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * @param leagueId
 	 *            league id
 	 */
-	private void addPlayerToLeague(Integer playerId, Integer leagueId) {
+	private void addPlayerToLeague(Integer playerId, Long leagueId) {
 		String sql = "INSERT INTO " + LEAGUE_PLAYERS_TABLE + " VALUES(?,?)";
-		simpleJdbcTemplate.update(sql, leagueId, playerId);
+		simpleJdbcTemplate.update(sql, leagueId.intValue(), playerId);
 	}
 	
 	/**
@@ -490,10 +490,10 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * @param leagueid
 	 *            league id
 	 */
-	private void addLeagueAdminRole(Integer playerId, Integer leagueId) {
+	private void addLeagueAdminRole(Integer playerId, Long leagueId) {
 		//if (!isPlayerLeagueAdmin(playerId, leagueId)) {
 			String sql = "insert into " + LEAGUE_ADMINS_TABLE + " values(?,?)";
-			simpleJdbcTemplate.update(sql, leagueId, playerId);
+			simpleJdbcTemplate.update(sql, leagueId.intValue(), playerId);
 		//}
 	}
 
@@ -505,10 +505,10 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * @param leagueid
 	 *            league id
 	 */
-	private void addMatchAdmin(Integer playerId, Integer leagueId) {
+	private void addMatchAdmin(Integer playerId, Long leagueId) {
 		//if (!isPlayerLeagueMatchAdmin(playerId, leagueId)) {
 			String sql = "insert into " + LEAGUE_MATCH_ADMINS_TABLE + " values(?,?)";
-			simpleJdbcTemplate.update(sql, leagueId, playerId);
+			simpleJdbcTemplate.update(sql, leagueId.intValue(), playerId);
 		//}
 	}
 	
@@ -533,7 +533,7 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * @param leagueId
 	 *            id of league to fetch roles
 	 */
-	private void updateLeagueRoles(List<Player> players, Integer leagueId) {
+	private void updateLeagueRoles(List<Player> players, Long leagueId) {
 		for (Player player : players) {
 			updateLeagueRole(player, leagueId);
 		}
@@ -547,7 +547,7 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 * @param leagueId
 	 *            id of league to fetch roles
 	 */
-	private void updateLeagueRole(Player player, Integer leagueId) {
+	private void updateLeagueRole(Player player, Long leagueId) {
 		java.util.Set<LeagueRole> leagueRoles = player.getLeagueRoles(leagueId);
 		if (isPlayerLeagueMember(player.getId(), leagueId)) {
 			leagueRoles.add(LeagueRole.MEMBER);
@@ -570,10 +570,10 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 *            league id
 	 * @return true if player is league admin; otherwise false
 	 */
-	private boolean isPlayerLeagueAdmin(Integer playerId, Integer leagueId) {
+	private boolean isPlayerLeagueAdmin(Integer playerId, Long leagueId) {
 		String sql = "select count(*) " + " from " + LEAGUE_ADMINS_TABLE + " where " 
 					+ LEAGUE_ADMINS_LEAGUE_ID + " = ? and " + LEAGUE_ADMINS_PLAYER_ID + " = ?";
-		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+		return simpleJdbcTemplate.queryForInt(sql, leagueId.intValue(), playerId) > 0;
 	}
 
 	/**
@@ -585,10 +585,10 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 *            league id
 	 * @return true if player is match admin; otherwise false
 	 */
-	private boolean isPlayerLeagueMatchAdmin(Integer playerId, Integer leagueId) {
+	private boolean isPlayerLeagueMatchAdmin(Integer playerId, Long leagueId) {
 		String sql = "select count(*) from " + LEAGUE_MATCH_ADMINS_TABLE + " where " 
 					+ LEAGUE_MATCH_ADMINS_LEAGUE_ID + " = ? and " + LEAGUE_MATCH_ADMINS_PLAYER_ID + " = ?";
-		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+		return simpleJdbcTemplate.queryForInt(sql, leagueId.intValue(), playerId) > 0;
 	}
 
 	/**
@@ -600,10 +600,10 @@ public class MySqlPersistenceManager implements PersistenceManager {
 	 *            league id
 	 * @return true if player is league member; otherwise false
 	 */
-	private boolean isPlayerLeagueMember(Integer playerId, Integer leagueId) {
+	private boolean isPlayerLeagueMember(Integer playerId, Long leagueId) {
 		String sql  = "select count(*) from " + LEAGUE_PLAYERS_TABLE + " where " + LEAGUE_PLAYERS_LEAGUE_ID + 
 			" = ? and "	+ LEAGUE_PLAYERS_PLAYER_ID + " = ?";
-		return simpleJdbcTemplate.queryForInt(sql, leagueId, playerId) > 0;
+		return simpleJdbcTemplate.queryForInt(sql, leagueId.intValue(), playerId) > 0;
 	}
 
 //	private List<Integer> getAllLeagueAdmins(Integer leagueId) {

@@ -24,7 +24,7 @@ public class League implements Serializable {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	@Persistent
 	private String name;
@@ -50,11 +50,11 @@ public class League implements Serializable {
 		//seasons.add( Season.createInitalSeason() );
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -6,14 +6,14 @@ package com.appspot.spelstegen.server.persistence.jdo;
 import java.util.Collection;
 import java.util.List;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 
 import com.appspot.spelstegen.client.entities.League;
 import com.appspot.spelstegen.client.entities.Match;
 import com.appspot.spelstegen.client.entities.Player;
 import com.appspot.spelstegen.client.entities.Sport;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 /**
  * JDO implementation of persistence manager
@@ -22,8 +22,8 @@ import com.appspot.spelstegen.client.entities.Sport;
  */
 public class JDOPersistenceManager implements com.appspot.spelstegen.server.persistence.PersistenceManager {
 	
-	private static final PersistenceManagerFactory pmf =
-        JDOHelper.getPersistenceManagerFactory("transactions-optional");
+//	private static final PersistenceManagerFactory pmf =
+//        JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	/**
 	 * Constructor
@@ -57,9 +57,10 @@ public class JDOPersistenceManager implements com.appspot.spelstegen.server.pers
 	}
 
 	@Override
-	public League getLeague(Integer leagueId) {
-		// TODO Auto-generated method stub
-		return null;
+	public League getLeague(Long leagueId) {
+		Key key = KeyFactory.createKey(League.class.getSimpleName(), leagueId);
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		return pm.getObjectById(League.class, key);
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class JDOPersistenceManager implements com.appspot.spelstegen.server.pers
 	}
 
 	@Override
-	public List<Match> getMatches(Integer leagueId) {
+	public List<Match> getMatches(Long leagueId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -87,7 +88,7 @@ public class JDOPersistenceManager implements com.appspot.spelstegen.server.pers
 	}
 
 	@Override
-	public List<Player> getPlayers(Integer leagueId) {
+	public List<Player> getPlayers(Long leagueId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -105,7 +106,8 @@ public class JDOPersistenceManager implements com.appspot.spelstegen.server.pers
 	}
 	
 	private void makePersistent(Object pc) {
-		PersistenceManager pm = pmf.getPersistenceManager();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+
         try {
             pm.makePersistent(pc);
         } finally {

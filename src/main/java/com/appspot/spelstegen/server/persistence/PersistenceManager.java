@@ -30,7 +30,7 @@ public interface PersistenceManager {
 	 * @param leagueId
 	 * @return league with specified id if it exists; otherwise null
 	 */
-	public League getLeague(Integer leagueId);
+	public League getLeague(Long leagueId);
 
 	/**
 	 * Add a new player
@@ -65,7 +65,7 @@ public interface PersistenceManager {
 	 *            leagues.
 	 * @return a list of players
 	 */
-	public List<Player> getPlayers(Integer leagueId);
+	public List<Player> getPlayers(Long leagueId);
 	
 	/**
 	 * Fetches all players
@@ -89,7 +89,7 @@ public interface PersistenceManager {
 	 *            id of league
 	 * @return a list with all matches in a league
 	 */
-	public List<Match> getMatches(Integer leagueId);
+	public List<Match> getMatches(Long leagueId);
 
 	/**
 	 * Fetches all leagues that a specific player is a member of

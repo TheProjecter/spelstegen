@@ -63,7 +63,7 @@ public class OverviewPanel extends Composite implements ValueChangeHandler<Strin
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		if (event != null && !event.getValue().equals("")) {
-			Integer leagueId = Integer.valueOf(event.getValue().trim());
+			Long leagueId = Long.valueOf(event.getValue().trim());
 			ServiceManager.getInstance().getLeague(leagueId);
 		}
 	}
