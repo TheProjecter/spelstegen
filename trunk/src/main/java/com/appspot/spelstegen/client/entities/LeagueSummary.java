@@ -10,7 +10,7 @@ public class LeagueSummary implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Integer id;
+	private Long id;
 	private String name;
 	private int numberOfPlayers;
 	
@@ -18,16 +18,16 @@ public class LeagueSummary implements Serializable {
 		super();
 	}
 
-	public LeagueSummary(Integer id, String name, int numberOfPlayers) {
+	public LeagueSummary(Long id, String name, int numberOfPlayers) {
 		this.id = id;
 		this.name = name;
 		this.numberOfPlayers = numberOfPlayers;
 	}
 	
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getName() {

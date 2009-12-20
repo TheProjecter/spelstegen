@@ -28,7 +28,7 @@ public class Match implements Serializable {
 	private Integer id;
 	
 	@Persistent
-	private Integer leagueId;
+	private Long leagueId;
 	
 	@Persistent
 	private Date date;
@@ -49,7 +49,7 @@ public class Match implements Serializable {
 		sets = new ArrayList<Set>();
 	}
 
-	public Match(Integer leagueId, Date date, Sport sport, Player player1,
+	public Match(Long leagueId, Date date, Sport sport, Player player1,
 			Player player2) {
 		this();
 		this.leagueId = leagueId;
@@ -67,11 +67,11 @@ public class Match implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getLeagueId() {
+	public Long getLeagueId() {
 		return leagueId;
 	}
 
-	public void setLeagueId(Integer leagueId) {
+	public void setLeagueId(Long leagueId) {
 		this.leagueId = leagueId;
 	}
 

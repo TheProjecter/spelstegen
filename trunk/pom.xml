@@ -23,11 +23,6 @@
 			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
 		</pluginRepository>
 		<pluginRepository>
-		  <releases>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>ignore</checksumPolicy>
-      </releases>
       <id>DataNucleus_2</id>
       <url>http://www.datanucleus.org/downloads/maven2/</url>
     </pluginRepository>
@@ -40,11 +35,6 @@
       <url>http://repo1.maven.org/maven2</url>
     </repository>	
     <repository>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>ignore</checksumPolicy>
-      </releases>
       <id>www.mvnsearch.org</id>
       <name>www.mvnsearch.org</name>
       <url>http://www.mvnsearch.org/maven2/</url>
@@ -228,8 +218,27 @@
             <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
             <exclude>javax.jdo:jdo2-api</exclude>
             <exclude>com.google.appengine:appengine-api</exclude>
+            <exclude>com.google.appengine.orm:datanucleus-appengine</exclude>
             <exclude>org.datanucleus.store.appengine</exclude>
           </excludes>
+          <additionalProjectnatures>
+            <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+        		<projectnature>com.google.appengine.eclipse.core.gaeNature</projectnature>
+        		<projectnature>com.google.gwt.eclipse.core.gwtNature</projectnature>
+        		<projectnature>com.google.gdt.eclipse.core.webAppNature</projectnature>
+          </additionalProjectnatures>
+          <additionalBuildcommands>
+      			<buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+      			<buildcommand>com.google.gwt.eclipse.core.gwtProjectValidator</buildcommand>
+      			<buildcommand>com.google.appengine.eclipse.core.enhancerbuilder</buildcommand>
+      			<buildcommand>com.google.appengine.eclipse.core.projectValidator</buildcommand>
+      			<buildcommand>com.google.gdt.eclipse.core.webAppProjectValidator</buildcommand>
+          </additionalBuildcommands>
+          <classpathContainers>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+            <classpathContainer>com.google.gwt.eclipse.core.GWT_CONTAINER</classpathContainer>
+            <classpathContainer>com.google.appengine.eclipse.core.GAE_CONTAINER</classpathContainer>
+          </classpathContainers>
         </configuration>
 			</plugin>
       
@@ -314,19 +323,21 @@
         <artifactId>maven-datanucleus-plugin</artifactId>
         <version>1.1.4</version>
         <configuration>
-          <verbose>true</verbose>
-          <api>JPA</api>
-          <mappingIncludes>**/*.jdo, **/model/**.class</mappingIncludes>
-          <enhancerName>ASM</enhancerName>
+           <api>JDO</api>
+           <mappingIncludes>**/*.class</mappingIncludes>
+           <log4jConfiguration>${basedir}/src/main/resources/log4j.properties</log4jConfiguration>
+           <verbose>false</verbose>
         </configuration>
+        <!--
         <executions>
           <execution>
-            <phase>compile</phase>
+            <phase>process-classes</phase>
             <goals>
               <goal>enhance</goal>
             </goals>
           </execution>
         </executions>
+        -->
       </plugin>
       
 		</plugins>

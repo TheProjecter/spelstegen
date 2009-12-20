@@ -69,7 +69,7 @@ public interface SpelstegenService extends RemoteService {
 	 * @param leagueId
 	 * @return
 	 */
-	public League getLeague(Integer leagueId);
+	public League getLeague(Long leagueId);
 	
 	/**
 	 * Get the version string from the server.

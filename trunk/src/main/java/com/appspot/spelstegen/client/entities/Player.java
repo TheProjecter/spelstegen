@@ -44,7 +44,7 @@ public class Player implements Serializable/*, Comparable<Player>*/ {
 	 * A map that contains all roles that the player has in a set of leagues. 
 	 */
 	@Persistent
-	private Map<Integer, java.util.Set<LeagueRole>> allLeagueRoles;
+	private Map<Long, java.util.Set<LeagueRole>> allLeagueRoles;
 	
 	@Persistent
 	private String playerName;
@@ -120,14 +120,14 @@ public class Player implements Serializable/*, Comparable<Player>*/ {
 		return password;
 	}
 	
-	public Map<Integer, java.util.Set<LeagueRole>> getAllLeagueRoles() {
+	public Map<Long, java.util.Set<LeagueRole>> getAllLeagueRoles() {
 		if (allLeagueRoles == null) {
-			allLeagueRoles = new HashMap<Integer, java.util.Set<LeagueRole>>();
+			allLeagueRoles = new HashMap<Long, java.util.Set<LeagueRole>>();
 		}
 		return allLeagueRoles;
 	}
 
-	public void setAllLeagueRoles(Map<Integer, java.util.Set<LeagueRole>> allLeagueRoles) {
+	public void setAllLeagueRoles(Map<Long, java.util.Set<LeagueRole>> allLeagueRoles) {
 		this.allLeagueRoles = allLeagueRoles;
 	}
 	
@@ -140,7 +140,7 @@ public class Player implements Serializable/*, Comparable<Player>*/ {
 	 * @return a set of all league roles that the player has for the league. If
 	 *         no roles are available an empty set is returned.
 	 */
-	public java.util.Set<LeagueRole> getLeagueRoles(Integer leagueId) {
+	public java.util.Set<LeagueRole> getLeagueRoles(Long leagueId) {
 		java.util.Set<LeagueRole> leagueRoles = getAllLeagueRoles().get(leagueId);
 		if (leagueRoles == null) {
 			leagueRoles = new HashSet<LeagueRole>();
@@ -148,20 +148,20 @@ public class Player implements Serializable/*, Comparable<Player>*/ {
 		return leagueRoles;
 	}
 	
-	public void setLeagueRoles(Integer leagueId, java.util.Set<LeagueRole> leagueRoles) {
+	public void setLeagueRoles(Long leagueId, java.util.Set<LeagueRole> leagueRoles) {
 		getAllLeagueRoles().put(leagueId, leagueRoles);
 	}
 
 	
-	public boolean isMatchAdmin(Integer leagueId) {
+	public boolean isMatchAdmin(Long leagueId) {
 		return getLeagueRoles(leagueId).contains(LeagueRole.MATCH_ADMIN);
 	}
 	
-	public boolean isLeagueAdmin(Integer leagueId) {
+	public boolean isLeagueAdmin(Long leagueId) {
 		return getLeagueRoles(leagueId).contains(LeagueRole.LEAGUE_ADMIN);
 	}
 	
-	public boolean isLeagueMember(Integer leagueId) {
+	public boolean isLeagueMember(Long leagueId) {
 		return getLeagueRoles(leagueId).contains(LeagueRole.MEMBER);
 	}
 	
@@ -171,9 +171,9 @@ public class Player implements Serializable/*, Comparable<Player>*/ {
 	 * @param leagueRole
 	 *            the league role
 	 */
-	public List<Integer> getLeagueIds(LeagueRole leagueRole) {
-		List<Integer> leagueIds = new ArrayList<Integer>();
-		for (Entry<Integer, Set<LeagueRole>> leagueUserRoles : getAllLeagueRoles().entrySet()) {
+	public List<Long> getLeagueIds(LeagueRole leagueRole) {
+		List<Long> leagueIds = new ArrayList<Long>();
+		for (Entry<Long, Set<LeagueRole>> leagueUserRoles : getAllLeagueRoles().entrySet()) {
 			if (leagueUserRoles.getValue().contains(leagueRole)) {
 				leagueIds.add(leagueUserRoles.getKey());
 			}

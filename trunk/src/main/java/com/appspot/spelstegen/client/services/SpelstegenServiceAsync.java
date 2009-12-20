@@ -30,7 +30,7 @@ public interface SpelstegenServiceAsync {
 	
 	public void getLeagueSummaries(AsyncCallback<List<LeagueSummary>> callback);
 	
-	public void getLeague(Integer id, AsyncCallback<League> callback);
+	public void getLeague(Long id, AsyncCallback<League> callback);
 		
 	public void getVersionString(AsyncCallback<String> callback);
 	

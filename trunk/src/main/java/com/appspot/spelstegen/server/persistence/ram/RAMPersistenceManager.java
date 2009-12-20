@@ -19,15 +19,15 @@ import com.appspot.spelstegen.server.persistence.PersistenceManager;
 
 public class RAMPersistenceManager implements PersistenceManager {
 	
-	private Integer leagueId = 0;
+	private Long leagueId = 0L;
 	private Integer playerId = 0;
 	private Integer sportId = 0;
 	private Integer matchId = 0;
 	
-	private Map<Integer, League> leagues = new HashMap<Integer, League>();
+	private Map<Long, League> leagues = new HashMap<Long, League>();
 	private Map<Integer, Player> players = new HashMap<Integer, Player>();
 	private Set<Sport> sports = new HashSet<Sport>();
-	private Map<Integer, List<Match>> matches = new HashMap<Integer, List<Match>>();
+	private Map<Long, List<Match>> matches = new HashMap<Long, List<Match>>();
 	
 	public RAMPersistenceManager() {
 		createTestData();
@@ -102,14 +102,14 @@ public class RAMPersistenceManager implements PersistenceManager {
 	}
 
 	@Override
-	public League getLeague(Integer leagueId) {
+	public League getLeague(Long leagueId) {
 		return leagues.get(leagueId);
 	}
 
 	@Override
 	public List<League> getLeagues(Player player) {
 		List<League> playerLeagues = new ArrayList<League>();
-		for (Integer leagueId : player.getAllLeagueRoles().keySet()) {
+		for (Long leagueId : player.getAllLeagueRoles().keySet()) {
 			playerLeagues.add( leagues.get(leagueId) );
 		}
 		return playerLeagues;
@@ -121,7 +121,7 @@ public class RAMPersistenceManager implements PersistenceManager {
 	}
 
 	@Override
-	public List<Match> getMatches(Integer leagueId) {
+	public List<Match> getMatches(Long leagueId) {
 		List<Match> allMatchesInLeague = matches.get(leagueId);
 		if (allMatchesInLeague == null) {
 			allMatchesInLeague = new ArrayList<Match>();
@@ -152,7 +152,7 @@ public class RAMPersistenceManager implements PersistenceManager {
 	}
 
 	@Override
-	public List<Player> getPlayers(Integer leagueId) {
+	public List<Player> getPlayers(Long leagueId) {
 		List<Player> playersInLeague = new ArrayList<Player>();
 		for (Player player : players.values()) {
 			if (player.isLeagueMember(leagueId)) {

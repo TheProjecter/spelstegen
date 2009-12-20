@@ -94,7 +94,7 @@ public class ServiceManager implements Services {
 	}
 
 	@Override
-	public void getLeague(final Integer id) {
+	public void getLeague(final Long id) {
 		final AsyncCallback<League> callback = new AsyncCallback<League>() {
 			public void onFailure(Throwable e) {
 				Log.error("Unexpected error when trying to get league [Id: "+id+"]: " + e.getMessage(), e);

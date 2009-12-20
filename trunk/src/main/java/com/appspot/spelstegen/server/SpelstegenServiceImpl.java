@@ -84,16 +84,16 @@ public class SpelstegenServiceImpl extends RemoteServiceServlet implements Spels
 	@Override
 	public List<League> getLeagues(Player player) {
 		logger.log(Level.FINE, "getLeagues called");
-		List<Integer> leagueIds = player.getLeagueIds(LeagueRole.MEMBER);
+		List<Long> leagueIds = player.getLeagueIds(LeagueRole.MEMBER);
 		List<League> leagues = new ArrayList<League>();
-		for (Integer leagueId : leagueIds) {
+		for (Long leagueId : leagueIds) {
 			leagues.add( getLeague(leagueId) );
 		}
 		return leagues;
 	}
 
 	@Override
-	public League getLeague(Integer id) {
+	public League getLeague(Long id) {
 		try {
 			League league = pm.getLeague(id);
 			List<Player> players = pm.getPlayers(league.getId());

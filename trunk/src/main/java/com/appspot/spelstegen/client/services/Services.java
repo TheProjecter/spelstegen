@@ -20,7 +20,7 @@ public interface Services {
 	 */
 	public void addLeagueUpdateListener(LeagueUpdateListener listener);
 	
-	public void getLeague(Integer id);
+	public void getLeague(Long id);
 	
 	public void getLeagues(Player player, AsyncCallback<List<League>> callback);
 	
