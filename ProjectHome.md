@@ -1,0 +1,1 @@
+This small webapp is developed in GWT and is used to keep track of points and rankings in a league. It it primarily developed for squash and in swedish. Support for other languages and sports is not hard to add since the code is quite generic.
